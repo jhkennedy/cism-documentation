@@ -1,0 +1,11 @@
+Notes on building documentation for CISM
+----------------------------------------
+MJH March 2014
+
+* A number of utilities/programs need to be manually specified at the top of the Makefile.  The current values work for me on my Mac, but minor adjustments may be needed by others.
+
+* The version number of the code needs to be manually updated by editing the file ./common/version.tex
+
+* The program dia is needed to convert some diagrams in .dia format to .eps format
+On a Mac, it can be obtained with:
+> sudo port install dia
