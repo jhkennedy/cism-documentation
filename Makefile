@@ -79,7 +79,7 @@ makegraphics: $(ug_graphics) $(num_graphics) $(numgnu_graphics) $(dg_graphics)
 # Finally, the clean target.  Need to add the subdirectory files that might get made.
 clean:
 	rm -f *.aux *.dvi *.pdf *.log *.out *.toc *.bbl *.blg *.eps
-	rm -f ug/figs/*.eps num/figs/*.eps num/gnu/*.eps ./fg/figures/*.eps
+	rm -f ug/figs/*.eps num/figs/*.eps num/gnu/*.eps ./dg/figures/*.eps
 	rm -f num/gnu/*.eps num/gnu/*.aux num/gnu/*.dvi num/gnu/*.tex num/gnu/*.log
 
 
