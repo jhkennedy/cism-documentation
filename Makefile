@@ -56,7 +56,13 @@ glimmer_html:  glimmer.tex
 	htlatex glimmer_html "html,3,info" "" " -d./www/ -m 644 "
 	$(BIBTEX) glimmer_html
 	htlatex glimmer_html "html,3,info" "" " -d./www/ -m 644 "
-	find $(SUBDIRS) -name '*.png' -exec install -m 644 -D {} ./www/{} \;
+	# First create the subdirectories needed for the png's to go into
+	find . -name '*.png' |grep -o '.*/' |sort|uniq | cut -f 1 | xargs -I {} install -d ./www/{}
+	find $(SUBDIRS) -name '*.png' -exec install -m 644 {} ./www/{} \;
+# old version that uses the handy -D option to create directories before installing but which is not available on Mac's crappy old 'install' version
+#	find $(SUBDIRS) -name '*.png' -exec install -m 644 -D {} ./www/{} \;
+	#TODO Clean up the rest of the junk that is created by htlatex
+	rm -f *.html
 
 #www::   doxygen-run glimmer_html doxygen-run
 #        rm -rf $(WWW_DIR)
@@ -113,5 +119,5 @@ glint_varlist.tex: $(top_srcdir)/libglint/glint_vars.def ./ug/varlist.tex.in
 clean:
 	rm -f *.aux *.dvi *.pdf *.log *.out *.toc *.bbl *.blg *.eps *.ps
 	rm -f ug/*_varlist.tex
-# TODO Need to add the recipe for cleaning all the junk created by the html build
-
+	# clean all the junk created by the html build
+	rm -rf www *.png *.html
