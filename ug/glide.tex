@@ -6,15 +6,15 @@ cvs -z3 -d:pserver:anonymous@forge.nesc.ac.uk:/cvsroot/glimmer co glimmer-exampl
 \end{verbatim}
 
 \subsection{Configuration}\label{ug.sec.config}
-The format of the configuration files is similar to Windows \texttt{.ini} files and contains sections. Each section contains key, values pairs.
+The format of the configuration files is taken from that used by the ConfigParser module in Python 2.x, which is similar to Windows \texttt{.ini} files and contains sections. Each section contains key, value(s) pairs.
 \begin{itemize}
 \item Empty lines, or lines starting with a \texttt{\#}, \texttt{;} or \texttt{!} are ignored.
 \item A new section starts with the the section name enclose with square brackets, e.g. \texttt{[grid]}.
 \item Keys are separated from their associated values by a \texttt{=} or \texttt{:}.
 \end{itemize}
-Sections and keys are case sensitive and may contain white space. However, the configuration parser is very simple and thus the number of spaces within a key or section name also matters. Sensible defaults are used when a specific key is not found.
+Sections and keys are case sensitive and may contain white space. However, the configuration parser is very simple and thus the number of spaces within a key or section name also matters. Sensible defaults are used when a specific key is not found.  Defaults are indicated in bold in the table below.
 
-For consistency, options for both the shallow-ice and higher-order dynamical cores (dycore) are discussed. Currently, only the shallow ice dycore is scientifically supported. The higher-order dycore will be supported as part of planned future releases of Glimmer CISM. Configuration number options with a * after them are specific to the higher-order dycore.
+For consistency, options for both the shallow-ice and higher-order dynamical cores (dycore) are discussed. {\bf TODO: Keep this statement?} Currently, only the shallow ice dycore is scientifically supported. The higher-order dycore will be supported as part of planned future releases of Glimmer CISM. {\bf TODO: Keep this convention?} Configuration number options with a * after them are specific to the higher-order dycore.
 
 \begin{center}
   \tablefirsthead{%
@@ -31,6 +31,8 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \hline}
   \tablelasttail{\hline}
   \begin{supertabular*}{\textwidth}{@{\extracolsep{\fill}}|l|p{10cm}|}
+
+
 %%%% GRID
     \hline
     \multicolumn{2}{|l|}{\texttt{[grid]}}\\
@@ -42,6 +44,13 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \texttt{upn} & (integer) number of nodes in $z$--direction\\
     \texttt{dew} & (real) node spacing in $x$--direction (m)\\
     \texttt{dns} & (real) node spacing in $y$--direction (m)\\
+%% global_bc
+    \texttt{global\_bc} & 
+        boundary conditions for the edges of the global domain \\ &
+    \begin{tabular}[t]{cp{0.85\linewidth}}
+      {\bf 0} & periodic \\
+      1 & outflow \\
+    \end{tabular}\\
 %    \texttt{sigma\_file} & (string) Name of file containing $\sigma$ coordinates. Alternatively, the sigma levels may be specified using the \texttt{[sigma]} section decribed below. If no sigma coordinates are specified explicitly, they are calculated based on the value of \texttt{sigma\_builtin} \\
     \texttt{sigma} &
 %    \begin{tabular}[t]{cp{\linewidth}}
@@ -60,30 +69,37 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %%%% SIGMA
     \multicolumn{2}{|l|}{\texttt{[sigma]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Define the sigma levels used in the vertical discretization (option 2 above). This is an alternative to using a separate file (specified in section \texttt{[grid]} above). If neither is used, the levels are calculated as described above.} \\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Define the sigma levels used in the vertical discretization (\texttt{sigma}=2 above). This is an alternative to using a separate file (specified in section \texttt{[grid]} above). If neither is used, the levels are calculated as described above.} \\
     \hline
     \texttt{sigma\_levels} & (real) list of sigma levels, in ascending order, separated by spaces. These run between 0.0 and 1.0 \\
     \hline
+
+
 %%%% TIME
     \hline
     \multicolumn{2}{|l|}{\texttt{[time]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps, etc. Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps, etc. {\bf TODO: Address/remove this note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps.}\\
     \hline
     \texttt{tstart} & (real) Start time of the model in years\\
     \texttt{tend} & (real) End time of the model in years\\
     \texttt{dt} & (real) size of time step in years\\
+    \texttt{subcyc} & (integer) number of time steps to subcycle within dt using a steady velocity field {\bf TODO: Support both subcyc and ntem/nvel?  Explain the difference?}\\
     \texttt{ntem} & (real) time step multiplier setting the ice temperature update interval\\
     \texttt{nvel} & (real) time step multiplier setting the velocity update interval\\
+    \texttt{profile} & (integer) profile frequency (number of time steps) {\bf TODO: more useful description of what profiling is?}\\
     \texttt{dt\_diag} & (real) writing diagnostic variables to log file every dt\_diag yrs\\
     \texttt{idiag} & (int) x direction grid index for diagnostic variables to be written to log file\\
     \texttt{jdiag} & (int) y direction grid index for diagnostic variables to be written to log file\\
+    \texttt{ndiag} & (int) number of time steps between diagnostics. {\bf DEPRECATED}.  Use \texttt{dt\_diag}.\\
     \hline
+
+
 %%%% Options
     \hline
     \multicolumn{2}{|l|}{\texttt{[options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated. Defaults are indicated in bold.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.}\\
     \hline
 %% dycore
     \texttt{dycore} & 
