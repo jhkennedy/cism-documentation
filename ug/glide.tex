@@ -103,6 +103,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \hline
 %% dycore
     \texttt{dycore} & 
+      {\bf TODO: Add Felix, Bisicles?} \\ &
     \begin{tabular}[t]{cp{0.85\linewidth}}
       {\bf 0} & Glide (serial, 3d, Shallow-Ice-Approximation dynamical core)\\
       1* & Glam (parallel, 3d, FDM, 1st-order-accurate dynamical core)  \\
@@ -121,10 +122,10 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% temperature
     \texttt{temperature} & 
     \begin{tabular}[t]{cl}
-      0 & isothermal\\
-      {\bf 1} & evolve using Glide temperature scheme \\
-      2 & held steady at inital value \\
-%      3 & evolve using incremental remapping-based scheme \\
+      0 & Set each ice column to local surface air temperature \\
+      {\bf 1} & prognostic temperature calculation \\
+      2 & held steady at initial value \\
+      3 & prognostic temperature calculation using enthalpy formulation {\bf TODO: include this?} \\
     \end{tabular}\\
 %% temperature init
     \texttt{temp\_init} & 
@@ -137,7 +138,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \texttt{flow\_law} &  
     \begin{tabular}[t]{cp{0.85\linewidth}}
       {\bf 0}  & constant (using the value of default\_flwa)\\
-      1 & temp. dependent, Patterson and Budd (temp.=-10degC)\\
+      1 & temp. dependent, Patterson and Budd (temp.=-5degC)\\
       2 & temp. dependent, Patterson and Budd (function of variable temp.)\\
     \end{tabular}\\
 %% basal water
@@ -156,6 +157,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\
 %% slip coefficient
     \texttt{slip\_coeff} & 
+        slip coefficient for Glide only \\ &
     \begin{tabular}[t]{cl}
       {\bf 0} & zero (no sliding) \\
       1 & set to a non--zero constant everywhere\\
@@ -166,12 +168,14 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\
 %% marine margin
     \texttt{marine\_margin} & 
+  {\bf TODO: KEEP ALL OF THESE?} \\ &
     \begin{tabular}[t]{cp{0.85\linewidth}}
       0 & ignore marine margin\\
       {\bf 1} & Set thickness to zero if floating\\
       2 & Lose fraction of ice when edge cell\\
       3 & Set thickness to zero if relaxed bedrock is below a given depth (variable "mlimit" in glide\_types)\\
       4 & Set thickness to zero if present-day bedrock is below a given depth (variable "mlimit" in glide\_types)\\
+      5 & Huybrechts grounding line scheme {\bf TODO: elaborate on this.} \\
     \end{tabular}\\
 %% vertical integration
     \texttt{vertical\_integration} & 
@@ -192,7 +196,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
       {\bf 0} & no isostatic adjustment \\
       1 & compute isostatic adjustment using lithosphere / asthenosphere model \\
     \end{tabular}\\
-    %% topography
+%% topography
     \texttt{topo\_is\_relaxed} &  
     \begin{tabular}[t]{cp{0.85\linewidth}}
       {\bf 0} & relaxed topography is read from a separate variable\\
@@ -200,17 +204,21 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
       2 & first time slice of input topography is assumed to be in isostatic
       equilibrium with ice thickness. \\
     \end{tabular}\\
-%% periodicity							
+%% periodicity
     \texttt{periodic\_ew} & 
+  {\bf TODO: Is this still used?  If so, do we need to add perdiodic\_ns?} \\&
     \begin{tabular}[t]{cp{0.85\linewidth}}
       {\bf 0} & switched off\\
       1 & periodic lateral EW boundary conditions (Glide SIA dycore only) \\
     \end{tabular}\\
-%% hotstart
-    \texttt{hotstart} &
+%% restart
+    \texttt{restart} &
+    Note: the alternate keyword {\bf hotstart} is retained for backwards compatibility. \\ &
     \begin{tabular}[t]{cp{0.85\linewidth}}
       {\bf 0} & normal start (initial guesses taken from input file or, if absent, using default options)\\
-      1 & restart model using input from previous run (do not calc. temp., rate factor, or vel. fields )\\
+      1 & restart model using input from previous run (do not calc., e.g., temp., rate factor, or vel. fields)  
+           Specific fields required for restart or dependent on options chosen.  (Specify 'restart' as a variable 
+           in an output file to get the required fields automatically.)\\
     \end{tabular}\\
     \hline
     \texttt{ioparams} & (string) name of file containing netCDF I/O configuration. The main configuration file is searched for I/O related sections if no file name is given (default).\\
@@ -229,42 +237,45 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\     
 %% which_ho_sparse
     \texttt{which\_ho\_sparse} & 
+{\bf TODO: Bill, check these descriptions for accuracy?  Also, do we need notes about which options are glissade vs. glam specific?} \\ &
     \begin{tabular}[t]{cp{0.85\linewidth}}
+      -1 & Solve sparse linear system using SLAP library with incomplete Cholesky method\\
       {\bf 0} & Solve sparse linear system with incomplete LU-preconditioned biconjugate gradient method\\
       1 & Solve sparse linear system with incomplete LU-preconditioned GMRES method\\
-      2 & Solve sparse linear system with incomplete LU-preconditioned conjugate gradient method\\
-      3 & Solve sparse linear system with conjugate gradient method (parallel code only)\\
+      2 & Solve sparse linear system with conjugate gradient method (parallel code only)\\
+      3 & Solve sparse linear system with conjugate gradient method with Chronopoulos-Gear preconditioner (parallel code only)\\
       4 & Solve sparse linear system using Trilinos, incomplete LU-preconditioned GMRES method (Trilinos compatible build only)\\
     \end{tabular}\\     
 %% which_ho_efvs
     \texttt{which\_ho\_efvs} & 
     \begin{tabular}[t]{cp{0.85\linewidth}}
-      0 & use a constant value for the effective viscosity \\
-      1 & use a multiple of the flow law rate factor for the effective viscosity \\
+      0 & use a constant value for the effective viscosity: 2336041.42829 Pa yr (Value used by ISMIP-HOM Test F)\\
+      1 & set the effective viscosity to a value based on the flow rate factor: efvs $= 0.5 * A^{-1/n}$\\
       {\bf 2} & use the effective strain rate for the calc. of the effective viscosity (i.e., full nonlinear treatment) \\
     \end{tabular}\\  
 %% which_disp
     \texttt{which\_disp} & 
+{\bf TODO: Should this be moved from ho\_options to options?} \\ &
     \begin{tabular}[t]{cp{0.85\linewidth}}
       {\bf 0} & calculate dissipation in temperature equation assuming SIA ice dynamics \\
       1* & calculate dissipation in temperature equation assuming 1st-order ice dynamics \\
     \end{tabular}\\    
 %% which_ho_babc
     \texttt{which\_ho\_babc} & 
-        Implementation of basal boundary condition in higher-order dycore \\ &
+        Implementation of basal boundary condition in higher-order dycore (Calculation of `beta' field.) {\bf TODO: include all of these?} \\ &
     \begin{tabular}[t]{cp{0.85\linewidth}}
       0 & constant value of 10 Pa yr / m. Useful for debugging\\
       1 & specify some simple pattern (hardcoded). Useful for debugging\\
-      2 & treat `betasquared' as yield stress (in Pa) to simulate sliding 
+      2 & read yield stress (in Pa) from input field `mintauf' to simulate sliding 
           over a plastic subglacial till (using Picard iteration)\\
-%%      3 & calculate betasquared as linear (inverse) function of basal water thickness\\     %% this is the NEW version of this option
-      3 & calculate betasquared field as required for circular shelf test case\\     				%% this is the OLD version of this option
-      {\bf 4} & no slip everywhere in domain (betasquared set to very
+      3 & calculate `beta' as linear (inverse) function of basal water thickness\\
+      {\bf 4} & no slip everywhere in domain (`beta' set to very
           large value)\\
-      5 & read value of betasquared in from .nc input file using standard i/o \\
-      4 & no slip everywhere in domain (using Dirichlet basal BC)\\
-      7 & Treat `betasquared' as yield stress (in Pa) to simulate sliding 
+      5 & read value of `beta' in from .nc input file using standard i/o \\
+      6 & no slip everywhere in domain (using Dirichlet basal BC)\\
+      7 & read yield stress (in Pa) from input field `mintauf' to simulate sliding 
           over a plastic subglacial till (using Newton iteration - under devel.)\\
+      8 & Spatial field of `beta' required for ISMIP-HOM Test C \\
     \end{tabular}\\  
 %% which_ho_resid
     \texttt{which\_ho\_resid} &
