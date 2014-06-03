@@ -64,18 +64,24 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
       3 & use evenly spaced sigma levels (required by Glam 1st-order dycore) \\
       4 & use Pattyn sigma levels \\
     \end{tabular}\\
-    \hline
-  
+
+
+
 %%%% SIGMA
+    \hline
+    \hline
+    \hline
     \multicolumn{2}{|l|}{\texttt{[sigma]}}\\
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Define the sigma levels used in the vertical discretization (\texttt{sigma}=2 above). This is an alternative to using a separate file (specified in section \texttt{[grid]} above). If neither is used, the levels are calculated as described above.} \\
     \hline
     \texttt{sigma\_levels} & (real) list of sigma levels, in ascending order, separated by spaces. These run between 0.0 and 1.0 \\
-    \hline
+
 
 
 %%%% TIME
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[time]}}\\
     \hline
@@ -92,10 +98,12 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \texttt{idiag} & (int) x direction grid index for diagnostic variables to be written to log file\\
     \texttt{jdiag} & (int) y direction grid index for diagnostic variables to be written to log file\\
     \texttt{ndiag} & (int) number of time steps between diagnostics. {\bf DEPRECATED}.  Use \texttt{dt\_diag}.\\
-    \hline
+
 
 
 %%%% Options
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[options]}}\\
     \hline
@@ -222,12 +230,16 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\
     \hline
     \texttt{ioparams} & (string) name of file containing netCDF I/O configuration. The main configuration file is searched for I/O related sections if no file name is given (default).\\
-    
- %%%% Higher-order options
+
+
+
+ %%%% HIGHER-ORDER OPTIONS
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[ho\_options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the higher-order extensions to the ice sheet model are treated. Defaults are indicated in bold. As noted above, higher-order model options are currently NOT scientifically supported.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section determine how various components of the higher-order extensions to the ice sheet model are treated. Defaults are indicated in bold. As noted above, higher-order model options are currently NOT scientifically supported.}\\
     \hline
 %% which_ho_nonlinear
     \texttt{which\_ho\_nonlinear} & 
@@ -264,7 +276,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \texttt{which\_ho\_babc} & 
         Implementation of basal boundary condition in higher-order dycore (Calculation of `beta' field.) {\bf TODO: include all of these?} \\ &
     \begin{tabular}[t]{cp{0.85\linewidth}}
-      0 & constant value of 10 Pa yr / m. Useful for debugging\\
+      0 & constant value \\
       1 & specify some simple pattern (hardcoded). Useful for debugging\\
       2 & read yield stress (in Pa) from input field `mintauf' to simulate sliding 
           over a plastic subglacial till (using Picard iteration)\\
@@ -289,23 +301,50 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
       2 & as in option 0 but using the mean rather than the max \\
       {\bf 3} & use the L2 norm of the system residual, defined by $r = Ax - b$ \\
     \end{tabular}\\  
+
+
+
+ %%%% EXTERNAL DYCORE OPTIONS
     \hline
+    \hline
+    \hline
+    \multicolumn{2}{|l|}{\texttt{[external\_dycore\_options]}}\\
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section are specific to external dycores that 
+    may have additional options/option files.  {\bf TODO: include this stuff?  elaborate?} }\\
+    \hline
+%% external_dycore_type
+    \texttt{external\_dycore\_type} & 
+    \begin{tabular}[t]{cp{0.85\linewidth}}
+      1 & Use BISICLES external dycore \\
+      2 & Use Albany-FELIX external dycore \\
+    \end{tabular}\\     
+    \texttt{dycore\_input\_file} &
+    Specify path to additional configuration file required by the external dycore. \\
+
+
+
 %%%% PARAMETERS
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[parameters]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Set various parameters.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Set values for various parameters.}\\
     \hline
     \texttt{log\_level} & (integer) set to a value between 0, no messages, and 6, all messages are displayed to stdout. By default messages are only logged to file.\\
-    \texttt{ice\_limit} & (real) below this limit ice is only accumulated; ice dynamics are switched on once the ice thickness is above this value.\\
-    \texttt{marine\_limit} & (real) all ice is assumed lost once water depths reach this value (for \texttt{marine\_margin}=2 or 4 in \texttt{[options]} above). Note, water depth is negative. \\
-    \texttt{calving\_fraction} & (real) fraction of ice lost due to calving (applies to "marine\_margin" option 2). \\
-    \texttt{geothermal} & (real) constant geothermal heat flux.\\
-    \texttt{flow\_factor} & (real) the flow law is enhanced with this factor \\
-    \texttt{hydro\_time} & (real) basal hydrology time constant \\
-    \texttt{isos\_time} & (real) isostasy time constant \\
-    \texttt{basal\_tract\_const} & constant basal traction parameter. You can load a nc file with a variable called \texttt{soft} if you want a specially variying bed softness parameter. \\
-    \texttt{basal\_tract} & (real(5)) basal traction factors. Basal traction is set to $B=\tanh(W)$ where the parameters
+    \texttt{ice\_limit} & (real) below this limit ice is only accumulated/ablated; ice dynamics are switched on once the ice thickness is above this value. (default = 100.0 m) \\
+    \texttt{ice\_limit\_temp} & (real) minimum thickness for computing vertical temperature (m). (default = 1.0 m) \\
+    \texttt{marine\_limit} & (real) all ice is assumed lost once water depths reach this value (for \texttt{marine\_margin}=3 or 4 in \texttt{[options]} above). Note, water depth is negative.  (default = -200.0 m) \\
+    \texttt{calving\_fraction} & (real) fraction of ice lost due to calving (applies to "marine\_margin" option 2). (default = 0.8)\\
+    \texttt{geothermal} & (real) constant geothermal heat flux. (default = -0.05 W m$^{-2}$)\\
+    \texttt{flow\_factor} & (real) the flow law is enhanced with this factor (default = 3.0)\\
+     \texttt{default\_flwa} * & Flow law parameter A to use in isothermal experiments (flow\_law set to 0).  Default value is $10^{-16}$ Pa$^{-n}$ yr$^{-1}$. \\
+    \texttt{hydro\_time} & (real) basal hydrology time constant (default = 1000.0 yr) \\
+    \texttt{basal\_tract\_const} & constant basal traction parameter. You can load a nc file with a variable called \texttt{soft} if you want a spatially varying bed softness parameter. \\
+    \texttt{basal\_tract\_max} & Max value for basal traction when using \texttt{slip\_coeff}=4. \\
+    \texttt{basal\_tract\_slope} & Slope value for basal traction relation when using \texttt{slip\_coeff}=4. (Relation also uses \texttt{basal\_tract\_const}.)\\
+    \texttt{basal\_tract\_tanh} & (real(5)) basal traction factors. Basal traction is set to $B=\tanh(W)$ where the parameters
       \begin{tabular}{cp{\linewidth}}
        (1) & width of the $\tanh$ curve\\
        (2) & $W$ at midpoint of $\tanh$ curve [m]\\
@@ -313,11 +352,37 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
        (4) & $B$ maximum [ma$^{-1}$Pa$^{-1}$] \\
        (5) & multiplier for marine sediments \\
      \end{tabular}\\
-     \texttt{default\_flwa} * & Flow law parameter A to use in isothermal experiments (flow\_law set to 2).  Default value is $10^{-16}$. \\
+    \texttt{ho\_beta\_const} * & (real) spatially uniform beta used when \texttt{which\_ho\_babc} = 0. (default = 10.0 Pa yr m$^{-1}$) \\
+    \texttt{periodic\_offset\_ew} & (real) Vertical offset between east and west edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.) \\
+    \texttt{periodic\_offset\_ns} & (real) Vertical offset between north and south edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.)\\
+
+
+
+%%%% GTHF
+    \multicolumn{2}{|l|}{\texttt{[GTHF]}}\\
+    \hline
+    \hline
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options related to lithospheric temperature and geothermal heat calculation.  Ignored unless \texttt{gthf} = 1.}\\
+    \hline
+    \texttt{num\_dim} & can be either \texttt{1} for 1D calculations or 3 for 3D calculations.\\
+    \texttt{nlayer} & number of vertical layers (default: 20). \\
+    \texttt{surft} & initial surface temperature (default 2$^\circ$C).\\
+    \texttt{rock\_base} & depth below sea-level at which geothermal heat gradient is applied (default: -5000m).\\
+    \texttt{numt} & number time steps for spinning up GTHF calculations (default: 0).\\
+    \texttt{rho} & The density of lithosphere (default: 3300kg m$^{-3}$).\\
+    \texttt{shc} & specific heat capcity of lithosphere (default: 1000J kg$^{-1}$ K$^{-1}$).\\
+    \texttt{con} & thermal conductivity of lithosphere (3.3 W m$^{-1}$ K$^{-1}$).\\    
+
+
+
+%%%% ISOSTASY
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[isostasy]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Isostatic adjustment is only enabled if this section is present in the configuration file. The options described control isostasy model.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options related to isostasy model.  Ignored unless \texttt{isostasy} = 1.  {\bf TODO: Need comments about which combinations are valid.} }\\
     \hline
     \texttt{lithosphere} & \begin{tabular}[t]{cp{0.9\linewidth}} 
       {\bf 0} & local lithosphere, equilibrium bedrock depression is found using Archimedes' principle \\
@@ -331,12 +396,24 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \texttt{update} & lithosphere update period (default: 500.a) \\
     \hline
 %%%%
+%    \hline
+%    \multicolumn{2}{|l|}{\texttt{[elastic lithosphere]}}\\
+%    \hline
+%    \multicolumn{2}{|p{0.95\textwidth}|}{Set up parameters of the elastic lithosphere.}\\
+    \hline
+    \texttt{flexural\_rigidity} & flexural rigidity of the lithosphere (default: 0.24e25)\\
+
+
+
+%%%% PROJECTION
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[projection]}}\\
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Specify map projection. The reader is
     referred to Snyder J.P. (1987) \emph{Map Projections - a working manual.} USGS 
-        Professional Paper 1395. }\\
+        Professional Paper 1395.    {\bf TODO: I am assuming this works.  Code is not in glide\_setup.F90.  Appears to be in glimmap\_printproj() in ../libglimmer/glimmer\_map\_init.F90}}\\
     \hline
     \texttt{type} & This is a string that specifies the projection type
     (\texttt{LAEA}, \texttt{AEA}, \texttt{LCC} or \texttt{STERE}). \\
@@ -348,28 +425,10 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     north. Up to two standard parallels may be specified (depending on the
     projection). \\
     \texttt{scale\_factor} & non-dimensional. Only relevant for the Stereographic projection.  \\
-%%%%
-%    \hline
-%    \multicolumn{2}{|l|}{\texttt{[elastic lithosphere]}}\\
-%    \hline
-%    \multicolumn{2}{|p{0.95\textwidth}|}{Set up parameters of the elastic lithosphere.}\\
-    \hline
-    \texttt{flexural\_rigidity} & flexural rigidity of the lithosphere (default: 0.24e25)\\
-    \hline
-    \hline
-    \multicolumn{2}{|l|}{\texttt{[GTHF]}}\\
-    \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Switch on lithospheric temperature and geothermal heat calculation.}\\
-    \hline
-    \texttt{num\_dim} & can be either \texttt{1} for 1D calculations or 3 for 3D calculations.\\
-    \texttt{nlayer} & number of vertical layers (default: 20). \\
-    \texttt{surft} & initial surface temperature (default 2$^\circ$C).\\
-    \texttt{rock\_base} & depth below sea-level at which geothermal heat gradient is applied (default: -5000m).\\
-    \texttt{numt} & number time steps for spinning up GTHF calculations (default: 0).\\
-    \texttt{rho} & The density of lithosphere (default: 3300kg m$^{-3}$).\\
-    \texttt{shc} & specific heat capcity of lithosphere (default: 1000J kg$^{-1}$ K$^{-1}$).\\
-    \texttt{con} & thermal conductivity of lithosphere (3.3 W m$^{-1}$ K$^{-1}$).\\    
-    \hline
+
+
+
+
   \end{supertabular*}
 \end{center}
 
@@ -421,7 +480,7 @@ NetCDF I/O can be configured in the main configuration file or in a separate fil
     \texttt{stop} & Stop writin to file when this time is reached (default: last time slice). \\
     \texttt{frequency} & The time interval in years, determining how often selected variables are written to file.\\
     \texttt{xtype} & Set the floating point representation used in netCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). \\
-    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. Variable \texttt{hot} selects all variables necessary for a hotstart.\\
+    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. Variable \texttt{restart} selects all variables necessary for a restart.\\
     \hline
   \end{supertabular*}
 \end{center}
