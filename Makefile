@@ -9,7 +9,7 @@
 # ===================================
 
 # Location of source directory - needed for autogenerating variables only
-top_srcdir = /Users/mhoffman/documents/seacism-oceans11/trunk
+top_srcdir = /Users/sprice/work/modeling/cism/seacism-new
 
 # commands to make documentation
 LATEX = latex
