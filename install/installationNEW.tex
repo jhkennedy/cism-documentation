@@ -5,26 +5,25 @@
 
 GLIMMER-CISM is a relatively complex system of libraries and programs which build on other libraries. This section documents how to get GLIMMER-CISM and its prerequisites, compile and install it. Please report problems and bugs to the \href{http://link-here}{GLIMMER-CISM mailing list}. \textbf{SP: We need to update the link here so that it points to whatever we're going to use for bug tracking, etc.}
 
-\subsection{Prerequisites}
 GLIMMER-CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. On UNIX / LINUX systems \href{http://www.gnu.org/software/make/}{GNU make} is suggested, since the Makefiles may rely on some GNU make specific features. \textbf{SP: Should this now be pointing to cmake instead? Do we still use gnu make? Is macports dependent on it? Are other things we install dependent on it?} There are two ways of getting the source code:
 
 \begin{enumerate}
-\item download a {\it released} version from the \href{http://glimmer.forge.nesc.ac.uk}{GLIMMER-CISM website}\footnote{\texttt{http://glimmer.forge.nesc.ac.uk}}, or \textbf{SP: We'll need to update this link}
-\item download the latest developers' version from \href{http://forge.nesc.ac.uk/}{NeSCForge} using \href{http://www.gnu.org/software/cvs/}{CVS}. \textbf{SP: Do we want to support this or just support the download-a-tag option?}
+\item download a {\it released} version from the \href{http://fix.this.link}{GLIMMER-CISM website}\footnote{\texttt{http://fix.this.link}}, or \textbf{SP: We'll need to update this link}
+\item download the latest developers' version from \href{http://fix.this.link/}{SomeRepo} using \href{http://some.repo.software}{SomeRepoSoftware}. \textbf{SP: Do we want to support this or just support the download-a-tag option?}
 \end{enumerate}
 
 For beginners, the latest release tag is recommended. More experienced users may want to download directly from the code repository, as it will have all the latest bug-fixes and new features. \textbf{SP: again, only if we support this option.}
 
-In either case, a Fortran90 compiler is required. GLIMMER-CISM is known to work with GNU gfortran compilers, Intel ifort, and PGI \textbf{SP: this list may not be complete}. Other prerequisites include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, which GLIMMER-CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution (used for analyzing dependencies and for automatically generating parts of the code) with a number of specific toolboxes. Users who want to run the code in parallel will need to install MPI and users who want access to the Trilinos solver library will need to download and build Trilinos, and link to it when building GLIMMER-CISM. Finally, you will need Cmake to compile the code and link to the various third-party libraries. \textbf{SP: I'm still not sure how dependent we are standard gnu make at this point. I'm guessing that macports will still need it for various things, so I'm inclined to leave it in there as part of the list of necessary software.} 
+In either case, a Fortran90 compiler is required. GLIMMER-CISM is known to work with GNU gfortran compilers, Intel ifort, and PGI \textbf{SP: this list may not be complete}. Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, which GLIMMER-CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution (used for analyzing dependencies and for automatically generating parts of the code) with a number of specific toolboxes. Users who want to run the code in parallel will also need to install MPI and users who want access to the Trilinos solver library will need to download and build Trilinos, and link to it when building GLIMMER-CISM. Finally, you will need Cmake to compile the code and link to the various third-party libraries. \textbf{SP: I'm still not sure how dependent we are standard gnu make at this point. I'm guessing that macports will still need it for various things, so I'm inclined to leave it in there as part of the list of necessary software.} 
 
-Because the build process can be fairly complicated, we describe it in some detail below, relying on the use of a package manager to handle many of the standard software dependencies. The procedure described below is for a Macintosh laptop or workstation running a recent version of OS X and the package manger we discuss is \href{http://www.macports.org/}{MacPorts}. However, similar options are available for installation on LINUX systems (e.g., Ubuntu is released with its own \href{https://help.ubuntu.com/12.04/serverguide/package-management.html}{package manager}). 
+Because the build process can be fairly complicated, we describe it in detail below, relying on the use of a package manager to handle many of the standard software dependencies. The procedure described below is specifically for a Macintosh laptop or workstation running a recent version of OS X and the package manger we discuss is \href{http://www.macports.org/}{MacPorts}. However, similar options are available for installation on LINUX systems (e.g., Ubuntu is released with its own \href{https://help.ubuntu.com/12.04/serverguide/package-management.html}{package manager}) and a similar set of steps should work equally well for a LINUX installation. 
 
 \section{Installing Supporting Software under Mac OS X}
-As mentioned above, we will take advantage of \href{http://www.macports.org/}{MacPorts}, a standard software package manager for Macs. This will allow us to install a significant amount of the base level software libraries needed by GLIMMER-CISM with few complications. This includes Fortran, C, C++ and OpenMPI compilers, NetCDF, and some additional tools needed for managing the building and linking of libraries (Libtool, Automake, Autoconf, Cmake, and Python). 
+As mentioned above, we will take advantage of \href{http://www.macports.org/}{MacPorts}, a standard software package manager for Macs. This will allow us to install a significant amount of the base level software libraries needed by GLIMMER-CISM with few complications. This includes Fortran, C, C++ and OpenMPI compilers, NetCDF, and some additional tools needed for managing the building and linking of libraries (Libtool, Automake, Autoconf, Cmake, and Python). \textbf{SP: maybe the libtool and autotools stuff not needed anymore at all?}
 
 \subsection{Download and install Macports}
 
-Go to \href{http://www.macports.org/install.php}{http://www.macports.org/install.php}, where you will find a range of ".pkg" installs available, including those for Mountain Lion, Lion, and Mavericks versions of Mac OS X (Note that prior to installing Macports you will need to have Xcode installed on your Mac, as described \href{http://guide.macports.org/#installing.xcode}{here}). Depending on computer security settings at your institution (firewalls, etc.), you may need to add proxy information so that Macports can communicate and download software from the outside world. All Macports software will be installed under \texttt{/opt/local/} by default. To add proxy information, after installing Macports, edit the configuration file at \texttt{/opt/local/etc/macports/macports.conf}. By searching for the text string "proxy", you will find the lines like \texttt{proxy\_http hostname:12345} near the bottom of the file. Enter your proxy information here as appropriate (e.g., \texttt{hostname:your\_host\_info\_here}).
+Go to \href{http://www.macports.org/install.php}{http://www.macports.org/install.php}, where you will find a range of ".pkg" installs available, including those for Mountain Lion, Lion, and Mavericks versions of Mac OS X. Note that installing MacPorts requires installing the Xcode developer toolset provided by Apple. Details of how to obtain Xcode vary by version of OS X. See MacPorts installation instructions and this \href{https://developer.apple.com/xcode/downloads/}{link} for details. Once Xcode is installed, you may need to additionally download the “command line tools” from the Preferences / Downloads menu of Xcode. Depending on computer security settings at your institution (firewalls, etc.), you may need to add proxy information so that Macports can communicate and download software from the outside world. All Macports software will be installed under \texttt{/opt/local/} by default. To add proxy information, after installing Macports, edit the configuration file at \texttt{/opt/local/etc/macports/macports.conf}. By searching for the text string "proxy", you will find the lines like \texttt{proxy\_http hostname:12345} near the bottom of the file. Enter your proxy information here as appropriate (e.g., \texttt{hostname:your\_host\_info\_here}).
 
 If you have previously installed Macports but not updated it recently, it’s generally a good idea to do so. Ideally, this should be done with admin or root privileges (you will be prompted to enter your password) using \texttt{sudo port selfupdate}. You will then be prompted to update any installed ports that are outdated, which you can do using \texttt{sudo port upgrade outdated}
 
@@ -57,10 +56,24 @@ Additional Macports tips will follow inline below. Extensive documentation for M
 To install NetCDF, use \texttt{sudo port install netcdf-fortran +gcc46}. \textbf{SP: Maybe we don't need to mention netcdf above and can include a short descrip. of it here?} Note that there are other versions of NetCDF available to install. It is important to choose the one with the "Fortran" extension. The "+gcc46" syntax specifies a port "variant". This tell Macports that, if there is a version of the selected software to install that is consistent with the GCC 4.6 compiler suite, then it should choose that one. Typing \texttt{port installed} should now show,
 
 \begin{verbatim}
-netcdf @4.2.0_4+dap+netcdf4 (active)netcdf-fortran @4.2_3+gcc46 (active)
+netcdf @4.2.0_4+dap+netcdf4 (active)
+netcdf-fortran @4.2_3+gcc46 (active)
 \end{verbatim}
 
 Note that the "dap+netcdf4" comes along automatically. \textbf{SP: will need to check the above version numbers, etc. for consistency.}
+
+\subsection{Install Python}
+
+Python is used for \textbf{summary of what it used for here}. While Mac OS X already comes with a working Python distribution, we will need additional toolboxes that can sometimes be tricky to get working together corretly. We have successfully used both the \href{https://www.enthought.com/products/epd/}{Enthought} Python distribution (which is free for people associated with a university) and a version installed using Macports. To install version 2.7 using Macports, along with the necessary additional toolboxes, do the following \textbf{SP: Matt, please check this}: 
+
+\begin{verbatim}
+sudo port install python27
+sudo port install py27-numpy
+sudo port install py27-matplotlib
+sudo port install py27-netcdf4
+\end{verbatim}
+
+\textbf{SP: Any other notes on what they would do to confirm working? Should then check using 'port installed python' or something like that?}
 
 \subsection{Install OpenMPI}
 
@@ -69,7 +82,14 @@ The OpenMPI library is used for handling parallel communications when running th
 First, check Macports for available OpenMPI variants using \texttt{port variants openmpi}. You should see something like:
 
 \begin{verbatim}
-openmpi has the variants:   g95: build mpif77 and mpif90 using g95     * conflicts with gcc42 gcc43 gcc44 gcc45 gcc46 ...     * conflicts with g95 gcc42 gcc43 gcc44 gcc46   gcc46: build mpif77 and mpif90 using gcc46     * conflicts with g95 gcc42 gcc43 gcc44 gcc45\end{verbatim}
+openmpi has the variants:
+   g95: build mpif77 and mpif90 using g95
+     * conflicts with gcc42 gcc43 gcc44 gcc45 gcc46
+ ...
+     * conflicts with g95 gcc42 gcc43 gcc44 gcc46
+   gcc46: build mpif77 and mpif90 using gcc46
+     * conflicts with g95 gcc42 gcc43 gcc44 gcc45
+\end{verbatim}
 
 Since we want the one for GCC 4.6, type \texttt{sudo port install openmpi +gcc46}. To make sure this is active, type \texttt{port installed openmpi}, which should return, 
 
@@ -79,7 +99,7 @@ Since we want the one for GCC 4.6, type \texttt{sudo port install openmpi +gcc46
 
 \subsection{Install Libtool, Automake, Autoconf, and Cmake} 
 
-\textbf{SP: confirm that we need libtool, automake, autoconf ... if not, then just install Cmake?}
+\textbf{SP: confirm that we need libtool, automake, autoconf ... if not, then just install Cmake? Matt says we don't need libtool, automake, or autoconf anymore.}
 
 While you probably already have versions of some of these on your system, they may be out of date or conflict with other Macports installed software. The following Macports installed versions work when building GLIMMER-CISM: Libtool 2.4.2, Automake 1.12, Autoconf 2.69, Cmake 2.8.8. These can be installed through Macports with the following commands: 
 
@@ -93,7 +113,10 @@ sudo port install cmake
 In addition to the software installed above, you should now see the following when you type \texttt{port installed}:
 
 \begin{verbatim}
-  autoconf @2.69_0 (active)  automake @1.12.2_0 (active)  libtool @2.4.2_2 (active)s  cmake @2.8.8_1 (active)
+  autoconf @2.69_0 (active)
+  automake @1.12.2_0 (active)
+  libtool @2.4.2_2 (active)s
+  cmake @2.8.8_1 (active)
 \end{verbatim}
 
 \subsection{Build, install, and test the Trilinos solver library}
@@ -103,46 +126,113 @@ Trilinos is a modern, open source, C++ based library of parallel nonlinear and l
 Trilinos requires both (1) an “out-of-source build” and (2) an “out-of-build installation”. This means that you cannot build the code in the same directory where the source code lives, and you cannot install the libraries in the same directory where you build the code (older versions of Trilinos required an out-of-source build but not and out-of-build installation). The easiest way to satisfy this requirement is to have separate “source”, “build” and “install” directories in the location where you want to install the code, for example, in \texttt{/usr/local/}, you could set up the following three directories:
 
 \begin{verbatim}
-trilinos-10.10.2-Build/trilinos-10.10.2-Install/trilinos-10.10.2-Source/
+trilinos-10.10.2-Build/
+trilinos-10.10.2-Install/
+trilinos-10.10.2-Source/
 \end{verbatim}
 
 The “source” directory will be created on its own when you uncompress the tar.gz archive that you download (while you do not have to keep the source code where you build and install the Trilinos libraries but you will need to remember the path to where that source code lives on your computer). Before we attempt to configure and build Trilinos, we need to specify some critical shell environmental variables, so that OpenMPI "wraps" the right compilers during the build process. In the \texttt{bash} shell these would be specified as follows (or using “setenv” in \texttt{csh} or \texttt{tsch}): \textbf{SP: this info needs to be updated/confirmed}
 
 \begin{verbatim}
-export OMPI_CC=/opt/local/bin/gcc-mp-4.6export OMPI_CXX=/opt/local/bin/g++-mp-4.6export OMPI_FORTRAN=/opt/local/bin/gfortran-mp-4.6
+export OMPI_CC=/opt/local/bin/gcc-mp-4.6
+export OMPI_CXX=/opt/local/bin/g++-mp-4.6
+export OMPI_FORTRAN=/opt/local/bin/gfortran-mp-4.6
 \end{verbatim}
 
-Note that the GCC compilers specified in these paths are the ones we installed using Macports. To configure the Trilinos build, you will need to execute a Cmake configure script. Sample configure scripts for a number of standard platforms are included in the “sampleScripts” directory under the root level of the Trilinos source code. The following “do-cmake” script should work for a Mac and contains the necessary information to build the Trilinos libraries needed by GLIMMER-CISM: \textbf{SP: Or, should we just include this script, or something like it, with the code? We could include this under the /utilities/ dir?}
+Note that the GCC compilers specified in these paths are the ones we installed using Macports. To configure the Trilinos build, you will need to execute a Cmake configure script. Sample configure scripts for a number of standard platforms are included in the “sampleScripts” directory under the root level of the Trilinos source code. The following “do-cmake” script should work for a Mac and contains the necessary information to build the Trilinos libraries needed by GLIMMER-CISM: \textbf{SP: Confirm that this is working, or instead should we just include a working script (for Mac build) with the code? We could include this under the /utilities/ dir?}
 
 \begin{verbatim}
-# Trilinos “do-cmake” script for use with CISM2.0 and Mac OS Xexport TRILINOS_HOME=/usr/local/trilinos-10.12.2-SourceEXTRA_ARGS=$@rm CMakeCache.txtcmake -D CMAKE_INSTALL_PREFIX:PATH=/usr/local/trilinos-10.10.2-Install \      -D CMAKE_BUILD_TYPE:STRING=NONE \      -D Trilinos_WARNINGS_AS_ERRORS_FLAGS:STRING="" \      -D Trilinos_ENABLE_ALL_PACKAGES:BOOL=OFF \      -D Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF \\      -D CMAKE_CXX_COMPILER=openmpicxx \      -D CMAKE_C_COMPILER=openmpicc \      -D CMAKE_Fortran_COMPILER=openmpif90 \\      -D Trilinos_ENABLE_Teuchos:BOOL=ON \      -D Trilinos_ENABLE_Epetra:BOOL=ON \      -D Trilinos_ENABLE_EpetraExt:BOOL=ON \      -D Trilinos_ENABLE_Ifpack:BOOL=ON \      -D Trilinos_ENABLE_AztecOO:BOOL=ON \      -D Trilinos_ENABLE_Amesos:BOOL=ON \      -D Trilinos_ENABLE_Belos:BOOL=ON \      -D Trilinos_ENABLE_ML:BOOL=ON \      -D Trilinos_ENABLE_NOX:BOOL=ON \      -D Trilinos_ENABLE_Stratimikos:BOOL=ON \      -D Trilinos_ENABLE_Thyra:BOOL=ON \      -D Trilinos_ENABLE_Isorropia:BOOL=ON\      -D Trilinos_ENABLE_Piro:BOOL=ON \      -D Trilinos_ENABLE_Zoltan:BOOL=ON\\      -D Trilinos_ENABLE_Mesquite:BOOL=OFF\      -D Trilinos_ENABLE_FEI:BOOL=OFF\\      -D Trilinos_ENABLE_TESTS:BOOL=ON \      -D Piro_ENABLE_TESTS:BOOL=ON \      -D NOX_ENABLE_TESTS:BOOL=ON \      -D Trilinos_ENABLE_EXAMPLES:BOOL=OFF \      -D TPL_ENABLE_MPI:BOOL=ON \\      -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF \      -D Trilinos_VERBOSE_CONFIGURE:BOOL=OFF \      -D MPI_EXEC="/opt/local/openmpiexec" \   $EXTRA_ARGS \   ${TRILINOS_HOME}
+# Trilinos “do-cmake” script for use with CISM2.0 and Mac OS X
+
+export TRILINOS_HOME=/usr/local/trilinos-10.12.2-Source
+EXTRA_ARGS=$@
+rm CMakeCache.txt
+
+cmake -D CMAKE_INSTALL_PREFIX:PATH=/usr/local/trilinos-10.10.2-Install \
+      -D CMAKE_BUILD_TYPE:STRING=NONE \
+      -D Trilinos_WARNINGS_AS_ERRORS_FLAGS:STRING="" \
+      -D Trilinos_ENABLE_ALL_PACKAGES:BOOL=OFF \
+      -D Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF \
+\
+      -D CMAKE_CXX_COMPILER=openmpicxx \
+      -D CMAKE_C_COMPILER=openmpicc \
+      -D CMAKE_Fortran_COMPILER=openmpif90 \
+\
+      -D Trilinos_ENABLE_Teuchos:BOOL=ON \
+      -D Trilinos_ENABLE_Epetra:BOOL=ON \
+      -D Trilinos_ENABLE_EpetraExt:BOOL=ON \
+      -D Trilinos_ENABLE_Ifpack:BOOL=ON \
+      -D Trilinos_ENABLE_AztecOO:BOOL=ON \
+      -D Trilinos_ENABLE_Amesos:BOOL=ON \
+      -D Trilinos_ENABLE_Belos:BOOL=ON \
+      -D Trilinos_ENABLE_ML:BOOL=ON \
+      -D Trilinos_ENABLE_NOX:BOOL=ON \
+      -D Trilinos_ENABLE_Stratimikos:BOOL=ON \
+      -D Trilinos_ENABLE_Thyra:BOOL=ON \
+      -D Trilinos_ENABLE_Isorropia:BOOL=ON\
+      -D Trilinos_ENABLE_Piro:BOOL=ON \
+      -D Trilinos_ENABLE_Zoltan:BOOL=ON\
+\
+      -D Trilinos_ENABLE_Mesquite:BOOL=OFF\
+      -D Trilinos_ENABLE_FEI:BOOL=OFF\
+\
+      -D Trilinos_ENABLE_TESTS:BOOL=ON \
+      -D Piro_ENABLE_TESTS:BOOL=ON \
+      -D NOX_ENABLE_TESTS:BOOL=ON \
+      -D Trilinos_ENABLE_EXAMPLES:BOOL=OFF \
+      -D TPL_ENABLE_MPI:BOOL=ON \
+\
+      -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+      -D Trilinos_VERBOSE_CONFIGURE:BOOL=OFF \
+      -D MPI_EXEC="/opt/local/openmpiexec" \
+   $EXTRA_ARGS \
+   ${TRILINOS_HOME}
 \end{verbatim}
 
 Note that the paths to both the “source” and “install” directories are specified within this script. Here, those directories are both assumed to live within \texttt{/usr/local/}. Also note the explicit path in the third to last line, 
 
 \begin{verbatim}
--D MPI_EXEC="/opt/local/openmpiexec" \\end{verbatim}
-Since some Macs may come with their own pre-installed Open<PI libraries, it is important here to specify the path to the version we previously installed using Macports.Copy and paste this text into a file called “do-cmake”, give it executable privileges (\texttt{chmod +x do-cmake}), and execute it (\texttt{./do-cmake}) from within your \texttt{trilinos-10.10.2-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
-
-\begin{verbatim}
-...Processing enabled package: [PACKAGE NAME]...
-
-Exporting library dependencies ...Finished configuring Trilinos!-- Configuring done-- Generating done-- Build files have been written to: /Users/you/software/trilinos/trilinos-10.10.2-Build
+-D MPI_EXEC="/opt/local/openmpiexec" \
 \end{verbatim}
 
-It is a good idea to scan the output while the “do-cmake” script is executing, for example to ensure the configure process is picking up the compilers you installed using Macports as opposed to some Mac default versions that might also be on your system. Once the code is configured successfully, build the libraries from within the \texttt{trilinos-10.10.2-Build} directory by typing \texttt{make} (or \texttt{sudo make}). For multiprocessor machines, the build process can be sped up significantly using the “-j” command; \texttt{make –j X}, where “X” is 2 times the number of processors available on your machine (e.g. \texttt{make –j 4} for a 2 processor machine). Again, depending on where you are building you may need to use “sudo” prior to the “make” command.Building Trilinos can take a long time (e.g., an hour or more), depending on your machine, the number of processors used for the build, and the number and type of libraries you are installing. Once you have built the code, we highly recommend testing it using \texttt{make test} (note that the
+Since some Macs may come with their own pre-installed Open<PI libraries, it is important here to specify the path to the version we previously installed using Macports.
+
+Copy and paste this text into a file called “do-cmake”, give it executable privileges (\texttt{chmod +x do-cmake}), and execute it (\texttt{./do-cmake}) from within your \texttt{trilinos-10.10.2-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
+
+\begin{verbatim}
+...
+Processing enabled package: [PACKAGE NAME]
+...
+
+Exporting library dependencies ...
+
+Finished configuring Trilinos!
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/you/software/trilinos/trilinos-10.10.2-Build
+\end{verbatim}
+
+It is a good idea to scan the output while the “do-cmake” script is executing, for example to ensure the configure process is picking up the compilers you installed using Macports as opposed to some Mac default versions that might also be on your system. Once the code is configured successfully, build the libraries from within the \texttt{trilinos-10.10.2-Build} directory by typing \texttt{make} (or \texttt{sudo make}). For multiprocessor machines, the build process can be sped up significantly using the “-j” command; \texttt{make –j X}, where “X” is 2 times the number of processors available on your machine (e.g. \texttt{make –j 4} for a 2 processor machine). Again, depending on where you are building you may need to use “sudo” prior to the “make” command.
+
+Building Trilinos can take a long time (e.g., an hour or more), depending on your machine, the number of processors used for the build, and the number and type of libraries you are installing. Once you have built the code, we highly recommend testing it using \texttt{make test} (note that the
 
 \begin{verbatim}
 Trilinos_ENABLE_TESTS:BOOL
 \end{verbatim}
 
-variable in the do-cmake script above can be set to “OFF” to disable building of the tests by default). Screen output will tell you if and how many tests failed. In general, we have seen one or two tests fail while still have a perfectly good and working Trilinos library. Query the CISM users/developers list \textbf{SP: link here?} if you have questions about specific Trilinos tests failing. Note that on a Mac, MPI tests have been known to trigger a dialog box from the firewall. With more than 300 tests, these messages popping up continually can make it impossible to use you computer until the tests complete. To keep them from appearing, you can temporarily turn off your firewall under “System Preferences” (Security $> Firewall $> Stop). Be sure to turn the firewall back on when the tests are complete!After running the tests, you will need to install Trilinos using \texttt{make install}. This will build the actual Trilinos libraries in the path specified in the
+variable in the do-cmake script above can be set to “OFF” to disable building of the tests by default). Screen output will tell you if and how many tests failed. In general, we have seen one or two tests fail while still have a perfectly good and working Trilinos library. Query the CISM users/developers list \textbf{SP: link here?} if you have questions about specific Trilinos tests failing. 
+
+Note that on a Mac, MPI tests have been known to trigger a dialog box from the firewall. With more than 300 tests, these messages popping up continually can make it impossible to use you computer until the tests complete. To keep them from appearing, you can temporarily turn off your firewall under “System Preferences” (Security $> Firewall $> Stop). Be sure to turn the firewall back on when the tests are complete!
+
+After running the tests, you will need to install Trilinos using \texttt{make install}. This will build the actual Trilinos libraries in the path specified in the
 
 \begin{verbatim}
 -D CMAKE_INSTALL_PREFIX:PATH=/path
 \end{verbatim} 
 
-line of your “do-cmake” script (above). For this example, those libraries will be installed in: \texttt{/usr/local/trilinos-10.10.2-Install}
+line of your “do-cmake” script (above). For this example, those libraries will be installed in: \texttt{/usr/local/trilinos-10.10.2-Install}
+
 \section{Build GLIMMER-CISM}
 
 Finally we are ready to build GLIMMER-CISM and its linked libraries. If you have not done so already, check out the tagged release version of GLIMMER-CISM at the CISM SVN repository: \textbf{SP: or whatever the relevant URL info is} \texttt{svn co https://svn-cism-model.cgd.ucar.edu/glimmer-cism2/branches/seacism}. Or, download a tar.gz archive of the source code \href{some-other-link.html}{here}. \textbf{SP: some additional info here about how / where to explode your tarball?}
@@ -155,8 +245,29 @@ Unlike in previous version of the code, the build system is now entirely based o
 \item{build the code using \texttt{make -j X}, where the "X" refers to the number of processors available for use in the build}
 \end{enumerate}
 
-\textbf{SP: add some notes here on what you should see happening for a successful build?}
+\textbf{SP: add some notes here on what you should see happening for a successful build? Are there env variables that need to be set for the Cmake build to work? If so, we need to describe them here.}
 
-When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the \texttt{./builds/mac-gnu/} directory. The file \texttt{cism\_driver*} there is the executable you will link to when running the model (e.g., for the test cases described in section XX). \textbf{SP: add link to test case description section of documentation here}
+When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the \texttt{./builds/mac-gnu/} directory. The file \texttt{cism\_driver*} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
 
+\begin{verbatim}
+ln -s ../../../builds/mac-gnu/cism_driver/cism_driver ./
+\end{verbatim}
+
+Discussion of applying the executable to standard test cases is continued in section XX). \textbf{SP: add link to test case description section of documentation here}. 
+
+\section{Additional Software Tools}
+
+\textbf{SP: Some notes on additional tools here, like NCO and Ncview, which can also be installed using Macports. Brief description of what they can do? Screenshot of ncview?} 
+
+These tools can be installed using Macports. For example, \texttt{port search nco} and \texttt{port search ncview} show the following:
+
+\begin{verbatim}
+ncview @1.93g (science)
+    X windows point'n'click NetCDF viewer.
+
+nco @4.2.0 (science)
+    The netCDF Operators
+\end{verbatim}
+
+\textbf{SP: there are some additional notes in the original word doc that I've not included in here yet. These are in the "other notes" section at the end of that document.}
 
