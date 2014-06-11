@@ -1,0 +1,238 @@
+%\documentclass[a4paper,12pt]{article}
+%\usepackage[english]{babel} % Quotes won't work without babel
+%\usepackage[utf8]{inputenc}  % This is very important!
+%\usepackage[T1]{fontenc}
+%
+%\usepackage[pdfborder={0 0 0}, breaklinks=true, pdftex=true, raiselinks=true]{hyperref}
+%\usepackage{graphicx}
+%
+%\usepackage{amsmath}
+%
+%\title{Higher-Order Model Boundary Conditions}
+%\date{}
+%
+%\begin{document}
+%\maketitle
+
+\section{Higher-Order Model Boundary Conditions}
+
+We will go through an approximate derivation of the boundary conditions that are implemented with CISM's higher-order scheme. By approximate we mean that some of the derivation is guided by physical intuition and reasonable arguments, rather than through the application of rigorous mathematics. In the end, we wind up with the same set of equations that one ends up using the more rigorous approach (see, e.g. \textit{Dukowicz et al., J. Glaciol.}, 56(197), 2010). We will look at the derivation in three parts, (1) the free surface boundary condition, (2) the specified basal traction boundary condition, and (3) lateral boundary conditions.
+
+\subsection{Stress Free Surface}
+At the ice surface, a stress-free boundary condition is applied. The traction vector, \textit{{\large T}}, must be continuous at the ice sheet surface and, assuming that atmospheric pressure and surface tension are small, we have
+
+\begin{align*}
+ & T_{i}=-T_{i(boundary)}\approx 0 \\ 
+ & T_{i}=\sigma _{ij}n_{j}=\sigma _{i1}n_{1}+\sigma _{i2}n_{2}+\sigma _{i3}n_{3}=0\\
+\end{align*}
+
+where the $n_i$ are the components of the outward facing, unit normal vector in Cartesisan coordinates.
+
+For a function \textit{F(x,y,z) = z -- f(x,y) = 0}, where \textit{z = f(x,y)} defines the surface, the gradient of \textit{F(x,y,z)} gives the components of the surface normal vector.
+
+For the case of the ice sheet surface, $s = f(x,y)$ and the surface normal is given by
+
+\begin{align*}
+n_{i}=\left( -\frac{\partial s}{\partial x},-\frac{\partial s}{\partial y},1 \right)\frac{1}{a}
+\end{align*}
+
+where
+
+\begin{align*}
+a=\sqrt{\left( \frac{\partial f}{\partial x} \right)^{2}+\left( \frac{\partial f}{\partial y} \right)^{2}+1^{2}}.
+\end{align*}
+
+The expression above for $T_i$ gives three equations that must be satisfied for a free surface boundary condition:
+
+\begin{align*}
+  & i=x:\quad T_{x}=\sigma _{xx}n_{x}+\sigma _{xy}n_{y}+\sigma _{xz}n_{z}=0, \\ 
+ & i=y:\quad T_{y}=\sigma _{yx}n_{x}+\sigma _{yy}n_{y}+\sigma _{yz}n_{z}=0, \\ 
+ & i=z:\quad T_{z}=\sigma _{zx}n_{x}+\sigma _{zy}n_{y}+\sigma _{zz}n_{z}=0. \\ 
+\end{align*}
+
+Expanding the last one and expressing stresses in terms of strain rates and pressures, where $\eta$ is the effective viscosity, gives
+
+\begin{align*}
+\left( 2\eta \dot{\varepsilon }_{zx} \right)n_{x}+\left( 2\eta \dot{\varepsilon }_{zy} \right)n_{y}+\left( 2\eta \dot{\varepsilon }_{zz}-P \right)n_{z}=0,
+\end{align*}
+
+which, when solved for the pressure gives
+
+\begin{align*}
+Pn_{z}=\left( 2\eta \dot{\varepsilon }_{zz} \right)n_{z}+\left( 2\eta \dot{\varepsilon }_{zx} \right)n_{x}+\left( 2\eta \dot{\varepsilon }_{zy} \right)n_{y}.
+\end{align*}
+
+
+Expanding the above expression in terms of velocity gradients and normal vector components we have
+
+\begin{align*}
+P=2\eta \frac{\partial w}{\partial z}-\left( \eta \frac{\partial u}{\partial z} \right)\frac{\partial s}{\partial x}-\left( \eta \frac{\partial v}{\partial z} \right)\frac{\partial s}{\partial y}
+\end{align*}
+
+where we have made the usual 1st-order approximation that 
+
+\begin{align*}
+\frac{\partial w}{\partial x}=\frac{\partial w}{\partial y}\approx 0.
+\end{align*}
+
+Now we use this expression for the pressure and expand the two horizontal boundary condition expressions
+
+\begin{align*}
+  & i=x:\quad T_{x}=\sigma _{xx}n_{x}+\sigma _{xy}n_{y}+\sigma _{xz}n_{z}=0, \\ 
+ & i=y:\quad T_{y}=\sigma _{yx}n_{x}+\sigma _{yy}n_{y}+\sigma _{yz}n_{z}=0, \\
+ \end{align*}
+
+in terms of velocity gradients and the effective viscosity to obtain
+
+\begin{align*}
+   {} & \hat{x}:\quad -2\eta \frac{\partial u}{\partial x}\frac{\partial s}{\partial x}-\eta \left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right)\frac{\partial s}{\partial y}+\eta \frac{\partial u}{\partial z}=  \\
+   {} & \quad \quad \quad \quad \quad -2\eta \frac{\partial w}{\partial z}\frac{\partial s}{\partial x}+\eta \frac{\partial u}{\partial z}\left[ \frac{\partial s}{\partial x}\frac{\partial s}{\partial x} \right]+\eta \frac{\partial v}{\partial z}\left[ \frac{\partial s}{\partial y}\frac{\partial s}{\partial x} \right],  \\
+\end{align*}
+
+\begin{align*}
+   {} & \hat{y}:\quad -2\eta \frac{\partial v}{\partial y}\frac{\partial s}{\partial y}-\eta \left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right)\frac{\partial s}{\partial x}+\eta \frac{\partial v}{\partial z}=  \\
+   {} & \quad \quad \quad \quad \quad -2\eta \frac{\partial w}{\partial z}\frac{\partial s}{\partial y}+\eta \frac{\partial u}{\partial z}\left[ \frac{\partial s}{\partial x}\frac{\partial s}{\partial y} \right]+\eta \frac{\partial v}{\partial z}\left[ \frac{\partial s}{\partial y}\frac{\partial s}{\partial y} \right].  \\
+\end{align*}
+
+In both of these expression, the terms in square brackets are $\sim{0}$ because, as noted above slopes on ice sheets are small (and the slope squared is exceedingly small). From continuity, we also have
+
+\begin{align*}
+\frac{\partial w}{\partial z}=-\frac{\partial u}{\partial x}-\frac{\partial v}{\partial y}.
+\end{align*}
+
+Using this expression for the normal vertical velocity gradient and removing the terms in square brackets our two horizontal boundary condition expressions become
+
+\begin{align*}
+   {} & \hat{x}:\quad -2\eta \frac{\partial u}{\partial x}\frac{\partial s}{\partial x}-\eta \left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right)\frac{\partial s}{\partial y}+\eta \frac{\partial u}{\partial z}=2\eta \left( \frac{\partial u}{\partial x}\frac{\partial s}{\partial x}+\frac{\partial v}{\partial y}\frac{\partial s}{\partial x} \right),  \\
+   {} & \hat{y}:\quad -2\eta \frac{\partial v}{\partial y}\frac{\partial s}{\partial y}-\eta \left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right)\frac{\partial s}{\partial x}+\eta \frac{\partial v}{\partial z}=2\eta \left( \frac{\partial u}{\partial x}\frac{\partial s}{\partial y}+\frac{\partial v}{\partial y}\frac{\partial s}{\partial y} \right).  \\
+\end{align*}
+
+As in the derivation of the \href{http://websrv.cs.umt.edu/isis/index.php/Blatter-Pattyn_model}{1st-order stress balance equations}, collect terms of a particular velocity gradient (that is, \textit{u} or \textit{v}) and move them to one side of the equation and, lastly, divide through by the effective viscosity \textit{\(\eta{}\)} to get the final form of the 1st-order free surface boundary conditions
+
+\begin{align*}
+   {} & \hat{x}:\quad -4\frac{\partial u}{\partial x}\frac{\partial s}{\partial x}-\frac{\partial u}{\partial y}\frac{\partial s}{\partial y}+\frac{\partial u}{\partial z}=2\frac{\partial v}{\partial y}\frac{\partial s}{\partial x}+\frac{\partial v}{\partial x}\frac{\partial s}{\partial y},  \\
+   {} & \hat{y}:\quad -4\frac{\partial v}{\partial y}\frac{\partial s}{\partial y}-\frac{\partial v}{\partial x}\frac{\partial s}{\partial x}+\frac{\partial v}{\partial z}=2\frac{\partial u}{\partial x}\frac{\partial s}{\partial y}+\frac{\partial u}{\partial y}\frac{\partial s}{\partial x}.  \\
+\end{align*}
+
+\subsection{Specified Basal Traction}
+Derivation of the basal boundary condition follows that above for the free surface except that (1) the right-hand side of the equation is not zero, rather it consists of an assumed basal traction vector with components 
+\begin{align*}
+\left( \tau _{bx},\tau _{by} \right),
+\end{align*}
+(2) the outward facing normal vector components now consist of horizontal gradients in the basal surface (with a resulting sign switch on the $x,y,z$ components relative to the upper surface), and (3) the effective viscosity does not disappear from the equations when we divide through. Making these substitutions we obtain the 1st-order basal boundary conditions for a specified basal traction
+
+\begin{align*}
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial b}{\partial x}+\frac{\partial u}{\partial y}\frac{\partial b}{\partial y}-\frac{\partial u}{\partial z}=-2\frac{\partial v}{\partial y}\frac{\partial b}{\partial x}-\frac{\partial v}{\partial x}\frac{\partial b}{\partial y}+\frac{\tau _{bx}}{\eta }, \\ 
+ & \hat{y}:\quad 4\frac{\partial v}{\partial y}\frac{\partial b}{\partial y}+\frac{\partial v}{\partial x}\frac{\partial b}{\partial x}-\frac{\partial v}{\partial z}=-2\frac{\partial u}{\partial x}\frac{\partial b}{\partial y}-\frac{\partial u}{\partial y}\frac{\partial b}{\partial x}+\frac{\tau _{by}}{\eta }. \\
+ \end{align*}
+
+We assume that basal traction is related to basal sliding velocity through a traction paramter, $\beta$, such that
+
+\begin{align*}
+\tau _{bx}=\left. -\beta u \right|_{z=b},\quad \tau _{by}=\left. -\beta v \right|_{z=b}.
+\end{align*}
+
+Note that the negative sign in front of the $\beta$ indicates that the traction vector is oriented parallel and in the opposite direction to the sliding velocity vector.
+
+Substituting this expression into the above gives our final horizontal boundary conditions at the ice sheet base
+
+\begin{align*}
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial b}{\partial x}+\frac{\partial u}{\partial y}\frac{\partial b}{\partial y}-\frac{\partial u}{\partial z}+\left( \frac{B}{\eta } \right)u=-2\frac{\partial v}{\partial y}\frac{\partial b}{\partial x}-\frac{\partial v}{\partial x}\frac{\partial b}{\partial y}, \\ 
+ & \hat{y}:\quad 4\frac{\partial v}{\partial y}\frac{\partial b}{\partial y}+\frac{\partial v}{\partial x}\frac{\partial b}{\partial x}-\frac{\partial v}{\partial z}+\left( \frac{B}{\eta } \right)v=-2\frac{\partial u}{\partial x}\frac{\partial b}{\partial y}-\frac{\partial u}{\partial y}\frac{\partial b}{\partial x}. \\ 
+\end{align*}
+
+\subsection{Specified Basal Yield Stress}
+The above implementation of a specified basal traction can be altered to simulate sliding over a sediment-covered bed for which the sediment has a plastic rheology. That is, sliding does not occur below the specified yield stress of the underlying material (e.g. a water saturated (thawed) subglacial till). When the yield stress, $\tau_0$ is reached, sliding occurs at a rate that maintains but does not exceed that yield stress. Consider the \textit{x} direction boundary condition above, written out in terms of basal stress components,
+
+\begin{align*}
+  & \hat{x}:\quad 4\eta \frac{\partial u}{\partial x}\frac{\partial b}{\partial x}+\eta \frac{\partial u}{\partial y}\frac{\partial b}{\partial y}-\eta \frac{\partial u}{\partial z}=-2\eta \frac{\partial v}{\partial y}\frac{\partial b}{\partial x}-\eta \frac{\partial v}{\partial x}\frac{\partial b}{\partial y}-\tau _{bx}, \\ 
+ & \quad \quad \quad \quad \quad \quad \tau _{bx}\approx \tau _{0}=\tau _{0}\left( \frac{u}{\left| \mathbf{u} \right|} \right)=\tau _{0}\left( \frac{u}{\sqrt{u_{0}^{2}+v_{0}^{2}+\gamma }} \right) \\ 
+\end{align*}
+
+In the expression above, $u$ is the $x$ component of the basal sliding velocity from the current iteration, $u_0$ and $v_0$ are components from the previous iteration, and $\gamma$ is a regularization constant (a small constant number to avoid division by zero during early iterations). Note that as the solution converges, velocities at the current and previous iteration are nearly equal, and the expression in parentheses approaches 1, in which case the basal stress and yield stress are approximately equal. 
+
+We can easily accommodate this in our earlier framework for incorporating the traction parameter $\beta$ by treating it as nonlinear and dependent on the velocity,
+
+\begin{align*}
+  & \tau _{bx}=-\beta u,\quad \quad  \\ 
+ & \beta \equiv \frac{\tau _{0}}{\sqrt{u_{0}^{2}+v_{0}^{2}+\gamma }},\quad  \\ 
+ & \tau _{bx}=-\left( \frac{\tau _{0}}{\sqrt{u_{0}^{2}+v_{0}^{2}+\gamma }} \right)u.\quad  \\
+\end{align*}
+
+Thus, we can implement plastic bed sliding behavior simply by substituting the above expression for our "nonlinear" \textit{{\large \(\beta{}\)}} into our previous expressions for the basal boundary conditions in \textit{x} (a similar expression applies for the \textit{y} direction). The Figures below show some examples of this type of boundary condition for the case of an idealized ice stream.
+
+%\begin{figure}
+%  \begin{center}
+%    \includegraphics[width=0.9\columnwidth]{\dir/figs/Plastic_bed1.jpg}
+%  \end{center}
+%  \caption{Idealized ice stream with plastic-bed sliding. Top panel shows a schematic of an idealized ice stream, frozen at the margins and thawed within the ice stream (flow is out of the page). Bottom panel (color) shows a modeled, idealized ice stream (flow is from left to right) with a yield stress of 5 kPa within the ice stream and much larger than 5 kPa outside of it. Bottom left shows the ice stream speed and the bottom right shows the basal drag. Within the ice stream basal drag is equal to the yield stress. Outside of the ice stream, stress transfer to the lateral margins results in basal drag that is much larger than the yield stress (and much larger than the driving stress).}
+%  \label{fig:plasticbed1}
+%\end{figure} 
+
+%\begin{figure}
+%  \begin{center}
+%    \includegraphics[width=0.9\columnwidth]{\dir/figs/Plastic_bed2.jpg}
+%  \end{center}
+%  \caption{Across-flow profiles of velocity and basal drag from the modeled, idealized ice stream in Figure 1. In the top panel, the analytical solution from \textit{Raymond} (2005) is also shown for comparison. In the bottom panel, stress transfer to the lateral margins is clearly seen.}
+%    \label{fig:plasticbed2}
+%\end{figure} 
+
+\subsection{Lateral Boundary Conditions}
+Currently, the only lateral boundary condition implemented that is of any significance is that for floating ice; the depth-averaged stress resulting from an adjacent column of ocean water is applied at the location of an ice shelf (or ice tongue) front. The derivation follows largely along the lines above for the free surface and specified basal traction boundary conditions, except that the surface normal vectors, $n_{x}$ and $n_{y}$, are taken as lying entirely in the $x$, $y$ plane (that is, they are perpendicular to a vertical shelf front). Thus we have
+
+\begin{align*}
+  & \hat{x}:\quad 4\eta \frac{\partial u}{\partial x}n_{x}+\eta \frac{\partial u}{\partial y}n_{y}+\eta \frac{\partial u}{\partial z}n_{z}=-2\eta \frac{\partial v}{\partial y}n_{x}-\eta \frac{\partial v}{\partial x}n_{y}+\rho g\left( s-z \right)n_{x}-S_{x}, \\ 
+ & \hat{y}:\quad 4\eta \frac{\partial v}{\partial y}n_{y}+\eta \frac{\partial v}{\partial x}n_{x}+\eta \frac{\partial v}{\partial z}n_{z}=-2\eta \frac{\partial u}{\partial x}n_{y}-\eta \frac{\partial u}{\partial y}n_{x}+\rho g\left( s-z \right)n_{y}-S_{y} \\ 
+\end{align*}
+
+where $S_x$ and $S_y$ are source terms from the pressure due to ocean water (to be defined below) and $\rho g\left( s-z \right)$ comes from including the 1st order vertical stress balance,
+
+\begin{align*}
+  & \frac{\partial \sigma _{zz}}{\partial z}=\frac{\partial \tau _{zz}}{\partial z}-\frac{\partial P}{\partial z}=\rho g\quad \text{(integrate w}\text{.r}\text{.t}\text{. z)}, \\ 
+ & P=\rho g\left( s-z \right)+\tau _{zz}, \\ 
+ & P=\rho g\left( s-z \right)+2\eta \dot{\varepsilon }_{zz}=\rho g\left( s-z \right)+2\eta \left( -\frac{\partial u}{\partial x}-\frac{\partial v}{\partial y} \right), \\ 
+\end{align*}
+
+with \textit{\(\rho{}\)} being the ice density. In the last step above we have used the constitutive relation and incompressibility to expand the vertical, normal-deviatoric stress in terms of the effective viscosity and horizontal-normal strain rates. We calculate the source terms $S_x$ and $S_y$ as the depth-averaged stress at the ice shelf front due to the pressure of ocean water there. This value is given by
+
+\begin{align*}
+S_{i}=\left[ \frac{1}{H}\frac{1}{2}\rho _{w}g\left( H-h \right)^{2} \right]n_{i}=\left[ \frac{1}{2}\rho _{w}gH\left( \frac{\rho }{\rho _{w}} \right)^{2} \right]n_{i},\quad \quad h=H\left( 1-\frac{\rho _{{}}}{\rho _{w}} \right),
+\end{align*}
+
+where  \textit{i=x,y}, $n_i$ is the shelf-front normal vector, $H$ is the ice thickness, $h$ is the ``freeboard'', or ice thickness above floatation, and $\rho_w$ is the density of ocean water. Because we have taken a depth-average for this source term, we take a depth-average of the term $\rho g\left( s-z \right)$ above, which is $\frac{1}{2}\rho gH$.
+
+Combining these two terms and inserting them in the horizontal boundary condition expressions above gives
+
+\begin{align*}
+& \hat{x}:\quad 4\eta \frac{\partial u}{\partial x}n_{x}+\eta \frac{\partial u}{\partial y}n_{y}+\eta \frac{\partial u}{\partial z}n_{z}= \\
+& -2\eta \frac{\partial v}{\partial y}n_{x}-\eta \frac{\partial v}{\partial x}n_{y}+\left[ -\frac{1}{2}H\left( \frac{\rho }{\rho _{w}} \right)^{2}\rho _{w}g+\frac{1}{2}\rho gH \right]n_{x}, \\ 
+ & \hat{y}:\quad 4\eta \frac{\partial v}{\partial y}n_{y}+\eta \frac{\partial v}{\partial x}n_{x}+\eta \frac{\partial v}{\partial z}n_{z}= \\
+ & -2\eta \frac{\partial u}{\partial x}n_{y}-\eta \frac{\partial u}{\partial y}n_{x}+\left[ -\frac{1}{2}H\left( \frac{\rho }{\rho _{w}} \right)^{2}\rho _{w}g+\frac{1}{2}\rho gH \right]n_{y}, \\ 
+\end{align*}
+
+which can be rearranged to
+
+\begin{align*}
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}n_{x}+\frac{\partial u}{\partial y}n_{y}+\frac{\partial u}{\partial z}n_{z}=-2\frac{\partial v}{\partial y}n_{x}-\frac{\partial v}{\partial x}n_{y}+\frac{\rho gH}{2\eta }\left( 1-\frac{\rho }{\rho _{w}} \right)n_{x}, \\ 
+ & \hat{y}:\quad 4\frac{\partial v}{\partial y}n_{y}+\frac{\partial v}{\partial x}n_{x}+\frac{\partial v}{\partial z}n_{z}=-2\frac{\partial u}{\partial x}n_{y}-\frac{\partial u}{\partial y}n_{x}+\frac{\rho gH}{2\eta }\left( 1-\frac{\rho }{\rho _{w}} \right)n_{y}. \\ 
+\end{align*}
+
+For an ice shelf, the surface and basal velocities are equal, in which case the vertical velocity gradient terms are $\sim{0}$, giving the final form of the lateral boundary conditions implemented in the model,
+
+\begin{align*}
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}n_{x}+\frac{\partial u}{\partial y}n_{y}=-2\frac{\partial v}{\partial y}n_{x}-\frac{\partial v}{\partial x}n_{y}+\frac{\rho gH}{2\eta }\left( 1-\frac{\rho }{\rho _{w}} \right)n_{x}, \\ 
+ & \hat{y}:\quad 4\frac{\partial v}{\partial y}n_{y}+\frac{\partial v}{\partial x}n_{x}=-2\frac{\partial u}{\partial x}n_{y}-\frac{\partial u}{\partial y}n_{x}+\frac{\rho gH}{2\eta }\left( 1-\frac{\rho }{\rho _{w}} \right)n_{y}. \\ 
+\end{align*}
+
+\subsection{Summary}
+Note that the form for ALL of the boundary conditions above is very similar. In fact, all that differs among the equations for the free surface, the specified basal traction, and the lateral shelf boundary condition is (1) the definition of the normal vectors and (2) the existence and definition of a source term. Here are the \textit{x} direction equations again for the three cases:
+
+\begin{align*}
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial s}{\partial x}+ \frac{\partial u}{\partial y}\frac{\partial s}{\partial y}-\frac{\partial u}{\partial z}=-2 \frac{\partial v}{\partial y}\frac{\partial s}{\partial x}-\frac{\partial v}{\partial x}\frac{\partial s}{\partial y}, \\ 
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial b}{\partial x}+\frac{\partial u}{\partial y}\frac{\partial b}{\partial y}-\frac{\partial u}{\partial z}=-2\frac{\partial v}{\partial y}\frac{\partial b}{\partial x}-\frac{\partial v}{\partial x}\frac{\partial b}{\partial y}-\frac{\tau _{bx}}{\eta }, \\ 
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}n_{x}+\frac{\partial u}{\partial y}n_{y}=-2\frac{\partial v}{\partial y}n_{x}-\frac{\partial v}{\partial x}n_{y}+\frac{\rho gH}{2\eta }\left( 1-\frac{\rho }{\rho _{w}} \right)n_{x}. \\
+\end{align*}
+
+In the first equation (free surface), the normals are related to the ice sheet surface slope and the source term is zero (which subsequently allows us to divide through by the effective viscosity and remove it from the equations). In the second equation (specified basal traction), the normals are related to the bedrock slopes and the source term is related to the assumed relationship between the basal shear stress and the basal sliding rate. In the last equation, the normals are defined by the shape of the ice-shelf front in map view, the vertical velocity gradient terms are absent, and the source term is related to the pressure from the adjacent column of ocean water.
+
+%\end{document}
