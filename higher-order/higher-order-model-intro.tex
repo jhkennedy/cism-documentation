@@ -2,19 +2,19 @@
 \section{Higher-Order Dynamics in CISM}
 
 \subsection{Basics}
-The main distinction between so-called higher-order models and 0-order (or "shallow ice") models is that higher-order models attempt a closer approximation to solving the non-linear Stokes equations. In general, this usually means incorporating some approximation of horizontal-stress gradients -- along-flow stretching or compression and across-flow shearing -- in addition to the vertical stress gradients that are accounted for in shallow ice models. This is important for several reasons:
+The main distinction between so-called higher-order models and 0-order (or "shallow ice") models is that higher-order models attempt a closer approximation to solving the non-linear Stokes equations. In general, this usually means incorporating some approximation of horizontal-stress gradients -- along-flow stretching or compression and across-flow shearing -- in addition to the vertical stress gradients that are accounted for in shallow ice models (Figure \ref{fig:stressbalance}). This is important for several reasons:
 
-%\begin{figure}
-%  \begin{center}
-%    \includegraphics[width=0.9\columnwidth]{\dir/figs/StressBalance.png}
-%  \end{center}
-%  \caption{The gravitational stress available to move the ice is the driving stress, indicated in green. Because the ice is assumed to be in equilibrium, the sum of the other stresses is equal to the gravitational driving stress. In the 0-order model (shallow ice approximation) only drag at the glacier base is included and the driving stress is assumed to be balanced by basal drag. In higher-order models, this restriction is relaxed, and the balance of stresses now includes lateral and longitudinal stresses. Note, however, that these stresses must be computed from conditions outside of the basic computational cell, which increases the complexity of the model.}
-%  \label{fig:stressbalance}
-%\end{figure} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\columnwidth]{\dir/figs/StressBalance.eps}
+  \end{center}
+  \caption{The gravitational stress available to move the ice is the driving stress, indicated in green. Because the ice is assumed to be in equilibrium, the sum of the other stresses is equal to the gravitational driving stress. In the 0-order model (shallow ice approximation) only drag at the glacier base is included and the driving stress is assumed to be balanced by basal drag. In higher-order models, this restriction is relaxed, and the balance of stresses now includes lateral and longitudinal stresses. Note, however, that these stresses must be computed from conditions outside of the basic computational cell, which increases the complexity of the model.}
+  \label{fig:stressbalance}
+\end{figure} 
 
 \begin{itemize}
 \item For parts of the ice sheet that we are the most interested in -- e.g. ice streams, ice shelves, and other regions of fast flow -- horizontal-stress gradients are as or more important than vertical stress gradients. To model the flow in these regions accurately, higher-order models are required.
-\item Shallow ice, applied to situations in which there is basal sliding, gives rise to a singularity in the the vertical velocity. Models compute the vertical velocity by integrating incompressablility
+\item Shallow ice, applied to situations in which there is basal sliding, gives rise to a singularity in the the vertical velocity. Models compute the vertical velocity by integrating incompressibility.
 \end{itemize}
 
 \begin{align*}
@@ -30,20 +30,20 @@ The main distinction between so-called higher-order models and 0-order (or "shal
 \item In some regions of very slow flow, horizontal-stress gradients are important or dominant. For example, ice cores are often recovered at ice divides. Flow modeling is important for interpreting ice core records and using information (such as layer thickness) to infer something about the past flow history in the region. In order to model that flow correctly, one must include horizontal stresses (At an ice divide the surface slope is \(\sim\)0, in which case vertical stress gradients that drive deformation in 0-order models are also \(\sim\)0. In reality, deformation is not 0 at ice divides it is simply controlled by horizontal stretching).
 \end{itemize}
 
-The term higher-order comes from scaling analyses of the Stokes equations for which a scaling parameter $\lambda=H/L$ -- the ratio of the thickness to the horizontal length scale of interest -- is used to assign importance to the various terms. Shallow ice models retain only terms of order 0 while higher-order models also retain terms of order 1 (and possibly greater).
+The term higher-order comes from scaling analyses of the Stokes equations for which a scaling parameter $\lambda=H/L$ -- the ratio of the thickness to the horizontal length scale of interest -- is used to assign importance to the various terms. Shallow ice models retain only terms of order 0 while higher-order models also retain terms of order 1 (and possibly greater) (Figure \ref{fig:hoeqns}).
 
-%\begin{figure}
-%  \begin{center}
-%    \includegraphics[width=0.9\columnwidth]{\dir/figs/HOeqns.png}
-%   \end{center}
-%  \caption{Stokes-flow (top) and first-order (bottom) constitutive equations.}
-%  \label{fig:hoeqns}
-%\end{figure} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\columnwidth]{\dir/figs/HOeqns.eps}
+   \end{center}
+  \caption{Stokes-flow (top) and first-order (bottom) constitutive equations.}
+  \label{fig:hoeqns}
+\end{figure} 
 
 \subsection{Available schemes}
 
 \begin{itemize}
-\item The most basic and fundamental higher-order scheme is the full non-linear Stokes equations. Because of the computational burden, many 3d, large-scale models solve lower-order approximations to the Stokes equations. However, a number of groups are making significant advances in this area and it seems likely that 3d, nonlinear-Stokes ice sheet models being used in climate-model applications is not far away (e.g. see the ELMER-Ice effort). Upcoming DOE-funded efforts will focus on implementing a nonlinear Stokes model on unstructured grids in CISM.
+\item The most basic and fundamental higher-order scheme is the full non-linear Stokes equations. Because of the computational burden, many 3d, large-scale models solve lower-order approximations to the Stokes equations (Figure \ref{fig:phylogeny}). However, a number of groups are making significant advances in this area and it seems likely that 3d, nonlinear-Stokes ice sheet models being used in climate-model applications is not far away (e.g. see the ELMER-Ice effort). Upcoming DOE-funded efforts will focus on implementing a nonlinear Stokes model on unstructured grids in CISM.
 \end{itemize}
 
 \begin{itemize}
@@ -60,13 +60,13 @@ The term higher-order comes from scaling analyses of the Stokes equations for wh
 
 \subsection{Practical differences between shallow ice models and higher-order models}
 
-%\begin{figure}
-%  \begin{center}
-%    \includegraphics[width=0.9\columnwidth]{\dir/figs/ISMPhylogeny.png}
-%   \end{center}
-%  \caption{The relationship between several common varieties of ice sheet modesl. Complexity increases along the vertical axis.}
-%   \label{fig:phylogeny}
-%\end{figure} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\columnwidth]{\dir/figs/ISMPhylogeny.eps}
+   \end{center}
+  \caption{The relationship between several common varieties of ice sheet modesl. Complexity increases along the vertical axis.}
+   \label{fig:phylogeny}
+\end{figure} 
 
 By practical differences, we mean \textbf{(1)} how do we deal with solving the momentum equations in each case (the dynamics, or stress balance) and \textbf{(2)} how do we use the relevant information we derive from that solution (the kinematics, or velocity fields) to evolve the ice sheet geometry in time? There are large differences in how both of these issues are handled -- in shallow ice models versus in higher-order models -- for two main reasons:
 
@@ -131,15 +131,15 @@ Both sets of equations are non-linear elliptical equations and much of the same 
 
 \subsection{Higher-order CISM}
 
-%\begin{figure}
-%  \begin{center}
-%    \includegraphics[width=0.9\columnwidth]{\dir/figs/GIS.png}
-%   \end{center}
-%  \caption{Observation-based balance velocities for Greenland (left) and depth-averaged speed from higher-order CISM (right) with basal sliding coefficients optimized to match the balance velocities (after Price et al., $PNAS$, \textbf{108}(22), 2011).}
-%  \label{fig:GIS_PNAS}
-%\end{figure} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\columnwidth]{\dir/figs/GIS.eps}
+   \end{center}
+  \caption{Observation-based balance velocities for Greenland (left) and depth-averaged speed from higher-order CISM (right) with basal sliding coefficients optimized to match the balance velocities (after Price et al., $PNAS$, \textbf{108}(22), 2011).}
+  \label{fig:GIS_PNAS}
+\end{figure} 
 
-The higher-order dynamics scheme currently implemented in CISM is discussed in more detail in the following chapters. First, the derivation of the equations themselves is discussed, followed by a discussion of the boundary conditions. Solutions methods for the nonlinear system of equations are then discussed. Finally, there is a brief discussion on the solution of the thickness evolution equation. 
+The higher-order dynamics scheme currently implemented in CISM (some output from which is shown in Figure \ref{fig:GIS_PNAS}) is discussed in more detail in the following chapters. First, the derivation of the equations themselves is discussed, followed by a discussion of the boundary conditions. Solutions methods for the nonlinear system of equations are then discussed. Finally, there is a brief discussion on the solution of the thickness evolution equation. 
 
 A very useful higher-order model intercomparison project (ISMIP-HOM) was organized by Frank Pattyn from the Université Libre de Bruxelles. That project, which resulted in a set of "benchmark" experiments for higher-order models, is reported on formally in Pattyn et al. (2008). 
 

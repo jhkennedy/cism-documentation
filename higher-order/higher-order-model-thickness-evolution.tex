@@ -42,13 +42,13 @@ An alternate approach is to solve the evolution equation using an advection sche
 
 Most ice sheet models (and fluid dynamic models in general) perform calculations on a "staggered" grid of the type shown below, where velocity components live on one grid and scalar components (e.g. temperatures, pressures, thickness, etc.) live on a grid that is staggered by 1/2 grid space in the horizontal dimensions (this is essential for numerical reasons that we won't discuss here).
 
-%\begin{figure}
-%  \begin{center}
-%    \includegraphics[width=0.9\columnwidth]{\dir/figs/Stag_grid.png}
-%  \end{center}
-%\caption{Staggered grid in two dimensions, showing scalars (like thickness, \textit{H}) at grid cell centers and velocity components, \textit{U} and \textit{V}, at grid cell faces. This is a "C" grid. Another staggered-grid possibility is a "B" grid, for which both velocity components live at the grid cell corners. While CISM uses a B grid, averaging of corner velocities to face centers allows one to express them on a C grid if necessary.}
-%  \label{fig:stag_c_grid}
-%\end{figure} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\columnwidth]{\dir/figs/Stag_grid.eps}
+  \end{center}
+\caption{Staggered grid in two dimensions, showing scalars (like thickness, \textit{H}) at grid cell centers and velocity components, \textit{U} and \textit{V}, at grid cell faces. This is a "C" grid. Another staggered-grid possibility is a "B" grid, for which both velocity components live at the grid cell corners. While CISM uses a B grid, averaging of corner velocities to face centers allows one to express them on a C grid if necessary.}
+  \label{fig:stag_c_grid}
+\end{figure} 
 
 A control volume (or finite volume) approach to solving the equation 
 
@@ -56,21 +56,21 @@ A control volume (or finite volume) approach to solving the equation
 \frac{\partial H}{\partial t}=-\left( \frac{\partial \left( UH \right)}{\partial x}+\frac{\partial \left( VH \right)}{\partial y} \right)+\dot{b} \\ 
 \end{align*}
 
-would be to integrate our equation over a control volume centered on the scalar values (Figure \ref{fig:stag_C_grid}). Ignoring source terms for now, and assuming flow only along the \textit{x} direction only (that is, assuming that \textit{V}\(\sim\)0) we have
+would be to integrate our equation over a control volume centered on the scalar values (Figure \ref{fig:stag_c_grid}). Ignoring source terms for now, and assuming flow only along the \textit{x} direction only (that is, assuming that \textit{V}\(\sim\)0) we have
 
 \begin{align*}
 \frac{\partial H}{\partial t}=-\frac{1}{\Delta y\Delta x}\int_{s}^{n}{\int_{w}^{e}{\frac{\partial \left( UH \right)}{\partial x}}}dxdy=-\frac{1}{\Delta y\Delta x}\left( HU_{e}-HU_{w} \right)\Delta y. \\
 \end{align*}
 
-The "east" and "west" (subscripts \textit{e} and \textit{w}) faces of the control volume are shown in Figure \ref{fig:stag_C_grid2}.
+The "east" and "west" (subscripts \textit{e} and \textit{w}) faces of the control volume are shown in Figure \ref{fig:stag_c_grid2}.
 
-%\begin{figure}
-%  \begin{center}
-%    \includegraphics[width=0.9\columnwidth]{\dir/figs/Stag_gridb.png}
-%  \end{center}
-%  \caption{Staggered grid in two dimensions, showing locations of interfaces and control volume dimensions. Interfaces \textit{e}, \textit{w}, \textit{n} and \textit{s} connect the volume centered at \textit{P} with those volumes to the east, west, north, and south (\textit{E}, \textit{W}, \textit{N}, and \textit{S}).}
-%  \label{fig:stag_c_grid2}
-%\end{figure} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\columnwidth]{\dir/figs/Stag_gridb.eps}
+  \end{center}
+  \caption{Staggered grid in two dimensions, showing locations of interfaces and control volume dimensions. Interfaces \textit{e}, \textit{w}, \textit{n} and \textit{s} connect the volume centered at \textit{P} with those volumes to the east, west, north, and south (\textit{E}, \textit{W}, \textit{N}, and \textit{S}).}
+  \label{fig:stag_c_grid2}
+\end{figure} 
 
 In the above equation, we've deliberately left it vague as to which value of \textit{H} is being advected across the east and west interfaces, into or out of the volume. This is where the term "upwinding" comes in -- we choose the scalar value to advect across the interface based on an upwinding criterion. If, for example, the flow at interface \textit{e} is from left to right (\textit{U}>0), we would advect the value of \textit{H} at \textit{P} $out$ of the volume centered at \textit{P} and $into$ the volume centered at \textit{E}. If, on the other hand, the flow at \textit{e} was from right to left (\textit{U}<0), we would advect the value of \textit{H} at \textit{E} $into$ the volume at \textit{P} and $out$ of the volume at \textit{E}. 
 

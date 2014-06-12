@@ -205,13 +205,13 @@ is the Newton update to be solved for. One method for doing so is by solving
 
 The advantage of Newton-based methods is that, with a good initial guess for the solution, convergence rates are very often quadratic (e.g. the residual decreases quadratically, so that at iteration \textit{k} one has a residual of 0.1, at iteration \textit{k+1}, a residual of 0.01, and at iteration \textit{k+2} a residual of 0.0001), whereas Picard-based iterations are much slower to converge. A figure comparing rates of convergence for Picard versus Newton on a CISM tests case is shown below (Figure \ref{fig:jfnk}. The Newton method is based on the work of Lemieux et al. ($J.$ $Comput.$ $Phys.$, \textbf{230}, 2011), which is discussed further below.
 
-%\begin{figure}
-%  \begin{center}
-%    \includegraphics[width=0.9\columnwidth]{\dir/figs/Picard_vs_newton.png}
-%  \end{center}
-%  \caption{Rates of convergence for the nonlinear iteration in CISM.}
-%  \label{fig:jfnk}
-%\end{figure} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\columnwidth]{\dir/figs/Picard_vs_newton.eps}
+  \end{center}
+  \caption{Rates of convergence for the nonlinear iteration in CISM.}
+  \label{fig:jfnk}
+\end{figure} 
 
 \subsection{The Jacobian Free Approach}
 In practice, the model Jacobian may either be too difficult or to expensive too form. A Jacobian Free Newton-Krylov (JFNK) approach has recently been implemented in CISM (Leimieux et al., 2011), largely following methods discussed in Knoll and Keyes ($J.$ $Comput.$ $Phys.$, \textbf{193}, 2004).
