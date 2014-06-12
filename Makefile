@@ -92,7 +92,6 @@ ug_graphics = glide.eps glimmer.eps glint_timesteps.eps
 num_graphics = scale.eps grid.eps thick_evo.eps grid_ew.eps basal_bc.eps basal_alg.eps staggered_grid.eps
 numgnu_graphics = w_profile.eps wt_sigma.eps
 dg_graphics = class_diagram.eps class_diagram_glint.eps glide_mod_depend.eps glimmer_structure.eps
-
 graphics: $(ug_graphics) $(num_graphics) $(numgnu_graphics) $(dg_graphics)
 
 

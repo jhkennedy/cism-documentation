@@ -60,17 +60,27 @@
 \mainmatter
 \part{User Documentation}
 
-\chapter{User Guide}
-\newcommand{\dir}{ug}
-\input{\dir/ug.tex}
+\chapter{Introduction and Overview}
+\newcommand{\dir}{intro}
+\input{\dir/intro.tex}
 
 \chapter{Installing GLIMMER-CISM}
 \renewcommand{\dir}{install}
 \input{\dir/install.tex}
 
+\chapter{Shallow Ice Dynamics}
+\renewcommand{\dir}{shallow-ice}
+\input{\dir/shallow-ice.tex}
+
 \chapter{Higher-Order Ice Dynamics}
 \renewcommand{\dir}{higher-order}
 \input{\dir/higher-order.tex}
+
+%% Old documentation below here
+
+\chapter{User Guide}
+\renewcommand{\dir}{ug}
+\input{\dir/ug.tex}
 
 \chapter{Tutorial}
 \renewcommand{\dir}{tut}
