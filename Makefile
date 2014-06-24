@@ -9,7 +9,7 @@
 # ===================================
 
 # Location of source directory - needed for autogenerating variables only
-top_srcdir = /Users/sprice/work/modeling/cism/seacism-new
+top_srcdir = /Users/mhoffman/documents/cism/trunk
 
 # commands to make documentation
 LATEX = latex
@@ -50,7 +50,7 @@ all: glimmer.pdf
 	$(LATEX) $<
 	$(LATEX) $<
 
-SUBDIRS = dg ug num tut common doclets ext
+SUBDIRS = dg ug num tut common doclets ext higher-order install intro shallow-ice dynamics-overview tests
 glimmer_html:  glimmer.tex
 	install -d www
 	htlatex glimmer_html "html,3,info" "" " -d./www/ -m 644 "
