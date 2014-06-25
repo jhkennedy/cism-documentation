@@ -1,2 +1,75 @@
 \section{Conservation of Energy}
 
+
+The first law of thermodynamics is used to make a basic statement of
+conservation of energy in a volume of ice V within a surface S is
+
+\begin{equation}
+\frac{d}{d t} \int_{V}E ~dV~=~- \int_{S}\mathbf{F}\cdot \hat{n}~dS~-~\int_{S}E \mathbf{u}\cdot \hat{n}~dS~+~\int_{V}W dV
+\end{equation}
+
+in which $E$ represents the energy of the volume, $F_{i}$ is a flux due
+to diffusion, and $W$ represents any sources or sinks of energy within
+the volume. The term $Eu_{i}$ is a flux through $S$ due to advection.
+Following the steps laid out earlier, we use the divergence theorem and
+the assumptions of continuous fields and incompressibility, such that
+
+\begin{equation}
+\frac{dE}{dt}~+~\nabla \cdot \left(F_{i} +E u_{i}  \right)~-~W~=~0
+\end{equation}
+
+Our goal is to use the first law of thermodynamics in order to compute
+the temperature of the ice and any change it may undergo over time.
+
+The energy $E$ is the product of density and the specific internal
+energy of the ice $e$, which is itself the product of the specific heat
+capacity $c_{p}$ and temperature $T$ because there is no transfer
+between internal energy and pressure for an incompressible fluid. Thus,
+
+\begin{equation}
+\begin{matrix}
+\frac{dE}{dt}&=&\frac{d\left(\rho e \right)}{dt} \\
+&=&\rho\frac{de}{dt}~+~e \frac{d\rho}{dt}\\
+&=&\rho c_{p} \frac{dT}{dt}
+\end{matrix}
+\end{equation}
+
+The flux due to diffusion follows Fourier's ``law'' for heat conduction
+so
+
+\begin{equation}
+\begin{matrix}
+\nabla \cdot F_{i}&=&\nabla \cdot \left( -k ~\nabla T  \right) \\
+&=&-k~\nabla^{2}T
+\end{matrix}
+\end{equation}
+
+in which $k$ represents the thermal diffusivity of ice and we assume
+gradients in its magnitude to be negligible.
+
+Using progress made above and assuming that $\nabla \cdot u_{i}$ is
+small with respect to other terms, we can write the advection term
+
+\begin{equation}
+\begin{matrix}
+\nabla \cdot \left(E u_{i} \right)~=~\rho c_{p}~ u_{i} \cdot \nabla T  
+\end{matrix}
+\end{equation}
+
+Two quantities must be considered as energy sources, the work done on
+the system by internal deformation and the latent heat associated with
+phase changes. The former is the product of strain rate and the
+deviatoric stress $\dot{\epsilon}_{ij} \tau_{ij}$. The latter is the
+product of the latent heat of fusion and the amount of material subject
+to melting (freezing) per unit volume per unit time, $L_{f}M_{f}$.
+
+At last, we are able to write equation
+\textbackslash{}ref\{equation:enbal2\} in terms of temperature
+
+\begin{equation}
+\frac{\partial T}{\partial t}~=~\frac{k}{\rho c_{p}} \nabla^{2}T~-~u_{i}\cdot \nabla T~+~\frac{1}{\rho c_{p}} \dot{\epsilon}_{ij} \tau_{ij} ~+~\frac{1}{\rho c_{p}} L_{f} M_{f}
+\end{equation}
+
+It is often the case that horizontal terms
+$\frac{\partial^{2} T}{\partial x^{2}}$ and
+$\frac{\partial^{2} T}{\partial y^{2}}$ are small enough to be ignored.

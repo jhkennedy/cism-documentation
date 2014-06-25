@@ -1,2 +1,92 @@
 \section{Conservation of Momentum}
 
+
+Starting from Newton's second law of motion, conservation of momentum is
+
+\begin{equation}
+\frac{d} {dt} \int_{V}\rho u_{i}~dV ~ = ~ \int_{V} \frac{\partial \sigma_{ij}} {\partial x_{j}} ~dV +  \int_{V} \rho g_{i}~dV
+\end{equation}
+
+where $t$ represents time, $\rho$ represents density, $u$ represents
+velocity, $\sigma_{ij}$ represents the stress tensor, $g$ represents the
+acceleration due to gravity, $V$ represents the volume of an arbitrary
+fluid element, and $(i,j)= \{x, y, z\}$ in a cartesian coordinate
+system. Equation \textbackslash{}ref\{equation:mobal1\} tells us that a
+fluid element of arbitrary size experiences a ``body force''
+$\rho g_{i}\delta V$ due to gravity and a force
+$\frac{\partial \sigma_{ij}} {\partial x_{j}} \delta V$ due to the
+surrounding fluid.
+
+Making the assumptions that we have continuous fields and that ice is
+incompressible (that is, its density $\rho$ does not change under
+conditions of interest to us), we can write
+
+\begin{equation}
+\rho \frac{D u_{i}}{D t}~=~\frac{\partial \sigma_{ij}}{\partial x_{j}} + \rho g_{i}
+\end{equation}
+
+in which $D$ is a material derivative. Due to the fact that Froude
+number \href{Wikipedia:Froude number}{Wikipedia:Froude number} for ice
+flow is extremely small, the acceleration term (the first term on the
+left hand side) could be neglected and we arrive to a steady-state form.
+
+\begin{equation}
+\frac{\partial \sigma_{ij}}{\partial x_{j}} + \rho g_{i} ~=~0
+\end{equation}
+
+We are left with the very simple statement that the gravitational
+driving force is balanced by forces resulting from the stresses
+$\sigma_{ij}$.
+
+The stress tensor $\sigma_{ij}$ has nine components in our three
+dimensional cartesian coordinate system
+
+\begin{equation}
+\mathbf{\sigma} =
+\left\vert  \begin{array}{ccc} 
+    \sigma _{ xx} & \sigma _{ xy} & \sigma _{ xz} \\
+    \sigma _{ yx} & \sigma _{ yy} & \sigma _{ yz} \\
+    \sigma _{ zx} & \sigma _{ zy} & \sigma _{ zz} \\
+\end{array} \right\vert 
+\end{equation}
+
+The components along the diagonal are called normal stresses and the
+off-diagonal components are called shear stresses. Deformation results
+not from the full stress but from the deviatoric stress
+
+\begin{equation}
+\tau_{ ij} ~ = ~ \sigma _{ ij} ~ - ~{\frac{ 1}{ 3}} \sigma _{ kk} \delta _{ ij}
+\end{equation}
+
+in which $\delta_{ ij}$ is the Kroneker delta.
+
+\subsubsection{Constitutive relationship}
+
+Strain rates $\dot{\epsilon}_{ij}$ are related to the stress tensor
+$\tau_{ij}$ by the generalized Glen flow law
+
+\begin{equation}
+\dot{\epsilon}_{ij}~=~A(T^{*})\tau_{e}^{n-1}\tau_{ij}
+\end{equation}
+
+in which $T^{*}$ is the absolute temperature corrected for the pressure
+dependence of the melt temperature, $\tau_{e}$ is the second invariant
+of the stress tensor and the exponent $n$ is 3. The rate factor $A$
+follows the Arrhenius relationship
+
+\begin{equation}
+A\left( T^{*}\right)~=~E A_{o}e^{-Q/RT^{*}}
+\end{equation}
+
+in which $A_{o}$ is a constant, $Q$ represents the activation energy for
+crystal creep, $R$ is the gas constant, and $E$ is a tuning parameter
+used to account for the effects of impurities and anisotropic ice
+fabrics. The homologous temperature is
+
+\begin{equation}
+T^{*}=T+\rho g H \Phi
+\end{equation}
+
+in which $\Phi$ is 9.8 $\times$10$^{-8}$ K Pa$^{-1}$, about 8.7
+$\times$10$^{-4}$ K m$^{-1}$. The pressure-dependent melt temperature is
+simply the triple point temperature less the product $\rho g H \Phi$.

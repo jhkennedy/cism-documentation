@@ -50,7 +50,7 @@ all: glimmer.pdf
 	$(LATEX) $<
 	$(LATEX) $<
 
-SUBDIRS = dg ug num tut common doclets ext higher-order install intro shallow-ice dynamics-overview tests
+SUBDIRS = dg ug num tut common doclets ext higher-order install intro shallow-ice modeling-intro tests physics
 glimmer_html:  glimmer.tex
 	install -d www
 	htlatex glimmer_html "html,3,info" "" " -d./www/ -m 644 "
