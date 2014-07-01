@@ -301,7 +301,30 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
       2 & as in option 0 but using the mean rather than the max \\
       {\bf 3} & use the L2 norm of the system residual, defined by $r = Ax - b$ \\
     \end{tabular}\\  
-
+%% which_ho_approx
+    \texttt{which\_ho\_approx} &
+     Which Stokes approximation to use with the glissade dycore \\ &
+    \begin{tabular}[t]{cp{0.85\linewidth}}
+      -1 & Shallow-ice approximation, Glide-type calculation (uses glissade\_velo\_sia) \\
+      0 & Shallow-ice approximation, vertical-shear stresses only (uses glissade\_velo\_higher) \\
+      1 & Shallow-shelf approximation, horizontal-plane stresses only (uses glissade\_velo\_higher) \\
+      {\bf 2} & Blatter-Pattyn with both vertical-shear and horizontal-plane stresses (uses glissade\_velo\_higher) \\
+    \end{tabular}\\  
+%% which_ho_precond
+    \texttt{which\_ho\_precond} &
+     Which Stokes preconditioner to use in the glissade dycore \\ &
+    \begin{tabular}[t]{cp{0.85\linewidth}}
+      0 & No preconditioner \\
+      1 & Diagonal preconditioner \\
+      {\bf 2} & Physics-based shallow-ice preconditioner \\
+    \end{tabular}\\  
+%% which_ho_gradient
+    \texttt{which\_ho\_gradient} &
+     Which gradient operator to use in the glissade dycore \\ &
+    \begin{tabular}[t]{cp{0.85\linewidth}}
+      0 & Centered gradient \\
+      {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0)}\\
+    \end{tabular}\\  
 
 
  %%%% EXTERNAL DYCORE OPTIONS
