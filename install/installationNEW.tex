@@ -271,3 +271,156 @@ nco @4.2.0 (science)
 
 \textbf{SP: there are some additional notes in the original word doc that I've not included in here yet. These are in the "other notes" section at the end of that document.}
 
+% =====================================
+% =====================================
+\section{Installation under Linux}
+% =====================================
+% =====================================
+This section describes setting up supporting software and CISM in a Linux environment.
+These instructions were written using a fresh installation of Ubuntu 12.10 but 
+steps should be very similar in other versions of Ubuntu or other flavors of Linux.
+Note that these instructions assume the user has administrative privileges for
+installing new packages.  If you are working on a shared machine without
+administrative privileges, you might proceed by assuming all needed packages are present and 
+continue to the CISM installation section.  You can then refer back to this
+section if you encounter problems to determine which packages might be missing or
+problematic before contacting your system administrator.
+
+\subsection{Basic supporting software needed for CISM}
+A number of software tools are necessary before performing a basic installation of CISM.
+Most systems are likely to have some or all of these packages already installed, 
+but these instructions are intended to be complete for a fresh installation of Ubuntu 12.10.
+Note that the commands below will execute safely if the packages are already installed.
+Additional tools are needed for a parallel installation using the Trilinos solver libraries, 
+which are described in another section below.
+
+\begin{enumerate}
+% =====================================
+\item{\texttt{git} - version control software
+
+If you intend to download the CISM code as a git repository, you will need the \texttt{git} package installed.
+If you download a zipped archive of the code, this step can be skipped.
+
+Install git with:
+
+\texttt{sudo apt-get install git}
+}
+
+% =====================================
+\item{\texttt{Fortran and C compilers} - needed for compiling code
+
+GNU compilers may have come with your Linux distribution.  If not, they need to 
+installed.  Ubuntu 12.10 comes with \texttt{gcc} installed but not \texttt{gfortran}.
+CISM has been tested extensively with \texttt{gfortran} versions 4.5 and 4.6.
+Newer (or older) versions may also work, although version 4.8 introduces a lot of 
+new features that may uncover issues.
+
+Install \texttt{gfortran} with:
+
+\texttt{sudo apt-get install gfortran}
+}
+
+
+% =====================================
+\item{\texttt{Build tools} - miscellaneous tools for compiling code
+
+Additional tools are needed for managing the build process.  \texttt{make} (specifically, GNU's gmake)
+usually comes with a Linux distribution, but if not it should be installed.  On Ubuntu
+(and other Debian systems) there is usually a package called \texttt{build-essential} that
+includes a large collection of tools and libraries that are typically necessary
+for compiling code.  Additionally, CISM uses the \texttt{cmake} build utility.
+
+Install these tools with:
+
+\texttt{sudo apt-get install build-essential cmake}
+}
+
+
+% =====================================
+\item{\texttt{NetCDF} - network Common Data Form libraries (a
+ machine-independent format for representing scientific data)
+
+This is required by CISM.
+
+Install NetCDF with:
+
+\texttt{sudo apt-get install libnetcdf-dev}
+
+Additionally, it is recommended to install some useful tools for working with NetCDF files:
+
+\texttt{sudo apt-get install netcdf-bin ncview nco}
+}
+
+% =====================================
+\item{\texttt{python} - scripting language
+
+Python generally comes with most Linux distributions.  If it is not present, it must be installed.
+Often, there is an additional python development package that is necessary
+when working with compiled code (tpyically called \texttt{python-dev} on Ubuntu).
+Additionally, CISM makes use of a number of python modules:
+\begin{itemize}
+  \item \texttt{numpy} - required for generating many test case initial conditions
+  \item \texttt{matplotlib} - used by some plotting scripts.  Not strictly necessary but required for those scripts to work properly.
+  \item  a python netCDF I/O module.  Options are \texttt{netCDF4},  \texttt{Scientific.IO.NetCDF}, or \texttt{PyCDF}.  
+\texttt{netCDF4} is the ideal choice, but it is often not available through Linux package managers and must be installed through a python package manager like pip or manually.
+\texttt{PyCDF} is the least recommended option here because it is not entirely compatible with the others.  \texttt{Scientific.IO.NetCDF} is usually available through Linux package managers.
+\end{itemize}
+
+Install python modules with:
+
+\texttt{sudo apt-get install python-dev python-numpy python-matplotlib python-scientific}
+}
+
+% =====================================
+\end{enumerate}
+
+\begin{mdframed}
+Optional: Installing \texttt{netCDF4} python module.
+
+Install pip:
+
+\texttt{sudo apt-get install pip}
+
+Install \texttt{netCDF4} using pip
+
+\texttt{sudo -E pip install netcdf4}
+\end{mdframed}
+
+% =====================================
+\subsection{Building serial CISM}
+
+TODO: How to build serial CISM
+
+
+% =====================================
+\subsection{Supporting software needed for parallel CISM}
+
+
+\begin{enumerate}
+% =====================================
+\item{\texttt{MPI} - message passing interface libraries and compilers for compiling and running parallel code
+
+MPI libaries and compilers are necessary for compiling parallel CISM.  There are a few options
+available, but OpenMPI is the most common implementation and one that has been 
+tested extensively with CISM.
+
+Install OpenMPI with:
+
+\texttt{sudo apt-get install openmpi-bin}
+}
+
+% =====================================
+\item{\texttt{Trilinos} - solver libraries
+
+TODO: How to build Trilinos
+
+}
+\end{enumerate}
+
+
+% =====================================
+\subsection{Building parallel CISM}
+
+TODO: How to build parallel CISM
+
+
