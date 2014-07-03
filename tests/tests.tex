@@ -1,2 +1,52 @@
+Test cases for CISM include experiments with analytic solutions, standardized experiments
+without analytic solutions but for which community benchmarks are available, and
+some experiments specific to CISM which have been well-characterized by CISM developers.
+
+Here we organize test cases based on the velocity solver that is more appropriate
+for each test.  Note, however, that any velocity solver can be used with any test
+if .config file settings are adjusted manually.  (However, in some cases the results
+would be difficult to interpret.)
+
+In general, each test directory includes a README file with some technical details 
+about how to run the test.  Many tests have python scripts that are used to setup
+the initial condition and, in many cases, actually execute the model.  Some tests
+also have an additional python script for analyzing the CISM output in some way.
+
+The user must manually provide each test with access to the CISM executable.
+There are a few ways this can be done:
+
+\begin{itemize}
+  \item Softlink the executable into the directory, e.g.:
+
+        \texttt{ln -s ../../builds/mac-gnu/cism\_driver/cism\_driver .}
+
+        This is the recommended procedure when doing development so that the test
+        will always be using the most up-to-date version of the executable.
+
+  \item Use the -e command line option for test case run scripts that support it, e.g.:
+
+        \texttt{./dome.py -e ../../builds/mac-gnu/cism\_driver/cism\_driver}
+
+        This is useful for quickly trying a different version of CISM (e.g., comparing 
+        serial and parallel executables).
+
+  \item Add the directory that contains the CISM executable to your environment PATH.
+
+  \item Copy the executable into the directory.  This is generally not the best practice,
+        but may make sense it some situations.
+\end{itemize}
+
+For tests that use python scripts, the scripts generally have a number of useful
+command line options that control their execution.  Typically, you can see details 
+by using the --help (or -h) command line option, e.g.:
+
+\texttt{./dome.py --help}
+
+
+
+% =====================================
 \input{\dir/shallow-ice-model-tests.tex}
+
+% =====================================
 \input{\dir/higher-order-model-tests.tex}
+
