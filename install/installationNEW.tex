@@ -278,7 +278,7 @@ nco @4.2.0 (science)
 % =====================================
 This section describes setting up supporting software and CISM in a Linux environment.
 These instructions were written using a fresh installation of Ubuntu 12.10 but 
-steps should be very similar in other versions of Ubuntu or other flavors of Linux.
+steps should be very similar in other versions of Ubuntu or other distributions of Linux.
 Note that these instructions assume the user has administrative privileges for
 installing new packages.  If you are working on a shared machine without
 administrative privileges, you might proceed by assuming all needed packages are present and 
@@ -286,7 +286,10 @@ continue to the CISM installation section.  You can then refer back to this
 section if you encounter problems to determine which packages might be missing or
 problematic before contacting your system administrator.
 
+% =====================================
 \subsection{Basic supporting software needed for CISM}
+% =====================================
+
 A number of software tools are necessary before performing a basic installation of CISM.
 Most systems are likely to have some or all of these packages already installed, 
 but these instructions are intended to be complete for a fresh installation of Ubuntu 12.10.
@@ -388,13 +391,33 @@ Install \texttt{netCDF4} using pip
 
 % =====================================
 \subsection{Building serial CISM}
+% =====================================
 
-TODO: How to build serial CISM
+For convenience, a build script for serial CISM is included \texttt{builds/linux-gnu-cism}.
+From that directory, run:
+
+\texttt{ source linux-gnu-cism-cmake-serial}
+
+This build script should work for most standard Linux setups.  However, if you encounter
+an error, you may need to modify some details, such as the location of your NetCDF libraries 
+or your compiler names.  Other errors you might encounter may indicate that some of
+the supporting software (above) is missing.
+
+Once the configuration step completes successfully, you can compile the code with:
+
+\texttt{make}
+
+or
+
+\texttt{make -j 4}
+
+if you have 4 processors available (or as many processors as you would like to use).
+
 
 
 % =====================================
 \subsection{Supporting software needed for parallel CISM}
-
+% =====================================
 
 \begin{enumerate}
 % =====================================
@@ -414,13 +437,48 @@ Install OpenMPI with:
 
 TODO: How to build Trilinos
 
+
+After successfully building Trilinos, create an environment variable called \texttt{GLIMMER\_TRILINOS\_DIR}
+so the CISM build process can find the Trilinos installation.  For example, if you 
+are using the bash shell and your current directory is the Trilinos install directory, you can do:
+\begin{verbatim}
+export GLIMMER_TRILINOS_DIR=$PWD
+\end{verbatim}
+(Note that you may prefer to modify your .bashrc or .bash\_profile (or similar)
+to set this environment variable on every login.)
+
+Alternatively, you can modify the CISM parallel build script (below) so that the line:
+\begin{verbatim}
+-D GLIMMER_TRILINOS_DIR=$GLIMMER_TRILINOS_DIR \
+\end{verbatim}
+is set to the Trilinos installation directory.
 }
 \end{enumerate}
 
 
 % =====================================
 \subsection{Building parallel CISM}
+% =====================================
 
-TODO: How to build parallel CISM
+The procedure for building parallel CISM is nearly identical to the serial build (above).
+The build script for parallel CISM is located in \texttt{builds/linux-gnu-cism}.
+From that directory, run:
 
+\texttt{ source linux-gnu-cism-cmake}
+
+This build script should work for most standard Linux setups.  However, if you encounter
+an error, you may need to modify some details, such as the location of your NetCDF libraries 
+or your compiler names.  Other errors you might encounter may indicate that some of
+the supporting software (above) is missing.  Common problems here have to do with 
+MPI, for example, the location of the MPI include or library directories.
+
+Once the configuration step completes successfully, you can compile the code with:
+
+\texttt{make}
+
+or
+
+\texttt{make -j 4}
+
+if you have 4 processors available (or as many processors as you would like to use).
 
