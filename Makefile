@@ -106,11 +106,11 @@ varlists: $(var_lists)
 
 # how to auto-generate the variable list .tex files
 glide_varlist.tex: $(top_srcdir)/libglide/glide_vars.def ./ug/varlist.tex.in
-	cd ug; $(PYTHON) $(top_srcdir)/scripts/generate_ncvars.py $(top_srcdir)/libglide/glide_vars.def varlist.tex.in; cd ..
+	cd ug; $(PYTHON) $(top_srcdir)/utils/build/generate_ncvars.py $(top_srcdir)/libglide/glide_vars.def varlist.tex.in; cd ..
 eis_varlist.tex: $(top_srcdir)/example-drivers/eis/src/eis_vars.def ./ug/varlist.tex.in
-	cd ug; $(PYTHON) $(top_srcdir)/scripts/generate_ncvars.py $(top_srcdir)/example-drivers/eis/src/eis_vars.def varlist.tex.in; cd ..
+	cd ug; $(PYTHON) $(top_srcdir)/utils/build/generate_ncvars.py $(top_srcdir)/example-drivers/eis/src/eis_vars.def varlist.tex.in; cd ..
 glint_varlist.tex: $(top_srcdir)/libglint/glint_vars.def ./ug/varlist.tex.in
-	cd ug; $(PYTHON) $(top_srcdir)/scripts/generate_ncvars.py $(top_srcdir)/libglint/glint_vars.def varlist.tex.in; cd ..
+	cd ug; $(PYTHON) $(top_srcdir)/utils/build/generate_ncvars.py $(top_srcdir)/libglint/glint_vars.def varlist.tex.in; cd ..
 
 
 #=======================
