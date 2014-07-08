@@ -382,9 +382,10 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 
 
 %%%% GTHF
+    \hline
+    \hline
+    \hline
     \multicolumn{2}{|l|}{\texttt{[GTHF]}}\\
-    \hline
-    \hline
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Options related to lithospheric temperature and geothermal heat calculation.  Ignored unless \texttt{gthf} = 1.}\\
     \hline
@@ -455,7 +456,30 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
   \end{supertabular*}
 \end{center}
 
-NetCDF I/O can be configured in the main configuration file or in a separate file (see \texttt{ioparams} in the \texttt{[options]} section). Any number of input and output files can be specified. Input files are processed in the same order they occur in the configuration file, thus potentially overwriting priviously loaded fields.
+NetCDF I/O can be configured in the main configuration file or in a separate file 
+(see \texttt{ioparams} in the \texttt{[options]} section). 
+Any number of input, forcing, and output files can be specified. 
+
+Input files are processed in the same order they occur in the configuration file, 
+thus potentially overwriting previously loaded fields.  The configuration section 
+for an input file specified which time slice from the input file should be used as
+the initial condition.  (Note this is an integer specifying the time level, not
+the actual time.)
+
+Forcing files are new in CISM 2.0 and are input files that are read on every 
+time step to allow time-dependent
+forcing to be applied during a simulation.  Any inputtable fields can be included
+in forcing files.  Forcing files should have a ``time'' field which is used to 
+assign values to each field in the file during the simulation.  Forcing is applied 
+in a piecewise constant fashion -- the most recent time slice in the forcing file prior
+to the current model time is used on each time step.  (Linearly interpolatation of
+forcing may be available in the future but is not currently implemented.)
+Note that if a field is present in both an input file and in a
+forcing file at the start time, the value in the forcing file will overwrite the value
+from the input file because forcing files get read after input files.
+Forcing files are processed in the same order they occur in the configuration file, 
+on each time step thus potentially overwriting previously loaded fields from other
+forcing files.
 
 \begin{center}
   \tablefirsthead{%
@@ -472,7 +496,7 @@ NetCDF I/O can be configured in the main configuration file or in a separate fil
     \hline}
   \tablelasttail{\hline}
   \begin{supertabular*}{\textwidth}{@{\extracolsep{\fill}}|l|p{11cm}|}
-%%%% defaults
+%%%% CF defaults
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF default]}}\\
     \hline
@@ -483,16 +507,33 @@ NetCDF I/O can be configured in the main configuration file or in a separate fil
     \texttt{references} & References that might be useful\\
     \texttt{comment} & A comment, further describing the experiment\\
     \hline
-%%%% 
+
+%%%% CF Input
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF input]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.}\\
     \hline
     \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
-    \texttt{time}& The time slice to be read from the netCDF file. The first time slice is read by default.\\
+    \texttt{time}& The time slice (not actual time) to be read from the netCDF file. The first time slice is read by default.\\
     \hline
-%%%% 
+
+%%%% CF Forcing
+    \hline
+    \hline
+    \hline
+    \multicolumn{2}{|l|}{\texttt{[CF forcing]}}\\
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file. }\\
+    \hline
+    \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
+    \hline
+
+%%%% CF output
+    \hline
+    \hline
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF output]}}\\
     \hline
