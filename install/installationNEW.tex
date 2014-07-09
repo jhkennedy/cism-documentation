@@ -609,8 +609,8 @@ Trilinos is a modern, open source, C++ based library of parallel nonlinear and l
 preconditioning and mesh-partitioning tools, and much more. It can be downloaded for free 
 \href{http://trilinos.sandia.gov/index.html}{here} (the software is free, but you are 
 required to enter your email address to download it). The documentation below assumes 
-that you are working with version 10.12.* and was specifically tested using version 10.12.2. 
-\textbf{SP: update this info}. 
+that you are working with version 11.4.* and was specifically tested using version 11.4.3. 
+
 Building Trilinos requires Cmake version 2.8 or later, which ideally you've already 
 installed as discussed above. Note that Trilinos is not needed to run the default 
 parallel, higher-order momentum balance model, but it may be useful for tackling 
@@ -629,9 +629,9 @@ The easiest way to satisfy this requirement is to have separate ``source'', ``bu
 for example, in \texttt{/usr/local/}, you could set up the following three directories:
 
 \begin{verbatim}
-trilinos-10.10.2-Build/
-trilinos-10.10.2-Install/
-trilinos-10.10.2-Source/
+trilinos-11.4.3-Build/
+trilinos-11.4.3-Install/
+trilinos-11.4.3-Source/
 \end{verbatim}
 
 The ``source'' directory will be created on its own when you uncompress the tar.gz archive 
@@ -643,13 +643,16 @@ To configure the Trilinos build, you will need to execute a Cmake configure scri
 Sample configure scripts for a number of standard platforms are included in the ``sampleScripts''
  directory under the root level of the Trilinos source code. 
 Additionally, the CISM code includes examples of Trilinos configure scripts (``do-configure'') 
-for use with CISM in the \texttt{utils} directory. 
-\textbf{SP/MH we should include a working script (for Mac and Linux builds) with the code. We could include this under the /utilities/ dir?}
+for use with CISM for both Linux and Mac platforms in the 
+\texttt{utils/trilinos_config_scripts_examples} directory. 
+We recommend starting with one of those example scripts and modifying it as
+necessary to work on your system.
 
-Note that the paths to both the ``source'' and ``install'' directories are specified within the ``do-configure'' scripts. Here, those directories are both assumed to live within \texttt{/usr/local/}. 
+Note that the paths to both the ``source'' and ``install'' directories are specified within the ``do-configure'' scripts. In these instructions, those directories are both assumed to live within \texttt{/usr/local/},
+but other locations are fine to use too (e.g., in your home/User directory).
 
 \begin{mdframed}[style=mac] % V==============MAC================V
-Also note the explicit path in the third to last line, 
+Also note the explicit path in the MPI lines, e.g.,
 
 \begin{verbatim}
 -D MPI_EXEC="/opt/local/openmpiexec" \
@@ -658,12 +661,12 @@ Also note the explicit path in the third to last line,
 Since some Macs may come with their own pre-installed OpenMPI libraries, it is important here to specify the path to the version we previously installed using Macports.
 \end{mdframed}              % ^==============MAC================^
 
-Find the example script most appropriate for your system, copy it to the \texttt{trilinos-10.10.2-Build} directory, and modify it if necessary (e.g., adjust paths, compiler locations, etc.).
+Find the example script most appropriate for your system, copy it to the \texttt{trilinos-11.4.3-Build} directory, and modify it if necessary (e.g., adjust paths, compiler locations, etc.).
 Execute it with: 
 
 \texttt{./do-cmake}
 
-from within your \texttt{trilinos-10.10.2-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
+from within your \texttt{trilinos-11.4.3-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
 
 \begin{verbatim}
 ...
@@ -676,14 +679,14 @@ Finished configuring Trilinos!
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: /Users/you/software/trilinos/trilinos-10.10.2-Build
+-- Build files have been written to: /usr/local/trilinos-11.4.3-Build
 \end{verbatim}
 
 It is a good idea to scan the output while the ``do-cmake'' script is executing, 
 for example to ensure the configure process is picking up the compilers you specified 
 (e.g., it is using the Macports versions as opposed to some Mac default versions that 
 might also be on your system). Once the code is configured successfully, build the libraries 
-from within the \texttt{trilinos-10.10.2-Build} directory by typing:
+from within the \texttt{trilinos-11.4.3-Build} directory by typing:
 
 \texttt{make} (or \texttt{sudo make} if necessary) 
 
@@ -733,7 +736,7 @@ This will build the actual Trilinos libraries in the path specified in the
 \end{verbatim} 
 
 line of your ``do-cmake'' script (above). For this example, those libraries will be 
-installed in: \texttt{/usr/local/trilinos-10.10.2-Install}
+installed in: \texttt{/usr/local/trilinos-11.4.3-Install}
 
 After successfully building Trilinos, create an environment variable called \texttt{GLIMMER\_TRILINOS\_DIR}
 so the CISM build process can find the Trilinos installation.  For example, if you 

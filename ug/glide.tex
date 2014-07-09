@@ -479,7 +479,8 @@ forcing file at the start time, the value in the forcing file will overwrite the
 from the input file because forcing files get read after input files.
 Forcing files are processed in the same order they occur in the configuration file, 
 on each time step thus potentially overwriting previously loaded fields from other
-forcing files.
+forcing files.  The ``dome'' test case (\texttt{tests/higher-order/dome}) includes 
+an example of how to use time-dependent forcing.
 
 \begin{center}
   \tablefirsthead{%
@@ -526,7 +527,7 @@ forcing files.
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF forcing]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file. }\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
     \hline
     \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
     \hline
