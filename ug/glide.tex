@@ -112,24 +112,24 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% dycore
     \texttt{dycore} & 
       {\bf TODO: Add Felix, Bisicles?} \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & Glide (serial, 3d, Shallow-Ice-Approximation dynamical core)\\
       1* & Glam (parallel, 3d, FDM, 1st-order-accurate dynamical core)  \\
       2* & Glissade (parallel, 3d, FEM, 1st-order-accurate dynamical core)  \\
     \end{tabular}\\
 %% evolution
     \texttt{evolution} & 
-    \begin{tabular}[t]{ll}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & pseudo-diffusion (Glide only)\\
       1 & ADI scheme  (Glide only)\\
       2 & diffusion (Glide only)\\
       3* & incremental remapping (Glam/Glissade only) \\
       4* & first-order upwind (Glam/Glissade only) \\
-      5* & evolve without changing ice thickness (Glam/Glissade only) \\
+      5* & evolve without changing ice thickness (Glam/Glissade only)  This can be useful when it is desired to run the model with a fixed geometry.  A useful example is during a temperature spinup. Note that on each time step this option evolves the geometry and tracers using incremental remapping and then resets geometry to its old value, so that tracer advection can still occur within a fixed geometry.  Therefore it is still subject to the advective CFL condition.\\
     \end{tabular}\\
 %% temperature
     \texttt{temperature} & 
-    \begin{tabular}[t]{cl}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & Set each ice column to local surface air temperature \\
       {\bf 1} & prognostic temperature calculation \\
       2 & held steady at initial value \\
@@ -137,21 +137,21 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\
 %% temperature init
     \texttt{temp\_init} & 
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & initial temperatures isothermal at 0 deg. C\\
       {\bf 1} & initial column temperatures set to atmos. temperature \\
       2 & initial column temperatures linearly interpolated from atmos. temperature \\
     \end{tabular}\\
 %% flow law
     \texttt{flow\_law} &  
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0}  & constant (using the value of default\_flwa)\\
       1 & temp. dependent, Patterson and Budd (temp.=-5degC)\\
       2 & temp. dependent, Patterson and Budd (function of variable temp.)\\
     \end{tabular}\\
 %% basal water
     \texttt{basal\_water} & 
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & none \\
       1 & local water balance\\
       2 & Compute the steady-state, routing-based, basal water flux and water layer thickness \\
@@ -159,14 +159,14 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\
 %% basal mass balance
     \texttt{basal\_mass\_balance} & 
-    \begin{tabular}[t]{cl}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & ignore basal melt rate in mass balance calculation \\
       1 & include basal melt rate in mass balance calculation \\
     \end{tabular}\\
 %% slip coefficient
     \texttt{slip\_coeff} & 
         slip coefficient for Glide only \\ &
-    \begin{tabular}[t]{cl}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & zero (no sliding) \\
       1 & set to a non--zero constant everywhere\\
       2 & set to constant where basal water (bwat) is nonzero\\
@@ -177,7 +177,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% marine margin
     \texttt{marine\_margin} & 
   {\bf TODO: KEEP ALL OF THESE?} \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & ignore marine margin\\
       {\bf 1} & Set thickness to zero if floating\\
       2 & Lose fraction of ice when edge cell\\
@@ -187,26 +187,26 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\
 %% vertical integration
     \texttt{vertical\_integration} & 
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & standard integration\\
       1 & constrained so that upper boundary kinematic velocity is obeyed\\
     \end{tabular}\\
 %% geothermal heat flux
     \texttt{gthf} &  
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & prescribed, uniform geothermal heat flux \\
       1 & read 2d geothermal heat flux field from input file \\
       2 & calculate geothermal heat flux using 3d diffusion model \\
     \end{tabular}\\
 %% isostasy
     \texttt{isostasy} &  
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & no isostatic adjustment \\
       1 & compute isostatic adjustment using lithosphere / asthenosphere model \\
     \end{tabular}\\
 %% topography
     \texttt{topo\_is\_relaxed} &  
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & relaxed topography is read from a separate variable\\
       1 & first time slice of input topography is assumed to be relaxed\\
       2 & first time slice of input topography is assumed to be in isostatic
@@ -215,14 +215,14 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% periodicity
     \texttt{periodic\_ew} & 
   {\bf TODO: Is this still used?  If so, do we need to add perdiodic\_ns?} \\&
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & switched off\\
       1 & periodic lateral EW boundary conditions (Glide SIA dycore only) \\
     \end{tabular}\\
 %% restart
     \texttt{restart} &
     Note: the alternate keyword {\bf hotstart} is retained for backwards compatibility. \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & normal start (initial guesses taken from input file or, if absent, using default options)\\
       1 & restart model using input from previous run (do not calc., e.g., temp., rate factor, or vel. fields)  
            Specific fields required for restart or dependent on options chosen.  (Specify 'restart' as a variable 
@@ -243,14 +243,14 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \hline
 %% which_ho_nonlinear
     \texttt{which\_ho\_nonlinear} & 
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & treat nonlinearity in momentum balance using Picard iteration \\
       1 & treat nonlinearity in momentum balance using Jacobian-Free Newton-Krylov iteration  \\
     \end{tabular}\\     
 %% which_ho_sparse
     \texttt{which\_ho\_sparse} & 
 {\bf TODO: Bill, check these descriptions for accuracy?  Also, do we need notes about which options are glissade vs. glam specific?} \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       -1 & Solve sparse linear system using SLAP library with incomplete Cholesky method\\
       {\bf 0} & Solve sparse linear system with incomplete LU-preconditioned biconjugate gradient method\\
       1 & Solve sparse linear system with incomplete LU-preconditioned GMRES method\\
@@ -260,7 +260,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \end{tabular}\\     
 %% which_ho_efvs
     \texttt{which\_ho\_efvs} & 
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & use a constant value for the effective viscosity: 2336041.42829 Pa yr (Value used by ISMIP-HOM Test F)\\
       1 & set the effective viscosity to a value based on the flow rate factor: efvs $= 0.5 * A^{-1/n}$\\
       {\bf 2} & use the effective strain rate for the calc. of the effective viscosity (i.e., full nonlinear treatment) \\
@@ -268,14 +268,14 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% which_disp
     \texttt{which\_disp} & 
 {\bf TODO: Should this be moved from ho\_options to options?} \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & calculate dissipation in temperature equation assuming SIA ice dynamics \\
       1* & calculate dissipation in temperature equation assuming 1st-order ice dynamics \\
     \end{tabular}\\    
 %% which_ho_babc
     \texttt{which\_ho\_babc} & 
         Implementation of basal boundary condition in higher-order dycore (Calculation of `beta' field.) {\bf TODO: include all of these?} \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & constant value \\
       1 & specify some simple pattern (hardcoded). Useful for debugging\\
       2 & read yield stress (in Pa) from input field `mintauf' to simulate sliding 
@@ -293,7 +293,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \texttt{which\_ho\_resid} &
      Residual calculation method for the velocity solver in higher-order dycore
      (iterations halt once residual falls below a specified absolute or relative value) \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & use the maximum value of the normalized velocity vector update, defined by 
       $r = \frac{|vel_{k-1} - vel_k|}{vel_k}$ \\
       1 & as in option 0 but omitting the basal velocities from the comparison
@@ -304,7 +304,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% which_ho_approx
     \texttt{which\_ho\_approx} &
      Which Stokes approximation to use with the glissade dycore \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       -1 & Shallow-ice approximation, Glide-type calculation (uses glissade\_velo\_sia) \\
       0 & Shallow-ice approximation, vertical-shear stresses only (uses glissade\_velo\_higher) \\
       1 & Shallow-shelf approximation, horizontal-plane stresses only (uses glissade\_velo\_higher) \\
@@ -313,7 +313,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% which_ho_precond
     \texttt{which\_ho\_precond} &
      Which Stokes preconditioner to use in the glissade dycore \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & No preconditioner \\
       1 & Diagonal preconditioner \\
       {\bf 2} & Physics-based shallow-ice preconditioner \\
@@ -321,7 +321,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
 %% which_ho_gradient
     \texttt{which\_ho\_gradient} &
      Which gradient operator to use in the glissade dycore \\ &
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & Centered gradient \\
       {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0)}\\
     \end{tabular}\\  
@@ -338,7 +338,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \hline
 %% external_dycore_type
     \texttt{external\_dycore\_type} & 
-    \begin{tabular}[t]{cp{0.85\linewidth}}
+    \begin{tabular}[t]{lp{0.85\linewidth}}
       1 & Use BISICLES external dycore \\
       2 & Use Albany-FELIX external dycore \\
     \end{tabular}\\     
@@ -408,11 +408,11 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Options related to isostasy model.  Ignored unless \texttt{isostasy} = 1.  {\bf TODO: Need comments about which combinations are valid.} }\\
     \hline
-    \texttt{lithosphere} & \begin{tabular}[t]{cp{0.9\linewidth}} 
+    \texttt{lithosphere} & \begin{tabular}[t]{lp{0.9\linewidth}} 
       {\bf 0} & local lithosphere, equilibrium bedrock depression is found using Archimedes' principle \\
       1 & elastic lithosphere, flexural rigidity is taken into account
     \end{tabular} \\
-    \texttt{asthenosphere} & \begin{tabular}[t]{cp{\linewidth}}
+    \texttt{asthenosphere} & \begin{tabular}[t]{lp{\linewidth}}
       {\bf 0} & fluid mantle, isostatic adjustment happens instantaneously \\
       1 & relaxing mantle, mantle is approximated by a half-space \\
     \end{tabular} \\    
