@@ -1,7 +1,7 @@
 
 \section{Introduction}
 %
-GLIMMER-CISM\footnote{{\it GLIMMER} was originally an acronym, reflecting the project's origin within the GENIE climate model. The meaning of the GLIMMER acronym is no longer important but reflects the current codes origins within the GLIMMER project. CISM stands for Community Ice Sheet Model, and reflects the project's evolution towards a fully supported, coupled component of the Community Earth System Model, or CESM. {\bf SP: add some links here?}} is a numerical model - a collection of software libraries, utilities and drivers  - used to simulate ice sheet evolution. GLIMMER-CISM is modular in design and coded almost entirely in standards-complient Fortran 95 \textbf{SP:should this be F90?}. It has two different "dynamical cores", which solve the equations for the conservation of mass, energy, and momentum. The serial, shallow-ice representation for ice dynamics from the original GLIMMER model is still supported through the GLIDE dynamical core \textbf{SP: pointer to correct chapter here}. New with GLIMMER-CISM is the GLISSADE dynamical core, which supports higher-order ice dynamics, scalable parallelism, and includes software links for coupling to robust, third-party solver libraries \textbf{SP: pointer to correct chapter here}. 
+GLIMMER-CISM\footnote{{\it GLIMMER} was originally an acronym, reflecting the project's origin within the GENIE climate model. The meaning of the GLIMMER acronym is no longer important but reflects the current codes origins within the GLIMMER project. CISM stands for Community Ice Sheet Model, and reflects the project's evolution towards a fully supported, coupled component of the \href{http://www2.cesm.ucar.edu/}{Community Earth System Model}, or CESM. {\bf SP: add some links here?}} is a numerical model - a collection of software libraries, utilities and drivers  - used to simulate ice sheet evolution. GLIMMER-CISM is modular in design and coded almost entirely in standards-complient Fortran 95 \textbf{SP:should this be F90?}. It has two different "dynamical cores", which solve the equations for the conservation of mass, energy, and momentum. The serial, shallow-ice representation for ice dynamics from the original GLIMMER model is still supported through the GLIDE dynamical core \textbf{SP: pointer to correct chapter here}. New with GLIMMER-CISM is the GLISSADE dynamical core, which supports higher-order ice dynamics, scalable parallelism, and includes software links for coupling to robust, third-party solver libraries \textbf{SP: pointer to correct chapter here}. 
 %
 \section{Overview}
 %
@@ -14,12 +14,11 @@ GLIMMER-CISM consists of several components:
 Earth Systems Model, GLINT allows the core ice model to be coupled to a variety of global climate models, or indeed any source of time-varying climate data on a lat-long grid. An example driver is provided to illustrate the use of GLINT, which uses temperature and precipitation data to drive a positive degree day (PDD) mass-balance model.
 \item {\bf shared, high-hevel code:} I'm thinking of stuff like derived types (glide types), config file parser (glide setup), i/o, build system files, etc. Would rather avoid giving it a cute name (like Glum, which I think is supposed to encompass this kind of stuff, but sounds stupid)
 \item {\bf SIMPLE:} Simple climate drivers that implement the experiments of the first phase of the EISMINT project, with idealised geometry. \textbf{SP: suggest we call this something else? Simple doesn't really make much sense any more. Should this whole item simply be renames "test cases"?}
-
-\item {\bf needs updating below here, or removing (I've moved some of this stuff into the new list above ...}
-\item {\bf EIS:} {\bf E}dinburgh {\bf I}ce {\bf S}heet climate driver based on a parameterisation of the equilibrium line altitude, sea-level surface temperatures and eustatic sea-level change. \textbf{SP: Not used/supported anymore - remove?}
-\item {\bf EISMINT3:} An implementation of a later part of the EISMINT project, concerning the modelling of the Greenland ice sheet. \textbf{SP: Not used/supported anymore - remove?}
-\item {\bf GLUM:} {\bf G}Limmer {\bf U}seful {\bf M}odules, various utility procedures used by the other components. \textbf{SP: mentioned / renamed above - remove?}
-\item Visualisation programs using GMT\footnote{Generic Mapping Tools}. \textbf{SP: Not used/supported anymore - remove?}
+%% SP: commented out the remainder, since we aren't supporting these anymore (and GLUM is included above, w/o the silly name)
+%\item {\bf EIS:} {\bf E}dinburgh {\bf I}ce {\bf S}heet climate driver based on a parameterisation of the equilibrium line altitude, sea-level surface temperatures and eustatic sea-level change. \textbf{SP: Not used/supported anymore - remove?}
+%\item {\bf EISMINT3:} An implementation of a later part of the EISMINT project, concerning the modelling of the Greenland ice sheet. 
+%\item {\bf GLUM:} {\bf G}Limmer {\bf U}seful {\bf M}odules, various utility procedures used by the other components. 
+%\item Visualisation programs using GMT\footnote{Generic Mapping Tools}. 
 \end{itemize}
 %
 %\begin{figure}[htbp]
