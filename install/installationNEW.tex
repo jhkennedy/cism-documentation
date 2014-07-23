@@ -3,21 +3,20 @@
 
 \textbf{SP: I've started to update this section using the old text here as a template and replacing where appropriate.}
 
-GLIMMER-CISM is a relatively complex system of libraries and programs which build on other libraries. This section documents how to get GLIMMER-CISM and its prerequisites, compile and install it. Please report problems and bugs to the \href{http://link-here}{GLIMMER-CISM mailing list}. \textbf{SP: We need to update the link here so that it points to whatever we're going to use for bug tracking, etc.}
+GLIMMER-CISM is a relatively complex system of libraries and programs which build on other libraries. This section documents how to get GLIMMER-CISM and its prerequisites, compile and install it. Please report problems and bugs to the \href{http://link-here}{GLIMMER-CISM mailing list}. \textbf{SP: We need to update the link here so that it points to whatever we're going to use for bug tracking, etc. I think we decided to use CESM boards for this. Check w/ Bill S. for confirmation and links.}
 
-GLIMMER-CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. On UNIX / LINUX systems \href{http://www.gnu.org/software/make/}{GNU make} is suggested, since the Makefiles may rely on some GNU make specific features. \textbf{SP: Should this now be pointing to cmake instead? Do we still use gnu make? Is macports dependent on it? Are other things we install dependent on it?} There are two ways of getting the source code:
+GLIMMER-CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. For UNIX and LINUX based systems, support for the use of \href{http://update.this.link.to.cmake/}{Cmake} is provided. Sample build scripts for a number of standard architectures are included, as are working build scripts for a number of large-scale, high-performance-computing architectures (e.g., Yellowstone at -where?, Titan at OLCF, and Hopper at NERSC). There are two ways of getting the source code:
 
 \begin{enumerate}
-\item download a {\it released} version from the \href{http://fix.this.link}{GLIMMER-CISM website}\footnote{\texttt{http://fix.this.link}}, or \textbf{SP: We'll need to update this link}
-\item download the latest developers' version from \href{http://fix.this.link/}{SomeRepo} using \href{http://some.repo.software}{SomeRepoSoftware}. \textbf{SP: Do we want to support this or just support the download-a-tag option?}
+\item download a {\it released} version from the \href{http://fix.this.link}{GLIMMER-CISM website}\footnote{\texttt{http://fix.this.link}}, or \textbf{SP: We'll need to update this link to Github site, or to Oceans11 URL}
+\item download the latest developers' version from \href{http://fix.this.link/}{SomeRepo} using \href{http://some.repo.software}{SomeRepoSoftware}. \textbf{SP: If we support this, do we need to include a quick-and-dirty list of instructions for using Git?}
 \end{enumerate}
 
-For beginners, the latest release tag is recommended. More experienced users may want to download directly from the code repository, as it will have all the latest bug-fixes and new features. \textbf{SP: again, only if we support this option.}
+For beginners, the latest release tag is recommended. More experienced users may want to download directly from the code repository, as it will have all the latest bug-fixes and new features.
 
-In either case, a Fortran90 compiler is required.  Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, which GLIMMER-CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution (used for analyzing dependencies and for automatically generating parts of the code) with a number of specific toolboxes. Users who want to run the code in parallel will also need to install MPI and users who want access to the Trilinos solver library will need to download and build Trilinos, and link to it when building GLIMMER-CISM. Finally, you will need Cmake to compile the code and link to the various third-party libraries. \textbf{SP: I'm still not sure how dependent we are standard gnu make at this point. I'm guessing that macports will still need it for various things, so I'm inclined to leave it in there as part of the list of necessary software.} 
+In either case, a Fortran90 compiler is required.  Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, which GLIMMER-CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution (used for analyzing dependencies and for automatically generating parts of the code) with a number of specific toolboxes. Users who want to run the code in parallel will also need to install MPI and users who want access to the \textit{Trilinos} solver library will need to download and build \textit{Trilinos}, and link to it when building GLIMMER-CISM. Finally, you will need Cmake to compile the code and link to the various third-party libraries. \textbf{SP: I'm still not sure how dependent we are standard gnu make at this point. Can we remove all references to gnu make or does the Macports / Ubuntu package manager need it?} 
 
-
-If you have not done so already, check out the tagged release version of GLIMMER-CISM at the CISM SVN repository: \textbf{SP: or whatever the relevant URL info is} \texttt{svn co https://svn-cism-model.cgd.ucar.edu/glimmer-cism2/branches/seacism}. Or, download a tar.gz archive of the source code \href{some-other-link.html}{here}. \textbf{SP: some additional info here about how / where to explode your tarball?}
+If you have not done so already, check out the tagged release version of GLIMMER-CISM at the CISM Github repository: \textbf{SP: or whatever the relevant URL info is} \texttt{relevant git command here?}. Or, download a tar.gz archive of the source code at \href{some-other-link.html}{here}. \textbf{SP: some additional info here about how / where to explode your tarball?}
 
 
 
@@ -33,18 +32,18 @@ For each step we give specific instructions for both Mac OS X using MacPorts (in
 Linux, specifically Ubuntu 12.10 (in blue boxes).  For users of different but similar systems,
 hopefully these instructions can be used as a guide.
 
-CISM can be installed in both serial and parallel configuration.  The parallel mode
+CISM can be installed in either a serial or parallel configuration. The parallel mode
 allows the model to be run on multiple processors which can greatly speed up execution.
 This is a common configuration to use on supercomputing clusters, but can also be 
 convenient on modern desktops and laptops which often have four or more cores available.
 However, the parallel build requires additional supporting software, so we first 
 detail how to build serial CISM.  For newer users, it is recommended to first build
 and successfully run serial CISM before moving on to the parallel build.  \textbf{Note
-that the Shallow Ice Approximation dycore (Glide) can only run on a single processor, 
-even with a parallel build.}
+that currently, the Shallow Ice Approximation dycore (Glide) can only run on a single processor, 
+even when the code is built with full parallel support.}
 
-Note that these instructions assume the user has administrative privileges for
-installing new software/packages (note the extensive use of \texttt{sudo}).  
+The instructions below assume the user has administrative privileges for
+installing new software (note the extensive use of \texttt{sudo}).  
 If you are working on a shared machine without
 administrative privileges, you might proceed by assuming all needed packages are present and 
 continue to the CISM installation section.  You can then refer back to this
@@ -783,5 +782,18 @@ if you have 4 processors available (or as many processors as you would like to u
 See Section \ref{serial-build} for details about customizing the build process, and 
 see Section \ref{sec:testcases} for details about running the model with standard
 test cases.
+
+
+% =====================================
+% =====================================
+\section{Next Steps}
+% =====================================
+% =====================================
+
+Here, we should close the section with some instructions on what to do next ... Now that you've got a successful build, 
+you can either read more about the details of ice sheet modeling, or how the code works, or you can proceed directly 
+to chapter XX to try and run some of the standard test cases.
+
+
 
 
