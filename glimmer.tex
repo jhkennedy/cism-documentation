@@ -60,7 +60,7 @@
 {}
 
 \mainmatter
-%\part{User Documentation}
+\part{User Documentation}
 
 \chapter{Introduction and Overview}
 \newcommand{\dir}{intro}
@@ -91,8 +91,7 @@
 \renewcommand{\dir}{tests}
 \input{\dir/tests.tex}
 
-%% Old documentation below here
-\chapter{ \Large *** NOTE: below here, the documentation is simply a copy of the old documentation, with edits as noted ***}
+%% Old documentation below here, with edits are noted
 
 \chapter{User Guide}
 \renewcommand{\dir}{ug}
@@ -105,28 +104,38 @@
 %\part{Developer Documentation}
 
 \chapter{Numerics}
-\Large *** NOTE: everything in this section was moved into the current chapter describing the Glide dycore ***
+** NOTE: everything in this section was moved into the current chapter describing the Glide dycore **
 %\renewcommand{\dir}{num}
 %\input{\dir/num.tex}
 
 \chapter{Developer Guide}
-\renewcommand{\dir}{dg}
-\input{\dir/dg.tex}
+** Useful stuff from here was stripped out and is now in appendices or elsewhere **
+%\renewcommand{\dir}{dg}
+%\input{\dir/dg.tex}
 
-\renewcommand{\dir}{ext}
-\input{\dir/ext.tex}
+%% SP: we removed support for the "extensions", and they weren't coming up in the pdf for some reason anyway
+%\renewcommand{\dir}{ext}
+%\input{\dir/ext.tex}
 
 \part{Appendix}
 \appendix
 \renewcommand{\dir}{ug}
 \chapter{netCDF Variables}
 \input{\dir/varlist.tex}
-\chapter{The GLIMMER API}
-\input{\dir/glum_api.tex}
-\input{\dir/glide_api.tex}
-\input{\dir/glint_api.tex}
+** Commented out the stuff on the GLIMMER API for now **
+%\chapter{The GLIMMER API}
+%\input{\dir/glum_api.tex}
+%\input{\dir/glide_api.tex}
+%\input{\dir/glint_api.tex}
 \renewcommand{\dir}{ext}
 \input{\dir/ext-app.tex}
+
+\chapter{Configuration File}
+\renewcommand{\dir}{dg}
+\input{\dir/config_file.tex}
+
+\chapter{Input and Output (I/O)}
+\input{\dir/netcdf.tex}
 
 \bibliography{glimmer}
 \end{document}
