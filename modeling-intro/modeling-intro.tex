@@ -1,5 +1,6 @@
 
-In this chapter we give an introduction to ice dynamics and the governing conservation equations.
+In this chapter we give an introduction to ice dynamics and the other conservation equations
+that must be accounted for when simulating glacier and ice sheet evolution.
 
 Ice sheets are key components of Earth's climate system. They contain
 nearly all of the planet's fresh water, changes in their volume have an
@@ -12,152 +13,140 @@ and Antarctic ice sheets have the potential to play important roles in
 climate change.
 
 A numerical model is a discrete approximation of a continuous process.
-The approximation is discrete due to the finite nature of a computer's
-precision. The underlying process is continuous because it is commonly
-formulated in terms of partial or ordinary differential equations.
-Numerical models can not be solved until the boundary conditions and
+The approximation is discrete, due to both the finite nature of a computer's
+precision and the finite problem size that can be tackled using a computer. 
+The underlying process is continuous because it is commonly
+formulated in terms of ordinary or partial differential equations (ODEs and PDEs,
+respecitively). Numerical models can not be ``solved" until the boundary and
 initial conditions are specified. Such models may be very simple such as
-a \href{Wikipedia:Harmonic oscillator}{Wikipedia:Harmonic oscillator},
-or very complex, as in a
-\href{Wikipedia:Global climate model}{Wikipedia:Global climate model}.
+a \href{http://en.wikipedia.org/wiki/Harmonic_oscillator}{harmonic oscillator},
+or very complex, as in a \href{http://en.wikipedia.org/wiki/General_Circulation_Model}
+{General Circulation Model} (GCM; also referred to as a Global Climate Model).
 
-The model we will use is called CISM. It has its basis in a set of
-programs and climate ``drivers'' built over many years by a research
-group at the \href{http://www.bris.ac.uk/}{University of Bristol}, led
-by Tony Payne. Historically, the effort was called
-\href{http://forge.nesc.ac.uk/projects/glimmer/}{Glimmer}. More
-recently, a collaborative project has extended the effort in many novel
-and exciting ways. This is called the Community Ice Sheet Model, or
-\href{http://websrv.cs.umt.edu/isis/}{CISM}.
-
-
+The ``land ice" (encompassing glaciers, ice caps, and ice sheets) model we will describe 
+has its basis in a set of programs and climate ``drivers'' built over many years. It was 
+originally started by Tony Payne at the University of Bristol (U.K) and was historically 
+referred to as \href{https://github.com/glimmer-cism}{``Glimmer"}. 
+More recently, a collaborative project involving a number of U.S. and U.K. laboratories and
+universities (see author list) has extended the effort in many novel and exciting ways. This effort is
+referred to as \href{http://our.lanl.url.here}{GLIMMER-CISM}, with CISM standing for the Community 
+Ice Sheet Model. The latter signifies the projects goals and evolution towards being a coupled
+component of the \href{http://www2.cesm.ucar.edu/}{The Community Earth System Model} (or CESM). 
+\textbf{SP: I wonder if we should be calling this just CISM throughout now; it will be confusing for
+folks if the link for the "Glimmer" code points to a repo called "Glimmer-CISM", and the link to the
+newer "Glimmer-CISM" code we discuss here, points to a repo called just "CISM".}
 
 % ========================================
 \subsection{Conservation equations}
 
-The mathematical descriptions of physical systems we encounter in Earth
-science problems begin from statements requiring the conservation of
-energy, momentum, or mass.
+For the majority of the physical systems encountered in Earth science problems, the first step in modeling is a
+mathematical description about the conservation of energy, momentum, and mass. Only after that description is
+laid out do we turn to the question of approximating those equations in a form that can be solved on a computer. 
 
 % ========================================
 \subsubsection{Integral form}
 
-The mathematical formulation of conservation can be arrived at by
-considering the change in a quantity $\phi$ that is known in a
-\textbf{control} volume $V$. The
-\href{Wikipedia:control volume}{Wikipedia:control volume} is enclosed by
-a surface $S$, with outward positive unit vector $\hat n$ normal to $S$.
-
+The mathematical formulation of conservation can be arrived at by considering the change in a quantity 
+$\phi$ that is known within a \textbf{control} volume $V$. The \href{http://en.wikipedia.org/wiki/Control_volume}
+{control volume} is enclosed by a surface $S$, with the outward positive unit vector $\hat n$, normal to $S$.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=0.9\columnwidth]{\dir/figs/ControlVolume.eps}
+    \includegraphics[width=0.7\columnwidth]{\dir/figs/ControlVolume.eps}
   \end{center}
   \caption{Diagram of control volume and associated quantities.}
   \label{fig:controlvol}
 \end{figure} 
 
-
-The value of $\phi$ within $V$ may change over time if
+The value of $\phi$ within $V$ may change over time if:
 
 \begin{enumerate}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  there is a flux through $S$. The flux is partitioned into two parts,
-  one due to \url{Wikipedia:diffusion} and another due to
-  \url{Wikipedia:advection}.
+  There is a flux of $\phi$ through $S$. The flux is partitioned into two parts,
+  one due to \href{http://en.wikipedia.org/wiki/Diffusion}{diffusion} and another 
+  due to \href{http://en.wikipedia.org/wiki/Advection}{advection}.
 \item
-  Creation or destruction of $\phi$ within $V$.
+  $\phi$ is created or destroyed within $V$.
 \end{enumerate}
 
-Formally, time rate of change in $\phi$ within $V$ is written:
+Formally, the time rate of change in $\phi$ within $V$ is written:
 
-$
+\begin{equation}
 {\frac{ \partial }{ \partial t}} { \int }_{ V} \phi dV~ = ~ -{ \int }_{ S} {\mathbf F}
     {\cdot} \hat n~ dS~ - ~{ \int }_{ S} \phi {\mathbf u} {\cdot} \hat n ~ dS~
     + ~{ \int }_{ V} HdV
-$
+    \label{eq:intcons}
+\end{equation}
 
 where ${\mathbf F}$ represents the flux due to diffusion
-($\mathbf{F} \propto \nabla \phi$), $\phi {\mathbf u}$ represents
-velocity field \emph{\href{Wikipedia:advection}{advecting}} $\phi$, $H$
-represents a source (or sink) of $\phi$. Vector quantities are
-represented in \textbf{boldface}. The negative signs in front of the
-first two terms on the right-hand side indicate that an outward flux
-results in decrease of $\phi$ in the volume enclosed by $S$.
+($\mathbf{F} \propto \nabla \phi$), $\phi {\mathbf u}$ represents a velocity field 
+\emph{advecting} $\phi$, and $H$ represents a source (or sink) of $\phi$. Vector quantities are
+represented in \textbf{boldface}. The negative signs in front of the first two terms on the right-hand 
+side indicate that an outward flux results in a decrease in $\phi$ within the volume enclosed by $S$.
 
-This statement of conservation of $\phi$ in the unit volume $V$ is
-always true, independent of the size of $V$ and even if the fields
-enclosed by $S$ are not continuous. This is the case because we
-integrate over $V$. It is important to note that that information on
-spatial scales smaller than $V$ is lost in the integration.
+This statement of conservation of $\phi$ in the unit volume $V$ is always true, independent of the 
+size of $V$ and even if the fields enclosed by $S$ are not continuous (this is the case because we
+integrate over $V$). It is important to note that that any information on spatial scales smaller than $V$ 
+is lost in the process of integration.
 
 % ========================================
 \subsubsection{Derivative form}
 
-Numerical models are often easier to formulate from the derivative form
-of the conservation equation. This requires the derivatives of $\phi$ to
-exist within $V$. This requirement allows the integral form of the
-conservation equation to be written as partial differential equations
-which are upheld with in the control volume.
+Numerical models are often easier to formulate from the derivative form of the conservation equation, and this
+is more often the form in which conservation equations are written. This requires the derivatives of $\phi$ to exist 
+within $V$, which in turn allows the integral form of the conservation equation to be written as partial differential 
+equations, which are upheld within the control volume.
 
-Begin with the terms describing diffusive and advective fluxes into or
-out of the control volume. The
-\href{Wikipedia:divergence theorem}{Wikipedia:divergence theorem} states
-that
+Begin with the terms describing diffusive and advective fluxes into or out of the control volume. The
+\href{http://en.wikipedia.org/wiki/Divergence_theorem}{divergence theorem} states that
 
-$
+\begin{equation}
 { \int }_{S} {\mathbf F} {\cdot} \hat{n} ~dS~ = ~{ \int }_{V} \nabla 
     {\cdot} {\mathbf F} ~dV. 
-$
+\end{equation}
 
-Or, adapting the notation that the subscript indicates a single
-component of a vector, and that repeated subscript indices in a single
-term are to be summed,
+Or, adapting the notation that the subscript indicates a single component of a vector, and that repeated subscript 
+indices in a single term are to be summed,
 
-$
+\begin{equation}
 { \int }_{ S} {\mathbf F}_{ j} ~n_{ j} ~dS~ = ~{ \int }_{ V} {\frac{
     \partial {\mathbf F}_{ j} }{ \partial x_{ j} }} ~dV.
-$
+\end{equation}
 
-Using the divergence theorem, the surface integrals over fluxes may be
-replaced,
+Using the divergence theorem, the surface integrals over fluxes in \eqref{eq:intcons} may be replaced by,
 
-$
+\begin{equation}
 -{ \int }_{ S} {\mathbf F} {\cdot} \hat{n}dS~ - ~{ \int }_{ S} \phi {\mathbf u}
     {\cdot}\hat{n} dS~ = ~ -{ \int }_{ V} \nabla {\cdot} \left ( {
     {\mathbf F}~ + ~ \phi ~ {\mathbf u}} \right )dV.
-$
+\end{equation}
 
-Assuming that the coordinate system is stationary with respect to the
-velocity field $\mathbf{u}$ (Eularian reference frame), it is possible
-to write
+Assuming that the coordinate system is stationary with respect to the velocity field $\mathbf{u}$ 
+(i.e, assuming an Eularian reference frame), it is then possible to write
 
-$
+\begin{equation}
 {\frac{ \partial}{ \partial t}} { \int }_{ V} \phi ~dV~ = ~{ \int }_{ V}
     {\frac{ \partial \phi }{ \partial t}} ~dV~
-$
+\end{equation}
 
-The end result is that the integral form of the conservation equation
-can now be written
+The end result is that the integral form of the conservation equation can now be written as
 
-$
+\begin{equation}
 { \int }_{ V} \left\{ {{\frac{ \partial \phi }{ \partial t}}
     ~ + ~ \nabla {\cdot} \left ( { {\mathbf F}~ + ~ \phi {\mathbf u}} \right ) ~
     - ~ H} \right\} dV~ = ~ 0
-$
+\end{equation}
 
-Because $V$ is an arbitrary volume, this equation can only be true if
-the term in brackets is zero for the volume. Hence, for any volume
-having continuously differentiable $\phi$,
+Because $V$ is an arbitrary volume, this equation can only be true if the term in brackets is zero 
+for the volume. Hence, for any volume having continuously differentiable $\phi$,
 
-$
+\begin{equation}
 {\frac{ \partial \phi }{ \partial t}} ~ + ~ \nabla {\cdot} 
     \left ( { {\mathbf F}~ + ~ \phi {\mathbf u}} \right ) ~ - ~H~ = ~ 0.
-$
+\end{equation}
 
-This is the general form for all conservation laws in continuum
-mechanics.
+This is the general form for all conservation laws in continuum mechanics.
 
 % ========================================
 \subsubsection{Applications of the conservation equation}
