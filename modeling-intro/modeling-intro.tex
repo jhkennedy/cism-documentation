@@ -104,10 +104,12 @@ Begin with the terms describing diffusive and advective fluxes into or out of th
 \begin{equation}
 { \int }_{S} {\mathbf F} {\cdot} \hat{n} ~dS~ = ~{ \int }_{V} \nabla 
     {\cdot} {\mathbf F} ~dV. 
+    \label{eq:intcons2}
 \end{equation}
 
-Or, adapting the notation that the subscript indicates a single component of a vector, and that repeated subscript 
-indices in a single term are to be summed,
+Here and below, we will often alternate between standard vector notation (as above) \href{http://en.wikipedia.org/wiki/Index_notation}{and 
+indicial (or index) notation}, where a single subscript indicates a component of a vector, two different subscripts indicate a tensor quantity, 
+and two repeated subscripts indicate summation. Thus, an identical way of writing equation \eqref{eq:intcons2} is 
 
 \begin{equation}
 { \int }_{ S} {\mathbf F}_{ j} ~n_{ j} ~dS~ = ~{ \int }_{ V} {\frac{
@@ -144,17 +146,17 @@ for the volume. Hence, for any volume having continuously differentiable $\phi$,
 \begin{equation}
 {\frac{ \partial \phi }{ \partial t}} ~ + ~ \nabla {\cdot} 
     \left ( { {\mathbf F}~ + ~ \phi {\mathbf u}} \right ) ~ - ~H~ = ~ 0.
+    \label{eq:derivcons}
 \end{equation}
 
-This is the general form for all conservation laws in continuum mechanics.
+This is the general form for all conservation laws in continuum mechanics. Below, we apply this to the three quantities conserved in an 
+ice sheet (and ideally, in an ice sheet model); mass, energy, and momentum.
 
 % ========================================
-\subsubsection{Applications of the conservation equation}
+%\subsubsection{Applications of the conservation equation}
 
-Having established a generalized conservation law, it is now applied to
-the three quantities which are conserved in an ice sheet model; mass,
-energy, and momentum.
-
+%The generalized conservation law in \eqref{eq:derivcons} is now applied to the three quantities conserved in an ice sheet (and
+%ideally, in an ice sheet model); mass, energy, and momentum.
 
 % ========================================
 % ========================================
@@ -168,11 +170,8 @@ energy, and momentum.
 % ========================================
 \input{\dir/mass-cons.tex}
 
-
 % ========================================
 % ========================================
-
-
 
 \subsection{Numerical solutions of field equations}
 
