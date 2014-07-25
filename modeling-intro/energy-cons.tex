@@ -1,9 +1,12 @@
 \section{Conservation of Energy}
+\textbf{SP: This section contains kind of a sloppy interleaving of vector and indicial notation, often within the same
+equations. Perhaps we should pick one or the other and stick with it?}
 
 The first law of thermodynamics is used to make a basic statement of conservation of energy in a volume of ice $V$ enclosed within a surface $S$ is
 
 \begin{equation}
 \frac{d}{d t} \int_{V}E ~dV~=~- \int_{S}\mathbf{F}\cdot \hat{n}~dS~-~\int_{S}E \mathbf{u}\cdot \hat{n}~dS~+~\int_{V}W dV
+\label{eq:enbal1}
 \end{equation}
 
 in which $E$ represents the energy of the volume, $F_{i}$ is the flux due
@@ -14,14 +17,15 @@ the assumptions of continuous fields and incompressibility, such that
 
 \begin{equation}
 \frac{dE}{dt}~+~\nabla \cdot \left(F_{i} +E u_{i}  \right)~-~W~=~0
+\label{eq:enbal2}
 \end{equation}
 
 Our goal is to use the first law of thermodynamics to compute the temperature of the ice and any changes in that temperature over time.
 
 The energy $E$ is the product of density and the specific internal
 energy of the ice $e$, which is itself the product of the specific heat
-capacity $c_{p}$ and temperature $T$ because there is no transfer
-between internal energy and pressure for an incompressible fluid. Thus,
+capacity $c_{p}$ and temperature $T$ (because there is no transfer
+between internal energy and pressure for an incompressible fluid). Thus,
 
 \begin{equation}
 \begin{matrix}
@@ -29,42 +33,48 @@ between internal energy and pressure for an incompressible fluid. Thus,
 &=&\rho\frac{de}{dt}~+~e \frac{d\rho}{dt}\\
 &=&\rho c_{p} \frac{dT}{dt}
 \end{matrix}
+\label{eq:enbal3}
 \end{equation}
 
-The flux due to diffusion follows Fourier's ``law'' for heat conduction
-so
+The heat flux due to diffusion follows Fourier's ``law'' for heat conduction,
 
 \begin{equation}
 \begin{matrix}
 \nabla \cdot F_{i}&=&\nabla \cdot \left( -k ~\nabla T  \right) \\
-&=&-k~\nabla^{2}T
+&=&-k~\nabla^{2}T,
 \end{matrix}
+\label{eq:enbal4}
 \end{equation}
 
-in which $k$ represents the thermal diffusivity of ice and we assume
-gradients in its magnitude to be negligible.
+in which $k$ represents the thermal conductivity of ice and we assume
+gradients in its magnitude to be negligible. 
+\textbf{SP: Is this true? I thought that one usually kept k (and rho and cp) inside of the 2nd deriv., rather than pulling it out. Maybe Bill can answer this as I am not that familiar with Glimmers heat balance code.}
 
-Using progress made above and assuming that $\nabla \cdot u_{i}$ is
-small with respect to other terms, we can write the advection term
+Using progress made above we can write the advection term
 
 \begin{equation}
 \begin{matrix}
-\nabla \cdot \left(E u_{i} \right)~=~\rho c_{p}~ u_{i} \cdot \nabla T  
+\nabla \cdot \left(E u_{i} \right)~=~\rho c_{p}~ u_{i} \cdot \nabla T. 
 \end{matrix}
+\label{eq:enbal5}
 \end{equation}
+
+In the expansion of the terms on the left-hand side of Equation \eqref{eq:enbal5} (using the product rule) we 
+have implicitly ignored the term involving $\nabla \cdot u_{i}$ because it is small with respect to the other terms
+retained on the right-hand side.
 
 Two quantities must be considered as energy sources, the work done on
 the system by internal deformation and the latent heat associated with
 phase changes. The former is the product of strain rate and the
 deviatoric stress $\dot{\epsilon}_{ij} \tau_{ij}$. The latter is the
-product of the latent heat of fusion and the amount of material subject
-to melting (freezing) per unit volume per unit time, $L_{f}M_{f}$.
+product of the latent heat of fusion and the amount of material (ice) subject
+to melting (or freezing) per unit volume, per unit time, $L_{f}M_{f}$.
 
-At last, we are able to write equation
-\textbackslash{}ref\{equation:enbal2\} in terms of temperature
+At last, we are able to write equation \eqref{eq:enbal2} in terms of temperature,
 
 \begin{equation}
-\frac{\partial T}{\partial t}~=~\frac{k}{\rho c_{p}} \nabla^{2}T~-~u_{i}\cdot \nabla T~+~\frac{1}{\rho c_{p}} \dot{\epsilon}_{ij} \tau_{ij} ~+~\frac{1}{\rho c_{p}} L_{f} M_{f}
+\frac{\partial T}{\partial t}~=~\frac{k}{\rho c_{p}} \nabla^{2}T~-~u_{i}\cdot \nabla T~+~\frac{1}{\rho c_{p}} \dot{\epsilon}_{ij} \tau_{ij} ~+~\frac{1}{\rho c_{p}} L_{f} M_{f}.
+\label{eq:enbal6}
 \end{equation}
 
 It is often the case that horizontal terms
