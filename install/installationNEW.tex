@@ -178,7 +178,7 @@ to see what packages you currently have installed. You should see \texttt{gcc46 
 in addition to any other packages you have installed (you may see software in addition to GCC 
 that was installed because Macports takes into account any software dependencies for GCC as well). 
 
-\textbf{SP: will need to update / check these version numbers.  MH: Does the gcc46 port include gfortran?  I remember some gcc ports required using a variant to get gfortran. }
+\textbf{SP: will need to update / check these version numbers.  MH: Does the gcc46 port include gfortran?  I remember some gcc ports required using a variant to get gfortran. SP: I'm not sure if it gets added by default - if you search for variants now, it doesn't say anything about gfortran, so it may be included by default. But I did 'sudo port install -v gcc46 +gfortran' just in case, and that worked.}
 
 The "(active)" description identifies which version of a particular package Macports 
 currently thinks you want to use (e.g., you could also have another older GCC suite installed). 
@@ -263,6 +263,58 @@ for compiling code. Install these tools and \texttt{cmake} with:
 \end{mdframed}                 % ^==============UBUNTU==========^
 
 
+% =====================================
+\subsection{Install NetCDF}
+% =====================================
+NetCDF stands for ``network Common Data Form'' libraries, which are a
+ machine-independent format for representing scientific data.
+This is required by CISM for performing input/output.  The NetCDF package you 
+install must include Fortran libraries for CISM to compile (in some package managers,
+the Fortran libraries are in a separate package).  There are substantial differences 
+between versions 3.x and 4.x of NetCDF, but both version series should work with CISM. 
+Note that it is also possible to download and compile NetCDF libraries manually, 
+which may be preferred by some advanced users wanting to use a specific version.
+
+It is also recommended that you install optional tools for working with NetCDF datafiles.
+\href{http://meteora.ucsd.edu/~pierce/ncview_home_page.html}{\texttt{ncview}} is a very convenient tool for viewing NetCDF files.  (Some alternatives are to write Python or Matlab scripts or to use another
+tool like Paraview.)  
+\href{http://nco.sourceforge.net/}{\texttt{NCO}} (``netCDF Operator'') is a toolkit of command line tools
+for manipulating and analyzing data stored in netCDF-accessible formats.
+
+\begin{mdframed}[style=mac] % V==============MAC================V
+To install NetCDF, use \texttt{sudo port install netcdf-fortran +gcc46}. 
+Note that there are other versions of NetCDF available to install. It is important 
+to choose the one with the "Fortran" extension. The "+gcc46" syntax specifies a port "variant". 
+This tell Macports that, if there is a version of the selected software 
+to install that is consistent with the GCC 4.6 compiler suite, then it should 
+choose that one. Typing \texttt{port installed} should now include:
+
+\begin{verbatim}
+netcdf @4.2.0_4+dap+netcdf4 (active)
+netcdf-fortran @4.2_3+gcc46 (active)
+\end{verbatim}
+
+Note that the "dap+netcdf4" comes along automatically. 
+
+\textbf{SP: will need to check the above version numbers, etc. for consistency.}
+
+\textbf{Optional but recommended:} Tools for working with NetCDF data files.
+
+\texttt{sudo port install ncview nco}
+
+\end{mdframed}              % ^==============MAC================^
+
+
+\begin{mdframed}[style=ubuntu] % V==============UBUNTU==========V
+Install NetCDF libraries with:
+
+\texttt{sudo apt-get install libnetcdf-dev}
+
+\textbf{Optional but recommended:} Tools for working with NetCDF data files.
+
+\texttt{sudo apt-get install netcdf-bin ncview nco}
+\end{mdframed}                 % ^==============UBUNTU==========^
+
 
 
 % =====================================
@@ -343,60 +395,6 @@ Install \texttt{netCDF4} using pip
 
 
 % =====================================
-\subsection{Install NetCDF}
-% =====================================
-NetCDF stands for ``network Common Data Form'' libraries, which are a
- machine-independent format for representing scientific data.
-This is required by CISM for performing input/output.  The NetCDF package you 
-install must include Fortran libraries for CISM to compile (in some package managers,
-the Fortran libraries are in a separate package).  There are substantial differences 
-between versions 3.x and 4.x of NetCDF, but both version series should work with CISM. 
-Note that it is also possible to download and compile NetCDF libraries manually, 
-which may be preferred by some advanced users wanting to use a specific version.
-
-It is also recommended that you install optional tools for working with NetCDF datafiles.
-\href{http://meteora.ucsd.edu/~pierce/ncview_home_page.html}{\texttt{ncview}} is a very convenient tool for viewing NetCDF files.  (Some alternatives are to write Python or Matlab scripts or to use another
-tool like Paraview.)  
-\href{http://nco.sourceforge.net/}{\texttt{NCO}} (``netCDF Operator'') is a toolkit of command line tools
-for manipulating and analyzing data stored in netCDF-accessible formats.
-
-\begin{mdframed}[style=mac] % V==============MAC================V
-To install NetCDF, use \texttt{sudo port install netcdf-fortran +gcc46}. 
-Note that there are other versions of NetCDF available to install. It is important 
-to choose the one with the "Fortran" extension. The "+gcc46" syntax specifies a port "variant". 
-This tell Macports that, if there is a version of the selected software 
-to install that is consistent with the GCC 4.6 compiler suite, then it should 
-choose that one. Typing \texttt{port installed} should now include:
-
-\begin{verbatim}
-netcdf @4.2.0_4+dap+netcdf4 (active)
-netcdf-fortran @4.2_3+gcc46 (active)
-\end{verbatim}
-
-Note that the "dap+netcdf4" comes along automatically. 
-
-\textbf{SP: will need to check the above version numbers, etc. for consistency.}
-
-\textbf{Optional:} Tools for working with NetCDF data files.
-
-\texttt{sudo port install ncview nco}
-
-\end{mdframed}              % ^==============MAC================^
-
-
-\begin{mdframed}[style=ubuntu] % V==============UBUNTU==========V
-Install NetCDF libraries with:
-
-\texttt{sudo apt-get install libnetcdf-dev}
-
-\textbf{Optional:} Tools for working with NetCDF data files.
-
-\texttt{sudo apt-get install netcdf-bin ncview nco}
-\end{mdframed}                 % ^==============UBUNTU==========^
-
-
-
-% =====================================
 % =====================================
 \section{Building serial Glimmer-CISM}
 \label{serial-build}
@@ -441,10 +439,7 @@ For building on a Linux platform, you should be able to build the by doing the f
 \end{enumerate}
 \end{mdframed}                 % ^==============UBUNTU==========^
 
-
-
-
-\textbf{SP: add some notes here on what you should see happening for a successful build? Are there env variables that need to be set for the Cmake build to work? If so, we need to describe them here.}
+\textbf{SP: Add some notes here on what you should see happening for a successful build? Are there env variables that need to be set for the Cmake build to work? If so, we need to describe them here. SP: for the cake build to ''just work", the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well.}
 
 When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the build directory. The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
 
