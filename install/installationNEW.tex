@@ -201,7 +201,12 @@ It is possible that gcc46 will be listed as active when you type texttt{port ins
 but that mp-gcc46 will not be listed as active when you type \texttt{port select gcc}. 
 If mp-gcc46 is not active as shown above, then you will need to select it using:
 
-\texttt{sudo port select gcc mp-gcc46}
+\begin{verbatim}
+	sudo port select --set gcc mp-gcc46
+\end{verbatim}
+
+This will ensure that any generic call to gcc, gfortran, g++, will point to the libraries just installed.
+
 \end{mdframed}              % ^==============MAC================^
 
 
@@ -421,6 +426,7 @@ you may need to modify some details, such as the location of your NetCDF librari
 or your compiler names.  Other errors you might encounter may indicate that some of
 the supporting software (above) is missing.
 
+\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to insteady do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command.} 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 For building on a Mac, you should be able to build the by doing the following:
@@ -442,8 +448,6 @@ For building on a Linux platform, you should be able to build the by doing the f
 \item{build the code using: \texttt{make -j X}, where the "X" refers to the number of processors available for use in the build (or just \texttt{make} if you only have one processor)}
 \end{enumerate}
 \end{mdframed}                 % ^==============UBUNTU==========^
-
-\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well.}
 
 When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the build directory. The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
 
@@ -531,7 +535,7 @@ for development and testing and is not supported for scientific applications.)
 Additionally, you may choose to include the Trilinos package of external solver libraries.  
 These are not required, but for some problems use of Trilinos may provide better
 performance and stability than the native solvers.  Note that Trilinos can also technically be 
-used with a serial build, but this configuration is not recommended.
+used with a serial build, but this configuration is not supported or recommended.
 
 % =====================================
 \subsection{Install OpenMPI}
@@ -551,42 +555,61 @@ It is likely that you already have versions of MPI installed on your system,
 but they may be out of date or not compatible with the other libraries we have 
 and will be installing. The following Macports installed versions of MPI are known 
 to work when building  GLIMMER-CISM.
-First, check Macports for available OpenMPI variants using \texttt{port variants openmpi}. 
-You should see something like:
+
+%% STEVE: The variants are no longer available. It looks like now you just install the version
+%% of openmpi that corresponds to your gcc suite.
+%
+%First, check Macports for available OpenMPI variants using \texttt{port variants openmpi}. 
+%You should see something like:
+%
+%\begin{verbatim}
+%openmpi has the variants:
+%   g95: build mpif77 and mpif90 using g95
+%     * conflicts with gcc42 gcc43 gcc44 gcc45 gcc46
+% ...
+%     * conflicts with g95 gcc42 gcc43 gcc44 gcc46
+%   gcc46: build mpif77 and mpif90 using gcc46
+%     * conflicts with g95 gcc42 gcc43 gcc44 gcc45
+%\end{verbatim}
+%
+%Since we want the one for GCC 4.6, type:
+
+First, check Macports for available versions of OpenMPI using \texttt{port search openmpi*}. We want 
+the version that is compatible with our GCC compiler suite, so we type: 
 
 \begin{verbatim}
-openmpi has the variants:
-   g95: build mpif77 and mpif90 using g95
-     * conflicts with gcc42 gcc43 gcc44 gcc45 gcc46
- ...
-     * conflicts with g95 gcc42 gcc43 gcc44 gcc46
-   gcc46: build mpif77 and mpif90 using gcc46
-     * conflicts with g95 gcc42 gcc43 gcc44 gcc45
+	sudo port install openmpi-gcc46
 \end{verbatim}
 
-Since we want the one for GCC 4.6, type:
+To make sure this is active, type 
+\begin{verbatim}
+	port installed openmpi
+\end{verbatim}
 
-\texttt{sudo port install openmpi +gcc46}
-
-To make sure this is active, type \texttt{port installed openmpi}, which should return, 
+, which should return, 
 
 \begin{verbatim}
-   openmpi @1.5.5_0+gcc46 (active)
+	openmpi-gcc46 @1.7.5_2+fortran (active)
 \end{verbatim}
 
-Before using the OpenMPI compilers, we need to 
-specify some critical shell environmental variables, so that OpenMPI "wraps" the right 
-compilers during the build process. In the \texttt{bash} shell these would be specified 
-as follows (or using ``setenv'' in \texttt{csh} or \texttt{tsch}): 
-\textbf{SP: this info needs to be updated/confirmed}
+As when installing the GCC compilers, we want to make sure that generic calls to MPI point to OpenMP. This 
+can be done with the following command:
 
 \begin{verbatim}
-export OMPI_CC=/opt/local/bin/gcc-mp-4.6
-export OMPI_CXX=/opt/local/bin/g++-mp-4.6
-export OMPI_FORTRAN=/opt/local/bin/gfortran-mp-4.6
+	sudo port select --set mpi openmpi-gcc46-fortran
 \end{verbatim}
 
-Note that the GCC compilers specified in these paths are the ones we installed using Macports. 
+%Before using the OpenMPI compilers, we need to specify some critical shell environmental variables, so that OpenMPI "wraps" the right 
+%compilers during the build process. In the \texttt{bash} shell these would be specified as follows (or using ``setenv'' in \texttt{csh} or \texttt{tsch}): 
+%\textbf{SP: this info needs to be updated/confirmed}
+%
+%\begin{verbatim}
+%export OMPI_CC=/opt/local/bin/gcc-mp-4.6
+%export OMPI_CXX=/opt/local/bin/g++-mp-4.6
+%export OMPI_FORTRAN=/opt/local/bin/gfortran-mp-4.6
+%\end{verbatim}
+%
+%Note that the GCC compilers specified in these paths are the ones we installed using Macports. 
 
 \end{mdframed}              % ^==============MAC================^
 
