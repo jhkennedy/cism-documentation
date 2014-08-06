@@ -400,8 +400,12 @@ Install \texttt{netCDF4} using pip
 \label{serial-build}
 % =====================================
 % =====================================
-At this point we are ready to build CISM and its linked libraries.  If you have not already done so,
-obtain a copy of the source code following the instructions above.
+At this point we are ready to build a \textit{serial} version of CISM and its linked libraries. While we ultimately want to build a 
+version of the code that also runs in parallel, it is often useful to stop at this step to make sure everything is working. Then, if 
+problems occur during the parallel build process (as they sometimes do), we know those problems have only occurred during 
+the final step of the process.
+
+If you have not already done so, obtain a copy of the source code following the instructions above.
 
 Unlike in previous version of the code, the build system is now entirely based on Cmake 
 (Autotools is no longer used). 
@@ -439,7 +443,7 @@ For building on a Linux platform, you should be able to build the by doing the f
 \end{enumerate}
 \end{mdframed}                 % ^==============UBUNTU==========^
 
-\textbf{SP: Add some notes here on what you should see happening for a successful build? Are there env variables that need to be set for the Cmake build to work? If so, we need to describe them here. SP: for the cake build to ''just work", the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well.}
+\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well.}
 
 When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the build directory. The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
 
