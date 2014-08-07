@@ -599,6 +599,10 @@ can be done with the following command:
 	sudo port select --set mpi openmpi-gcc46-fortran
 \end{verbatim}
 
+\textbf{SP: For the above instructions to work with the current mac cake build script, one needs to point the mpi libs in that script to, e.g. ``mpif90" as opposed to
+``openmpif90", as currently written. With that change to the current build script (changes on 3 lines), the build works ``out of the box", with no 
+additional changes / tweaks needed as part of the software installation process.}
+
 %Before using the OpenMPI compilers, we need to specify some critical shell environmental variables, so that OpenMPI "wraps" the right 
 %compilers during the build process. In the \texttt{bash} shell these would be specified as follows (or using ``setenv'' in \texttt{csh} or \texttt{tsch}): 
 %\textbf{SP: this info needs to be updated/confirmed}
