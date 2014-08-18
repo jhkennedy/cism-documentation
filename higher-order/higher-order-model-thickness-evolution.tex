@@ -1,5 +1,6 @@
 
 \section{Thickness Evolution in Higher-Order Models}
+\label{sc:ho-thickness-evol}
 
 \subsection{Conservation of mass}
 For an ice sheet (or any depth-integrated mass flow), conservation of mass can be expressed by
@@ -98,7 +99,7 @@ The thickness at the new time step $t=1$ is a function of \textit{only} variable
 
 Essentially, this means that we can't take such a large time step that we advect mass through more than one volume (past more than one grid space) per time step.
 
-There is not much more to a first-order advection scheme other than extending it to two dimensions for non-zero \textit{V}. The finite volume formulation guarantees that it will be conservative globally (i.e. all mass moved around on the grid is accounted for at each time step). There are many other "higher-order" advection schemes available (e.g., the incremental remapping scheme used in CISM), but they are mainly based on the principles outlined here and rely on corrections to the simple upwind assumption in order to gain more accuracy.
+There is not much more to a first-order advection scheme other than extending it to two dimensions for non-zero \textit{V}. The finite volume formulation guarantees that it will be conservative globally (i.e. all mass moved around on the grid is accounted for at each time step). There are many other ``higher-order" advection schemes available (e.g., the incremental remapping scheme used in CISM), but they are mainly based on the principles outlined here and rely on corrections to the simple upwind assumption in order to gain more accuracy.
 
 %\section{Reference}
 %\begin{itemize}

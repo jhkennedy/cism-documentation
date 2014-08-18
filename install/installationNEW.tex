@@ -1,24 +1,27 @@
 
-\section{Getting and Installing Glimmer-CISM}
+\section{Getting and Installing CISM}
+\label{sec:getcode}
 
-\textbf{SP: I've started to update this section using the old text here as a template and replacing where appropriate.}
+\textbf{SP: I've started to update this section using the old text here as a template and replacing where appropriate. I think in this first section, the only things that remains
+to be done is to (1) update the link for the discussion boards (through CESM website), }
 
-\href{http://oceans11.lanl.gov/cism/}{Glimmer-CISM}\footnote{\texttt{http://oceans11.lanl.gov/cism/}} is a relatively complex system of libraries and programs which build on other libraries. This section documents how to get Glimmer-CISM and its prerequisites, compile and install it. Please report problems and bugs to the \href{http://link-here}{Glimmer-CISM mailing list}. \textbf{SP: We need to update the link here so that it points to whatever we're going to use for bug tracking, etc. I think we decided to use CESM boards for this. Check w/ Bill S. for confirmation and links.}
+\href{http://oceans11.lanl.gov/cism/}{CISM}\footnote{\texttt{http://oceans11.lanl.gov/cism/}} is a relatively complex system of libraries and programs which build on other libraries. This section documents how to get CISM and its prerequisites, compile and install it. Please report problems using the bug reporting facility at the \href{https://github.com/CISM}{CISM Github website}\footnote{\texttt{https://github.com/CISM}}. Many other common problems and questions can be addressed by querying the \href{http://forum.cgd.ucar.edu/cism}{user discussion boards\footnote{\texttt{http://forum.cgd.ucar.edu/cism}}}. 
 
-Glimmer-CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. For UNIX and LINUX based systems, support for the use of \href{http://www.cmake.org/}{Cmake} is provided. Sample build scripts for a number of standard architectures are included, as are working build scripts for a number of large-scale, high-performance-computing architectures (e.g., Yellowstone at -where?, Titan at OLCF, and Hopper at NERSC). There are two ways of getting the source code:
+CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. For UNIX and LINUX based systems, support for the use of \href{http://www.cmake.org/}{Cmake} is provided. Sample build scripts for a number of standard architectures are included, as are working build scripts for a number of large-scale, high-performance-computing architectures (e.g., Yellowstone at -where?, Titan at OLCF, and Hopper at NERSC). There are two ways of getting the source code:
 
 \begin{enumerate}
-\item download a {\it released} version from the \href{http://oceans11.lanl.gov/cism/}{Glimmer-CISM website} \textbf{SP: in the case that we put a tarball on the homepage?}
-\item clone the code from the \href{https://github.com/CISM}{Glimmer-CISM Github repository}\footnote{\texttt{https://github.com/CISM}}\textbf{SP: If we support this, do we need to include a quick-and-dirty list of instructions for using Git? This section still needs some work.}
+
+\item \href{https://github.com/CISM/CISM-release/archive/master.zip}{download} a {\it released} version of the code as a an archive (zip file) 
+
+\item clone the code from the \href{https://github.com/CISM}{CISM Github repository} using the following command: \texttt{git clone https://github.com/CISM/CISM-release/archive/master.zip}
+
 \end{enumerate}
 
 For beginners, the latest release tag is recommended. More experienced users may want to download directly from the code repository, as it will have all the latest bug-fixes and new features.
 
-In either case, a Fortran90 compiler is required.  Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, which Glimmer-CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution (used for analyzing dependencies and for automatically generating parts of the code) with a number of specific toolboxes. Users who want to run the code in parallel will also need to install MPI and users who want access to the \textit{Trilinos} solver library will need to download and build \textit{Trilinos}, and link to it when building Glimmer-CISM. Finally, you will need Cmake to compile the code and link to the various third-party libraries. \textbf{SP: I'm still not sure how dependent we are standard gnu make at this point. Can we remove all references to gnu make or does the Macports / Ubuntu package manager need it?} 
+In either case, a Fortran90 compiler is required.  Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, which CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution (used for analyzing dependencies and for automatically generating parts of the code) with a number of specific toolboxes. Users who want to run the code in parallel will also need to install MPI and users who want access to the \textit{Trilinos} solver library will need to download and build \textit{Trilinos}, and link to it when building CISM. Finally, you will need Cmake and Gnu Make to compile the code and link to the various third-party libraries. 
 
-If you have not done so already, check out the tagged release version of Glimmer-CISM at the CISM Github repository: \textbf{SP: or whatever the relevant URL info is} \texttt{relevant git command here?}. Or, download a tar.gz archive of the source code at \href{some-other-link.html}{here}. \textbf{SP: some additional info here about how / where to explode your tarball?}
-
-
+If you have not done so already, clone a tagged version of CISM or download an archive of the code, as noted above. Store the code or the unzipped, untarred archive in a location of your choice. More detailed build instructions, including instructions for the installation of supporting software, are given below.
 
 % =====================================
 % =====================================
@@ -54,7 +57,7 @@ problematic before contacting your system administrator.
 \begin{mdframed}[style=mac] % V==============MAC================V
 As mentioned above, we will take advantage of \href{http://www.macports.org/}{MacPorts}, 
 a software package manager for Macs. This will allow us to install a significant amount 
-of the base level software libraries needed by GLIMMER-CISM with few complications. 
+of the base level software libraries needed by CISM with few complications. 
 
 Go to \href{http://www.macports.org/install.php}{http://www.macports.org/install.php}, where you will find a range of ".pkg" installs available, including those for Mountain Lion, Lion, and Mavericks versions of Mac OS X. 
 
@@ -142,7 +145,7 @@ Install git with:
 
 The GCC compiler suite contains compilers for C, C++, and, optionally, Fortran.
 Fortran and C compilers are required for serial CISM, and a C++ compiler is also
-needed for parallel CISM.  GLIMMER-CISM is known to work with GNU gfortran compilers, 
+needed for parallel CISM.  CISM is known to work with GNU gfortran compilers, 
 Intel ifort, and PGI.  In these instructions we will use GNU compilers because they
 have been extensively tested with CISM and are freely available.  Advanced users
 are welcome to use other compilers of their choosing.
@@ -401,7 +404,7 @@ Install \texttt{netCDF4} using pip
 
 % =====================================
 % =====================================
-\section{Building serial Glimmer-CISM}
+\section{Building serial CISM}
 \label{serial-build}
 % =====================================
 % =====================================
@@ -410,21 +413,22 @@ version of the code that also runs in parallel, it is often useful to stop at th
 problems occur during the parallel build process (as they sometimes do), we know those problems have only occurred during 
 the final step of the process.
 
-If you have not already done so, obtain a copy of the source code following the instructions above.
+If you have not already done so, obtain a copy of the source code following the instructions above in section \ref{sec:getcode}. Below, all 
+paths starting with \texttt{./} indicate the root level of the source code directory. E.g., if you expanded your tar.gz archive into a main source code 
+directory with the path \texttt{/usr/JohnDoe/CISM}, the \texttt{./} refers to the path \texttt{/usr/JohnDoe/CISM/}.  
 
 Unlike in previous version of the code, the build system is now entirely based on Cmake 
 (Autotools is no longer used). 
 
 Build scripts are provided that should work for most standard Mac and Linux setups, 
 as well as some supercomputing platforms on which CISM is commonly used.
-All build scripts are located in the \texttt{builds} directory from the root level of the code.
+All build scripts are located in the \texttt{./builds} directory from the root level of the code.
 In general, change to the subdirectory that most closely matches your system and intended
 build.
 
-If you encounter an error when using the included scripts, 
-you may need to modify some details, such as the location of your NetCDF libraries 
-or your compiler names.  Other errors you might encounter may indicate that some of
-the supporting software (above) is missing.
+If you encounter an error when using the included scripts, you may need to modify some details, 
+such as the location of your NetCDF libraries or your compiler names.  Other errors you might 
+encounter may indicate that some of the supporting software (above) is missing.
 
 \textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to insteady do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command.} 
 
@@ -432,7 +436,7 @@ the supporting software (above) is missing.
 For building on a Mac, you should be able to build the by doing the following:
 
 \begin{enumerate}
-\item{change to the \texttt{builds/mac-gnu-serial} directory from the root level of the code}
+\item{change to the \texttt{./builds/mac-gnu-serial} directory from the root level of the code}
 \item{configure the build using: \texttt{source mac-gnu-cmake-serial}}
 \item{build the code using: \texttt{make -j X}, where the "X" refers to the number of processors available for use in the build (or just \texttt{make} if you only have one processor)}
 \end{enumerate}
@@ -443,7 +447,7 @@ For building on a Mac, you should be able to build the by doing the following:
 For building on a Linux platform, you should be able to build the by doing the following:
 
 \begin{enumerate}
-\item{change to the \texttt{builds/linux-gnu-cism} directory from the root level of the code}
+\item{change to the \texttt{./builds/linux-gnu-cism} directory from the root level of the code}
 \item{configure the build using: \texttt{source linux-gnu-cism-cmake-serial}}
 \item{build the code using: \texttt{make -j X}, where the "X" refers to the number of processors available for use in the build (or just \texttt{make} if you only have one processor)}
 \end{enumerate}
@@ -554,7 +558,7 @@ momentum balance model are not fully supported in parallel).
 It is likely that you already have versions of MPI installed on your system, 
 but they may be out of date or not compatible with the other libraries we have 
 and will be installing. The following Macports installed versions of MPI are known 
-to work when building  GLIMMER-CISM.
+to work when building  CISM.
 
 %% STEVE: The variants are no longer available. It looks like now you just install the version
 %% of openmpi that corresponds to your gcc suite.
@@ -630,6 +634,7 @@ Install OpenMPI with:
 % =====================================
 \subsection{Install Trilinos solver libraries}
 % =====================================
+\textbf{Steve: I have not checked over this section yet}
 Trilinos is a modern, open source, C++ based library of parallel nonlinear and linear solvers, 
 preconditioning and mesh-partitioning tools, and much more. It can be downloaded for free 
 \href{http://trilinos.sandia.gov/index.html}{here} (the software is free, but you are 
@@ -669,7 +674,7 @@ Sample configure scripts for a number of standard platforms are included in the 
  directory under the root level of the Trilinos source code. 
 Additionally, the CISM code includes examples of Trilinos configure scripts (``do-configure'') 
 for use with CISM for both Linux and Mac platforms in the 
-\texttt{utils/trilinos\_config\_scripts\_examples} directory. 
+\texttt{./utils/trilinos\_config\_scripts\_examples} directory. 
 We recommend starting with one of those example scripts and modifying it as
 necessary to work on your system.
 
@@ -746,7 +751,7 @@ about specific Trilinos tests failing.
 Note that on a Mac, MPI tests have been known to trigger a dialog box from the firewall. 
 With more than 300 tests, these messages popping up continually can make it impossible 
 to use you computer until the tests complete. To keep them from appearing, you can temporarily 
-turn off your firewall under ``System Preferences'' (Security $> Firewall $> Stop). 
+turn off your firewall under ``System Preferences'' (Security $>$ Firewall $>$ Stop). 
 Be sure to turn the firewall back on when the tests are complete!
 \end{mdframed}              % ^==============MAC================^
 
@@ -816,10 +821,8 @@ test cases.
 % =====================================
 % =====================================
 
-Here, we should close the section with some instructions on what to do next ... Now that you've got a successful build, 
-you can either read more about the details of ice sheet modeling, or how the code works, or you can proceed directly 
-to chapter XX to try and run some of the standard test cases.
-
-
+Now that you have successfully built the code, you can proceed to Chapters \ref{ch:modelingintro} and \ref{ch:higher-order} to learn more detailed 
+information about ice sheet modeling, to Chapters \ref{ch:glide} and \ref{ch:glissade} to learn more about the various model approximations 
+available through CISM, or you can proceed to Chapter \ref{ch:tests} to learn how to run and examine some standard model test cases.  
 
 
