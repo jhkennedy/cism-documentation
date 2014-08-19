@@ -2,21 +2,49 @@
 \section{Getting and Installing CISM}
 \label{sec:getcode}
 
-\href{http://oceans11.lanl.gov/cism/}{CISM}\footnote{\texttt{http://oceans11.lanl.gov/cism/}} is a relatively complex system of libraries and programs which build on other libraries. This section documents how to get CISM and its prerequisites, compile and install it. Please report problems using the bug reporting facility at the \href{https://github.com/CISM}{CISM Github website}\footnote{\texttt{https://github.com/CISM}}. Many other common problems and questions can be addressed using the \href{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}{user discussion boards\footnote{\texttt{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}}}. 
+\href{http://oceans11.lanl.gov/cism/}{CISM}\footnote{\texttt{http://oceans11.lanl.gov/cism/}} is 
+a relatively complex system of libraries and programs which build on other libraries. 
+This section documents how to get CISM and its prerequisites, compile and install it. 
+Many common problems and questions can be addressed using the 
+\href{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}{user discussion boards
+\footnote{\texttt{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}}}. 
+Please report unresolved problems using the bug reporting facility at the 
+\href{https://github.com/CISM/CISM-release/issues}{CISM Github website}
+\footnote{\texttt{https://github.com/CISM/CISM-release/issues}}. 
 
-CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. For UNIX and LINUX based systems, support for the use of \href{http://www.cmake.org/}{Cmake} is provided. Sample build scripts for a number of standard architectures are included, as are working build scripts for a number of large-scale, high-performance-computing architectures (e.g., Yellowstone at -where?, Titan at OLCF, and Hopper at NERSC). There are two ways of getting the source code:
+CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. 
+For UNIX and LINUX based systems (including Mac), the \href{http://www.cmake.org/}{Cmake} build system is used for building the model. 
+Sample build scripts for a number of standard architectures are included, as are working build scripts 
+for a number of large-scale, high-performance-computing architectures 
+(e.g., Yellowstone at NCAR's CISL, Titan at OLCF, and Hopper at NERSC). 
+
+There are two ways of getting the source code:
 
 \begin{enumerate}
 
-\item \href{https://github.com/CISM/CISM-release/archive/master.zip}{download} a {\it released} version of the code as a an archive (zip file) 
+\item \href{https://github.com/CISM/CISM-release/archive/master.zip}{Download} a {\it released} version of the code as an archive (zip file) 
 
-\item clone the code from the \href{https://github.com/CISM}{CISM Github repository} using the following command: \texttt{git clone https://github.com/CISM/CISM-release/archive/master.zip}
+\item Clone the code from the \href{https://github.com/CISM/CISM-release}{CISM Github repository} using the following command: 
+\texttt{git clone https://github.com/CISM/CISM-release/archive/master.zip}  
+(Note that it is also possible to clone the repository using the SSH protocol 
+if you have an SSH keypair generated on your computer and attached to your GitHub account.  
+See the \href{https://github.com/CISM/CISM-release}{CISM Github repository wepage} and 
+\href{https://help.github.com/articles/which-remote-url-should-i-use}{Github's help pages} for more information.)
 
 \end{enumerate}
 
-For beginners, the latest release tag is recommended. More experienced users may want to download directly from the code repository, as it will have all the latest bug-fixes and new features.
+For beginners, downloading a zip archive of the latest release tag is recommended. 
+More experienced users may want to download directly from the repository, 
+as it will make updating the code easier in the future.
 
-In either case, a Fortran90 compiler is required.  Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, which CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution (used for analyzing dependencies and for automatically generating parts of the code) with a number of specific toolboxes. Users who want to run the code in parallel will also need to install MPI and users who want access to the \textit{Trilinos} solver library will need to download and build \textit{Trilinos}, and link to it when building CISM. Finally, you will need Cmake and Gnu Make to compile the code and link to the various third-party libraries. 
+In either case, a Fortran90 compiler is required.  
+Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, 
+which CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution 
+(used for analyzing dependencies and for automatically generating parts of the code) 
+with a number of specific Python modules. Users who want to run the code in parallel will also need to install MPI, 
+and users who want access to the \textit{Trilinos} solver library will need to 
+download and build \textit{Trilinos}, and link to it when building CISM. 
+Finally, you will need Cmake and Gnu Make to compile the code and link to the various third-party libraries. 
 
 If you have not done so already, clone a tagged version of CISM or download an archive of the code, as noted above. Store the code or the unzipped, untarred archive in a location of your choice. More detailed build instructions, including instructions for the installation of supporting software, are given below.
 
