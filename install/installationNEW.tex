@@ -8,6 +8,10 @@ This section documents how to get CISM and its prerequisites, compile and instal
 Many common problems and questions can be addressed using the 
 \href{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}{user discussion boards
 \footnote{\texttt{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}}}. 
+A CISM users mailing list is also available and can be subscribed to by sending an email
+to \texttt{cism-users@googlegroups.com}\footnote{Note that in order to subscribe from a non-Google email
+address, you should first make sure to completely log out from any Google sites (e.g., Gmail) before sending 
+your request. If you do not, it will automatically try to associate your request with your Gmail account instead.}
 Please report unresolved problems using the bug reporting facility at the 
 \href{https://github.com/CISM/CISM-release/issues}{CISM Github website}
 \footnote{\texttt{https://github.com/CISM/CISM-release/issues}}. 
@@ -206,9 +210,7 @@ to see what packages you currently have installed. You should see \texttt{gcc46 
 in addition to any other packages you have installed (you may see software in addition to GCC 
 that was installed because Macports takes into account any software dependencies for GCC as well). 
 
-\textbf{SP: will need to update / check these version numbers.  MH: Does the gcc46 port include gfortran?  I remember some gcc ports required using a variant to get gfortran. SP: I'm not sure if it gets added by default - if you search for variants now, it doesn't say anything about gfortran, so it may be included by default. But I did 'sudo port install -v gcc46 +gfortran' just in case, and that worked.}
-
-The "(active)" description identifies which version of a particular package Macports 
+The ``(active)" description identifies which version of a particular package Macports 
 currently thinks you want to use (e.g., you could also have another older GCC suite installed). 
 To make sure the newly installed version is active, you would type:
 
@@ -269,7 +271,6 @@ Additionally, CISM uses the \texttt{cmake} build utility
 (\href{http://www.cmake.org/}{a cross-platform, open-source build system}).
 
 \begin{mdframed}[style=mac] % V==============MAC================V
-\textbf{SP: confirm that we need libtool, automake, autoconf ... if not, then just install Cmake? Matt says we don't need libtool, automake, or autoconf anymore.}
 
 While you probably already have a version of \texttt{make} on your system, they may be out of date or conflict with other Macports installed software. These can be installed through Macports with the following commands: 
 
@@ -312,7 +313,7 @@ which may be preferred by some advanced users wanting to use a specific version.
 It is also recommended that you install optional tools for working with NetCDF datafiles.
 \href{http://meteora.ucsd.edu/~pierce/ncview_home_page.html}{\texttt{ncview}} is a very convenient tool for viewing NetCDF files.  (Some alternatives are to write Python or Matlab scripts or to use another
 tool like Paraview.)  
-\href{http://nco.sourceforge.net/}{\texttt{NCO}} (``netCDF Operator'') is a toolkit of command line tools
+\href{http://nco.sourceforge.net/}{\texttt{NCO}} (``netCDF Operators'') is a toolkit of command line tools
 for manipulating and analyzing data stored in netCDF-accessible formats.
 
 \begin{mdframed}[style=mac] % V==============MAC================V
@@ -324,13 +325,11 @@ to install that is consistent with the GCC 4.6 compiler suite, then it should
 choose that one. Typing \texttt{port installed} should now include:
 
 \begin{verbatim}
-netcdf @4.2.0_4+dap+netcdf4 (active)
-netcdf-fortran @4.2_3+gcc46 (active)
+netcdf @4.3.2_0+dap+gcc46+netcdf4 (active)
+netcdf-fortran @4.2_12+gcc46 (active)
 \end{verbatim}
 
-Note that the "dap+netcdf4" comes along automatically. 
-
-\textbf{SP: will need to check the above version numbers, etc. for consistency.}
+Note that the ``dap+netcdf4" comes along automatically. 
 
 \textbf{Optional but recommended:} Tools for working with NetCDF data files.
 
@@ -456,7 +455,7 @@ If you encounter an error when using the included scripts, you may need to modif
 such as the location of your NetCDF libraries or your compiler names.  Other errors you might 
 encounter may indicate that some of the supporting software (above) is missing.
 
-\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to insteady do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command.} 
+\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to instead do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command. I've already changed the gcc documentation above to reflect this. It would be good for someone else to confirm this if / when they do a clean install on a new machine.} 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 For building on a Mac, you should be able to build the by doing the following:
@@ -575,7 +574,7 @@ There are a few options available, but OpenMPI is the most common implementation
 tested extensively with CISM.
 
 The OpenMPI library is used for handling parallel communications when running the 
-code on multiple processors. A more complete description of possible parallel model configurations is give in Section X \textbf{SP: we'll need to add this somewhere, and link to it here.} 
+code on multiple processors. A more complete description of possible parallel model configurations is give in Chapter \ref{ch:runcism}. 
 (for example, some test cases and configurations when running the shallow-ice 
 momentum balance model are not fully supported in parallel). 
 
@@ -631,7 +630,8 @@ can be done with the following command:
 
 \textbf{SP: For the above instructions to work with the current mac cake build script, one needs to point the mpi libs in that script to, e.g. ``mpif90" as opposed to
 ``openmpif90", as currently written. With that change to the current build script (changes on 3 lines), the build works ``out of the box", with no 
-additional changes / tweaks needed as part of the software installation process.}
+additional changes / tweaks needed as part of the software installation process. Need to confirm w/ Doug R. if when we can make that change and commit back up
+to the repo.}
 
 %Before using the OpenMPI compilers, we need to specify some critical shell environmental variables, so that OpenMPI "wraps" the right 
 %compilers during the build process. In the \texttt{bash} shell these would be specified as follows (or using ``setenv'' in \texttt{csh} or \texttt{tsch}): 
@@ -660,7 +660,8 @@ Install OpenMPI with:
 % =====================================
 \subsection{Install Trilinos solver libraries}
 % =====================================
-\textbf{Steve: I have not checked over this section yet}
+\textbf{*** Steve: I have not checked over this section yet ***}
+
 Trilinos is a modern, open source, C++ based library of parallel nonlinear and linear solvers, 
 preconditioning and mesh-partitioning tools, and much more. It can be downloaded for free 
 \href{http://trilinos.sandia.gov/index.html}{here} (the software is free, but you are 

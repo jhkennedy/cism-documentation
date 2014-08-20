@@ -19,33 +19,24 @@ precision and the finite problem size that can be tackled using a computer.
 The underlying process is continuous because it is commonly
 formulated in terms of ordinary or partial differential equations (ODEs and PDEs,
 respecitively). Numerical models can not be ``solved" until the boundary and
-initial conditions are specified. Such models may be very simple such as
+initial conditions are specified. Such models may be very simple, such as
 a \href{http://en.wikipedia.org/wiki/Harmonic_oscillator}{harmonic oscillator},
-or very complex, as in a \href{http://en.wikipedia.org/wiki/General_Circulation_Model}
-{General Circulation Model} (GCM; also referred to as a Global Climate Model).
+or very complex, as in a complete \href{http://en.wikipedia.org/wiki/General_Circulation_Model}
+{Earth System Model} (ESM). In general, ESMs are composed of a number of component
+models, of which land ice (encompassing glaciers, ice caps, and large ice sheets) is but one
+component (with atmosphere, ocean, sea ice, and land surface models being the other
+primary ones).   
 
-The ``land ice" (encompassing glaciers, ice caps, and ice sheets) model we will describe 
-has its basis in a set of programs and climate ``drivers'' built over many years. It was 
-originally started by Tony Payne at the University of Bristol (U.K) and was historically 
-referred to as \href{https://github.com/glimmer-cism}{``Glimmer"}. 
-More recently, a collaborative project involving a number of U.S. and U.K. laboratories and
-universities (see author list) has extended the effort in many novel and exciting ways. This effort is
-referred to as \href{http://our.lanl.url.here}{GLIMMER-CISM}, with CISM standing for the Community 
-Ice Sheet Model. The latter signifies the projects goals and evolution towards being a coupled
-component of the \href{http://www2.cesm.ucar.edu/}{The Community Earth System Model} (or CESM). 
-\textbf{SP: I wonder if we should be calling this just CISM throughout now; it will be confusing for
-folks if the link for the "Glimmer" code points to a repo called "Glimmer-CISM", and the link to the
-newer "Glimmer-CISM" code we discuss here, points to a repo called just "CISM".}
 
 % ========================================
-\subsection{Conservation equations}
+\section{Conservation equations}
 
 For the majority of the physical systems encountered in Earth science problems, the first step in modeling is a
 mathematical description about the conservation of energy, momentum, and mass. Only after that description is
 laid out do we turn to the question of approximating those equations in a form that can be solved on a computer. 
 
 % ========================================
-\subsubsection{Integral form}
+\subsection{Integral form}
 
 The mathematical formulation of conservation can be arrived at by considering the change in a quantity 
 $\phi$ that is known within a \textbf{control} volume $V$. The \href{http://en.wikipedia.org/wiki/Control_volume}
@@ -92,7 +83,7 @@ integrate over $V$). It is important to note that that any information on spatia
 is lost in the process of integration.
 
 % ========================================
-\subsubsection{Derivative form}
+\subsection{Derivative form}
 
 Numerical models are often easier to formulate from the derivative form of the conservation equation, and this
 is more often the form in which conservation equations are written. This requires the derivatives of $\phi$ to exist 
@@ -154,7 +145,7 @@ This is the general form for all conservation laws in continuum mechanics. Below
 ice sheet (and ideally, in an ice sheet model); mass, energy, and momentum.
 
 % ========================================
-%\subsubsection{Applications of the conservation equation}
+\section{Applications of the General Conservation Equation}
 
 %The generalized conservation law in \eqref{eq:derivcons} is now applied to the three quantities conserved in an ice sheet (and
 %ideally, in an ice sheet model); mass, energy, and momentum.
@@ -174,7 +165,7 @@ ice sheet (and ideally, in an ice sheet model); mass, energy, and momentum.
 % ========================================
 % ========================================
 
-\subsection{Numerical solutions of field equations}
+\section{Numerical Solutions of the Field Equations}
 \textbf{SP: Not sure if this stuff is needed, since we go into these details later in the sections specific to each
 dycore. Leaving it in for now in case it can be made use of in later sections.}
 
