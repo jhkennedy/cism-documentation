@@ -1,7 +1,23 @@
-\section{Climate Forcing}
+\section{Climate Forcing Configuration}
 
 Something about climate forcing options for GLIMMER-CISM. Essentially, this include EISMINT and GLINT, and the SMB schemes, which we are unfamiliar with. I'm lumping them all in here simply 
 because they have something to do w/ climate and running the model. Other ``drivers" and climate forcing stuff that we don't support anymore has been commented out of this build.
+
+
+
+%\subsection{Climate Drivers}
+%\label{subsec:climdrive}
+\textbf{SP: Matt, can you take a stab at correcting / updating this section? Maybe we don't even need it anymore since we aren't really supporting most of the old climate drivers?}
+The core ice sheet model, GLIDE, is connected to the climate via the surface mass balance and temperature fields and (optionally) a scalar value for eustatic sea level. These drivers can be derived from simple assumptions, e.g. uniform mass balance or EISMINT tests, or from climate model output, e.g. GENIE or a regional climate model. These components, and how they relate to each other, are outlined in Figure \ref{ug.glide}.
+%
+%\begin{figure}[htbp]
+% \begin{center}
+%   \includegraphics[width=0.9\textwidth]{\dir/figs/glide.eps}
+% \end{center}
+% \caption{Outline of the GLIDE and Climate components.}
+%\label{ug.glide}
+%\end{figure}
+%
 
 %________________________________________________
 %________________________________________________

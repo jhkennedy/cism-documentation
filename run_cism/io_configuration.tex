@@ -1,0 +1,95 @@
+\section{Input/Output Configuration}
+
+NetCDF I/O can be configured in the main configuration file or in a separate file 
+(see \texttt{ioparams} in the \texttt{[options]} section). 
+Any number of input, forcing, and output files can be specified. 
+
+Input files are processed in the same order they occur in the configuration file, 
+thus potentially overwriting previously loaded fields.  The configuration section 
+for an input file specifies which time slice from the input file should be used as
+the initial condition.  (Note this is an integer specifying the time level, not
+the actual time.)
+
+Forcing files are new in CISM 2.0 and are input files that are read on every 
+time step to allow time-dependent
+forcing to be applied during a simulation.  Any inputtable fields can be included
+in forcing files.  Forcing files should have a ``time'' field which is used to 
+assign values to each field in the file during the simulation.  Forcing is applied 
+in a piecewise constant fashion -- the most recent time slice in the forcing file prior
+to the current model time is used on each time step.  (Linearly interpolatation of
+forcing may be available in the future but is not currently implemented.)
+Note that if a field is present in both an input file and in a
+forcing file at the start time, the value in the forcing file will overwrite the value
+from the input file because forcing files get read after input files.
+Forcing files are processed in the same order they occur in the configuration file, 
+on each time step thus potentially overwriting previously loaded fields from other
+forcing files.  The ``dome'' test case (\texttt{tests/higher-order/dome}) includes 
+an example of how to use time-dependent forcing.
+
+\begin{center}
+  \tablefirsthead{%
+    \hline
+  }
+  \tablehead{%
+    \hline
+    \multicolumn{2}{|l|}{\emph{\small continued from previous page}}\\
+    \hline
+  }
+  \tabletail{%
+    \hline
+    \multicolumn{2}{|r|}{\emph{\small continued on next page}}\\
+    \hline}
+  \tablelasttail{\hline}
+  \begin{supertabular*}{\textwidth}{@{\extracolsep{\fill}}|l|p{11cm}|}
+%%%% CF defaults
+    \hline
+    \multicolumn{2}{|l|}{\texttt{[CF default]}}\\
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be modified in the \texttt{[output]} section. The model automatically attaches a time stamp and the model version to the netCDF output file.}\\
+    \hline
+    \texttt{title}& Title of the experiment\\
+    \texttt{institution} & Institution at which the experiment was run\\
+    \texttt{references} & References that might be useful\\
+    \texttt{comment} & A comment, further describing the experiment\\
+    \hline
+
+%%%% CF Input
+    \hline
+    \hline
+    \hline
+    \multicolumn{2}{|l|}{\texttt{[CF input]}}\\
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.}\\
+    \hline
+    \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
+    \texttt{time}& The time slice (not actual time) to be read from the netCDF file. The first time slice is read by default.\\
+    \hline
+
+%%%% CF Forcing
+    \hline
+    \hline
+    \hline
+    \multicolumn{2}{|l|}{\texttt{[CF forcing]}}\\
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
+    \hline
+    \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
+    \hline
+
+%%%% CF output
+    \hline
+    \hline
+    \hline
+    \multicolumn{2}{|l|}{\texttt{[CF output]}}\\
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{This section of the netCDF parameter file controls how often selected  variables are written to file.}\\
+    \hline
+    \texttt{name} & The name of the output netCDF file. Typically netCDF files end with \texttt{.nc}.\\
+    \texttt{start} & Start writing to file when this time is reached (default: first time slice).\\
+    \texttt{stop} & Stop writin to file when this time is reached (default: last time slice). \\
+    \texttt{frequency} & The time interval in years, determining how often selected variables are written to file.\\
+    \texttt{xtype} & Set the floating point representation used in netCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). \\
+    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. Variable \texttt{restart} selects all variables necessary for a restart.\\
+    \hline
+  \end{supertabular*}
+\end{center}

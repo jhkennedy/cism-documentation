@@ -1,21 +1,22 @@
-\section{GLIDE}
-** This section needs to be edited / updated, including the title **
-GLIDE is the actual ice sheet model. GLIDE comprises three procedures which initialise the model, perform a single time step and finalise the model. The GLIDE configuration file is described in Section \ref{ug.sec.config}. The GLIDE API is described in Appendix \ref{ug.sec.glide_api}. The simple example driver explains how to write a simple climate driver for GLIDE. Download the example from the GLIMMER website or from CVS:
-\begin{verbatim}
-cvs -d:pserver:anonymous@forge.nesc.ac.uk:/cvsroot/glimmer login
-cvs -z3 -d:pserver:anonymous@forge.nesc.ac.uk:/cvsroot/glimmer co glimmer-example
-\end{verbatim}
+\section{Model Configuration}\label{ug.sec.config}
 
-\subsection{Configuration}\label{ug.sec.config}
-The format of the configuration files is taken from that used by the ConfigParser module in Python 2.x, which is similar to Windows \texttt{.ini} files and contains sections. Each section contains key, value(s) pairs.
-\begin{itemize}
-\item Empty lines, or lines starting with a \texttt{\#}, \texttt{;} or \texttt{!} are ignored.
-\item A new section starts with the the section name enclose with square brackets, e.g. \texttt{[grid]}.
-\item Keys are separated from their associated values by a \texttt{=} or \texttt{:}.
-\end{itemize}
-Sections and keys are case sensitive and may contain white space. However, the configuration parser is very simple and thus the number of spaces within a key or section name also matters. Sensible defaults are used when a specific key is not found.  Defaults are indicated in bold in the table below.
+General model configuration options 
+specify the grid and time-stepping used by the model, 
+the dynamical core (dycore) used, 
+and control various optional physics packages and parameter values.
+The \texttt{[grid]} and \texttt{[time]} configuration sections are always required.
+Additionally, while not required, in almost all situations  \texttt{[options]}, 
+ and \texttt{[ho\_options]}, if using a higher-order dycore, will be included in .config files.
+The \texttt{[parameters]} and \texttt{[sigma]} sections are also commonly used.  
+The \texttt{[GTHF]}, \texttt{[isostasy]}, and \texttt{[projection]} sections
+are only needed if the associated features are desired.  Details of each of these
+sections, what they control, and the available options for each section are described 
+in the tables below.
 
-For consistency, options for both the shallow-ice and higher-order dynamical cores (dycore) are discussed. {\bf TODO: Keep this statement?} Currently, only the shallow ice dycore is scientifically supported. The higher-order dycore will be supported as part of planned future releases of Glimmer CISM. {\bf TODO: Keep this convention?} Configuration number options with a * after them are specific to the higher-order dycore.
+TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Currently, only the shallow ice dycore is scientifically supported. 
+
+
+
 
 \begin{center}
   \tablefirsthead{%
@@ -38,7 +39,9 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \hline
     \multicolumn{2}{|l|}{\texttt{[grid]}}\\
     \hline
-    \multicolumn{2}{|p{0.97\textwidth}|}{Define model grid. Maybe we should make this optional and read grid specifications from input netCDF file (if present). Certainly, the input netCDF files should be checked (but presently are not) if grid specifications are compatible.}\\
+    \multicolumn{2}{|p{0.97\textwidth}|}{Define model grid. 
+%Maybe we should make this optional and read grid specifications from input netCDF file (if present). Certainly, the input netCDF files should be checked (but presently are not) if grid specifications are compatible.
+}\\
     \hline
     \texttt{ewn} & (integer) number of nodes in $x$--direction\\
     \texttt{nsn} & (integer) number of nodes in $y$--direction\\
@@ -108,7 +111,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \hline
     \multicolumn{2}{|l|}{\texttt{[options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.  Configuration number options with a * after them are specific to the higher-order dycores (Glissade/Glam).}\\
     \hline
 %% dycore
     \texttt{dycore} & 
@@ -327,24 +330,24 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
       {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0)}\\
     \end{tabular}\\  
 
-
- %%%% EXTERNAL DYCORE OPTIONS
-    \hline
-    \hline
-    \hline
-    \multicolumn{2}{|l|}{\texttt{[external\_dycore\_options]}}\\
-    \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section are specific to external dycores that 
-    may have additional options/option files.  {\bf TODO: include this stuff?  elaborate?} }\\
-    \hline
-%% external_dycore_type
-    \texttt{external\_dycore\_type} & 
-    \begin{tabular}[t]{lp{0.85\linewidth}}
-      1 & Use BISICLES external dycore \\
-      2 & Use Albany-FELIX external dycore \\
-    \end{tabular}\\     
-    \texttt{dycore\_input\_file} &
-    Specify path to additional configuration file required by the external dycore. \\
+% MJH: Commenting out external dycore options for 2.0 release.
+%% %%%% EXTERNAL DYCORE OPTIONS
+%    \hline
+%    \hline
+%    \hline
+%    \multicolumn{2}{|l|}{\texttt{[external\_dycore\_options]}}\\
+%    \hline
+%    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section are specific to external dycores that 
+%    may have additional options/option files.  {\bf TODO: include this stuff?  elaborate?} }\\
+%    \hline
+%%% external_dycore_type
+%    \texttt{external\_dycore\_type} & 
+%    \begin{tabular}[t]{lp{0.85\linewidth}}
+%      1 & Use BISICLES external dycore \\
+%      2 & Use Albany-FELIX external dycore \\
+%    \end{tabular}\\     
+%    \texttt{dycore\_input\_file} &
+%    Specify path to additional configuration file required by the external dycore. \\
 
 
 
@@ -364,7 +367,7 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
     \texttt{geothermal} & (real) constant geothermal heat flux. (default = -0.05 W m$^{-2}$)\\
     \texttt{flow\_factor} & (real) the flow law is enhanced with this factor (default = 3.0)\\
      \texttt{default\_flwa} * & Flow law parameter A to use in isothermal experiments (flow\_law set to 0).  Default value is $10^{-16}$ Pa$^{-n}$ yr$^{-1}$. \\
-    \texttt{hydro\_time} & (real) basal hydrology time constant (default = 1000.0 yr) \\
+    \texttt{hydro\_time} & (real) basal hydrology time constant (default = 1000.0 yr) {\bf TODO: IS THIS STILL USED?}\\
     \texttt{basal\_tract\_const} & constant basal traction parameter. You can load a nc file with a variable called \texttt{soft} if you want a spatially varying bed softness parameter. \\
     \texttt{basal\_tract\_max} & Max value for basal traction when using \texttt{slip\_coeff}=4. \\
     \texttt{basal\_tract\_slope} & Slope value for basal traction relation when using \texttt{slip\_coeff}=4. (Relation also uses \texttt{basal\_tract\_const}.)\\
@@ -457,96 +460,4 @@ For consistency, options for both the shallow-ice and higher-order dynamical cor
   \end{supertabular*}
 \end{center}
 
-NetCDF I/O can be configured in the main configuration file or in a separate file 
-(see \texttt{ioparams} in the \texttt{[options]} section). 
-Any number of input, forcing, and output files can be specified. 
 
-Input files are processed in the same order they occur in the configuration file, 
-thus potentially overwriting previously loaded fields.  The configuration section 
-for an input file specified which time slice from the input file should be used as
-the initial condition.  (Note this is an integer specifying the time level, not
-the actual time.)
-
-Forcing files are new in CISM 2.0 and are input files that are read on every 
-time step to allow time-dependent
-forcing to be applied during a simulation.  Any inputtable fields can be included
-in forcing files.  Forcing files should have a ``time'' field which is used to 
-assign values to each field in the file during the simulation.  Forcing is applied 
-in a piecewise constant fashion -- the most recent time slice in the forcing file prior
-to the current model time is used on each time step.  (Linearly interpolatation of
-forcing may be available in the future but is not currently implemented.)
-Note that if a field is present in both an input file and in a
-forcing file at the start time, the value in the forcing file will overwrite the value
-from the input file because forcing files get read after input files.
-Forcing files are processed in the same order they occur in the configuration file, 
-on each time step thus potentially overwriting previously loaded fields from other
-forcing files.  The ``dome'' test case (\texttt{tests/higher-order/dome}) includes 
-an example of how to use time-dependent forcing.
-
-\begin{center}
-  \tablefirsthead{%
-    \hline
-  }
-  \tablehead{%
-    \hline
-    \multicolumn{2}{|l|}{\emph{\small continued from previous page}}\\
-    \hline
-  }
-  \tabletail{%
-    \hline
-    \multicolumn{2}{|r|}{\emph{\small continued on next page}}\\
-    \hline}
-  \tablelasttail{\hline}
-  \begin{supertabular*}{\textwidth}{@{\extracolsep{\fill}}|l|p{11cm}|}
-%%%% CF defaults
-    \hline
-    \multicolumn{2}{|l|}{\texttt{[CF default]}}\\
-    \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be modified in the \texttt{[output]} section. The model automatically attaches a time stamp and the model version to the netCDF output file.}\\
-    \hline
-    \texttt{title}& Title of the experiment\\
-    \texttt{institution} & Institution at which the experiment was run\\
-    \texttt{references} & References that might be useful\\
-    \texttt{comment} & A comment, further describing the experiment\\
-    \hline
-
-%%%% CF Input
-    \hline
-    \hline
-    \hline
-    \multicolumn{2}{|l|}{\texttt{[CF input]}}\\
-    \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.}\\
-    \hline
-    \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
-    \texttt{time}& The time slice (not actual time) to be read from the netCDF file. The first time slice is read by default.\\
-    \hline
-
-%%%% CF Forcing
-    \hline
-    \hline
-    \hline
-    \multicolumn{2}{|l|}{\texttt{[CF forcing]}}\\
-    \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
-    \hline
-    \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
-    \hline
-
-%%%% CF output
-    \hline
-    \hline
-    \hline
-    \multicolumn{2}{|l|}{\texttt{[CF output]}}\\
-    \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{This section of the netCDF parameter file controls how often selected  variables are written to file.}\\
-    \hline
-    \texttt{name} & The name of the output netCDF file. Typically netCDF files end with \texttt{.nc}.\\
-    \texttt{start} & Start writing to file when this time is reached (default: first time slice).\\
-    \texttt{stop} & Stop writin to file when this time is reached (default: last time slice). \\
-    \texttt{frequency} & The time interval in years, determining how often selected variables are written to file.\\
-    \texttt{xtype} & Set the floating point representation used in netCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). \\
-    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. Variable \texttt{restart} selects all variables necessary for a restart.\\
-    \hline
-  \end{supertabular*}
-\end{center}

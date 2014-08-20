@@ -1,3 +1,71 @@
-\section{Introduction}
+\section{Overview of Running CISM}
 
-Some introductory stuff about running the model here. Note that right now this section is sort of grab bag for left over stuff that we wanted to keep. 
+Assuming you successfully completed the Installation instructions in Chapter \ref{chp:install},
+the executable for running the model, \texttt{cism\_driver} can be found in your 
+build directory in a subdirectory called \texttt{cism\_driver} 
+(e.g., \texttt{./builds/mac-gnu/cism\_driver/cism\_driver}).
+
+The build system creates the executable at this path but does not automatically
+make it available to other locations on your system.  How you choose to do so depends 
+on your situation.  See the introduction to Chapter \ref{sec:testcases} for 
+an overview of how to make the executable available to other locations on your system
+(e.g., symlinking, copying, modifying your PATH environment variable).
+
+Unlike previous versions of Glimmer, with CISM 2.0 this single \texttt{cism\_driver} 
+executable is used for running the model in all configurations.  \
+texttt{cism\_driver} can be invoked with a single argument specifying 
+a CISM .config file to run CISM  as a standalone ice sheet model without GLINT climate forcing,
+ or with two arguments (a CISM config file and a GLINT config file) 
+to run CISM with GLINT climate forcing:
+\begin{verbatim}
+ Call cism_driver with either 1 or 2 arguments. Examples:
+ cism_driver ice_sheet.config
+ cism_driver ice_sheet.config climate.config
+\end{verbatim}
+The available options for the CISM configuration file and 
+for the GLINT climate interface configuration file are described in detail below.
+
+Note that instructions for running CISM within the Community Earth System Model (CESM)
+or another climate model are not described here.
+
+
+
+\section{Overview of Configuration Files}
+
+Running CISM is managed through configuration files (*.config) that enable 
+desired model features and control input of initial conditions and/or forcing 
+and output of model results.  This chapter summarizes the configuration options 
+available for running CISM and is divided into sections on general Model Configuration, 
+Input/Ouput Configuration, and optional Climate Forcing Configuration.
+
+The format of CISM configuration files is taken from that used by the 
+ConfigParser module in Python 2.x, which is similar to Windows \texttt{.ini} files 
+and contains sections. Each section contains key, value(s) pairs.
+
+\begin{itemize}
+\item[Comments:] Empty lines, or lines starting with a \texttt{\#}, \texttt{;} or \texttt{!} are ignored.  Comments can also be added on the same line as a key/value pair using these delimiters.
+\item[Sections:] A new section starts with the the section name enclosed with square brackets, \texttt{[]} and can be 20 characters long, e.g. \texttt{[grid]}.
+\item[Key/Value Pairs:] Keys are separated from their associated values by a \texttt{=} or \texttt{:}. The names can be 20 characters long. Values can be 200 characters long.
+\end{itemize}
+
+Sections and keys are case sensitive and may contain white space. 
+However, the configuration parser is very simple and thus the number of spaces 
+within a key or section name also matters. Sensible defaults are used when 
+a specific key is not found.  Defaults are indicated in bold in the tables below.
+
+An example configuration file:
+\begin{verbatim}
+;a comment
+[a section]
+an_int  : 1
+a_float = 2.0
+a_char  = hey, this is rather cool
+an_array = 10. 20. -10. 40. 100.
+
+[another section]
+! more comments
+foo : bar
+\end{verbatim}
+
+
+
