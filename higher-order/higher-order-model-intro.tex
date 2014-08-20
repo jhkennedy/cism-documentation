@@ -63,7 +63,7 @@ The term higher-order comes from scaling analyses of the Stokes equations for wh
 
 A good review paper that goes into a fair amount of detail about the various ice flow modeling approximations, their derivations, and their applicability, is the recent review by \citet{Schoof:2013is}.
 
-\subsection{Practical differences between shallow ice models and higher-order models}
+\subsection{Practical differences between shallow-ice and higher-order models}
 
 \begin{figure}
   \begin{center}
@@ -73,41 +73,41 @@ A good review paper that goes into a fair amount of detail about the various ice
    \label{fig:phylogeny}
 \end{figure} 
 
-By practical differences, we mean \textbf{(1)} how do we deal with solving the momentum equations in each case (the dynamics, or stress balance) and \textbf{(2)} how do we use the relevant information we derive from that solution (the kinematics, or velocity fields) to evolve the ice sheet geometry in time? There are large differences in how both of these issues are handled -- in shallow ice models versus in higher-order models -- for two main reasons:
+Here, by practical differences, we mean \textbf{(1)} how do we deal with solving the momentum equations (the dynamics, or stress balance) in each case and \textbf{(2)} how do we use the relevant information we derive from that solution (the kinematics, or velocity fields) to evolve the ice sheet geometry in time? There are large differences in how both of these issues are handled -- in shallow ice models versus in higher-order models -- for two main reasons:
 
 \begin{itemize}
-\item  The numerical solution of the dynamical equations is fundamentally different in each case. For the shallow ice case, we need only local information (slope and thickness) to solve for the velocity as a function of depth in a single column of ice. We do this pointwise for every location on our model domain (in map view), which is a relatively easy numerical problem; each column of velocities leads to a banded coefficient matrix that is relatively easy to invert (to solve for the velocities). This problem is also what we might call $embarrassingly$ $parallel$; in theory, each column of unknown velocities results in its own tridiagonal matrix, which could be solved for on its own processor. For higher-order models, however, we cannot do this since the solution at any point also depends on the solution at neighboring points (in map plane). The velocity at any point depends on non-local information, leading to an elliptic system of equations, and every velocity must be solved for simultaneously with every other velocity. The result is a much larger system of equations to solve, which is a more difficult numerical problem to solve on one processor and a much more difficult problem to solve on multiple processors. Because large-scale applications of higher-order models (e.g. whole-ice sheet models and coupling with climate models) will require efficient solution and parallelization techniques, this is a very active area of current research.  
+\item  The numerical solution of the dynamical equations is fundamentally different in each case. For the shallow ice case, we need only local information (slope and thickness) to solve for the velocity as a function of depth in a single column of ice. We do this pointwise for every location on our model domain (in map view), which is a relatively easy numerical problem; each column of velocities leads to a banded coefficient matrix that is easy to invert (to solve for the velocities). This problem is also what we might call $embarrassingly$ $parallel$; in theory, each column of unknown velocities results in its own tridiagonal matrix, which could be solved for on its own processor. For higher-order models, however, we cannot do this since the solution at any point also depends on the solution at neighboring points (in map plane). The velocity at any point depends on non-local information, leading to an elliptic system of equations, and every velocity must be solved for simultaneously with every other velocity. The result is a much larger system of equations to solve, which is a more difficult numerical problem to solve on one processor and a much more difficult problem to solve on multiple processors. Because large-scale applications of higher-order models (e.g. whole-ice sheet models and coupling with climate models) will require efficient, robust solution and parallelization techniques, this is a very active area of current research.  
 \end{itemize}
 
 \begin{itemize}
-\item  The equations governing dynamics AND evolution in a shallow ice model can be recast together as a single, non-linear, diffusion equation for ice thickness. A single system of equations is solved to calculate the velocity field and evolve the ice sheet geometry. For higher-order models, we must first solve the momentum balance equations to obtain the velocity field. Then, we need to use some other scheme to evolve the ice thickness. 
+\item  The equations governing dynamics AND evolution in a shallow-ice model can be recast together as a single, non-linear, diffusion equation for ice thickness. A single system of equations is solved to calculate the velocity field and evolve the ice sheet geometry. For higher-order models, we must first solve the momentum balance equations to obtain the velocity field. Then, we need to use some other scheme to evolve the ice thickness. 
 \end{itemize}
 
 Both of these differences mean that a model based on shallow ice physics may be built in a fundamentally different way than one based on higher-order physics. Most of the development work on CISM during the past few years has had to do with upgrading the model so that it can be used effectively and efficiently with higher-order dynamics schemes.  
 
-The equations describing a (2d) higher-order flow that is vertically integrated (i.e., the SSA) are:
+%The equations describing a (2d) higher-order flow that is vertically integrated (i.e., the SSA) are:
+%
+%\begin{align*}
+%\frac{\partial}{\partial x}\left ( 2 \eta H 
+%\left(2\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)\right)
+%+\frac{\partial}{\partial y}\left(\eta H\left(
+%\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right)\right)
+%=\rho_w gH \frac{\partial s}{\partial x}
+%\end{align*}
+%
+%
+%\begin{align*}
+%\frac{\partial}{\partial y}\left ( 2 \eta H 
+%\left(2\frac{\partial v}{\partial y}+\frac{\partial u}{\partial x}\right)\right)
+%+\frac{\partial}{\partial x}\left(\eta H\left(
+%\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right)\right)
+%=\rho_w gH \frac{\partial s}{\partial y}
+%\end{align*}
+
+The equations describing a (3d) higher-order\footnote{Specifically, the first-order accurate Stokes approximation discussed above. These will be derived in more detail in Section \ref{sc:higher-order-mom}.} flow are:
 
 \begin{align*}
-\frac{\partial}{\partial x}\left ( 2 \eta H 
-\left(2\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)\right)
-+\frac{\partial}{\partial y}\left(\eta H\left(
-\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right)\right)
-=\rho_w gH \frac{\partial s}{\partial x}
-\end{align*}
-
-
-\begin{align*}
-\frac{\partial}{\partial y}\left ( 2 \eta H 
-\left(2\frac{\partial v}{\partial y}+\frac{\partial u}{\partial x}\right)\right)
-+\frac{\partial}{\partial x}\left(\eta H\left(
-\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right)\right)
-=\rho_w gH \frac{\partial s}{\partial y}
-\end{align*}
-
-The equations describing a (3d) higher-order flow that is NOT vertically integrated (Blatter-Pattyn) are:
-
-\begin{align*}
-\frac{\partial}{\partial x}\left ( 2 \eta  
+  & x: \frac{\partial}{\partial x}\left ( 2 \eta  
 \left(2\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)\right)
 +\frac{\partial}{\partial y}\left(\eta \left(
 \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right)\right)
@@ -117,7 +117,7 @@ The equations describing a (3d) higher-order flow that is NOT vertically integra
 
 
 \begin{align*}
-\frac{\partial}{\partial y}\left ( 2 \eta 
+  & y: \frac{\partial}{\partial y}\left ( 2 \eta 
 \left(2\frac{\partial v}{\partial y}+\frac{\partial u}{\partial x}\right)\right)
 +\frac{\partial}{\partial x}\left(\eta \left(
 \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right)\right)
@@ -125,14 +125,24 @@ The equations describing a (3d) higher-order flow that is NOT vertically integra
 =\rho_w g \frac{\partial s}{\partial y}
 \end{align*}
 
-There are three differences that you should note
+%There are three differences that you should note
+Based on these equations, we can point out a few of the important differences between shallow-ice and higher-order models: 
 \begin{enumerate}
-\item  The vertically integrated model includes the ice thickness, $H$, in each term. This is a reflection of the integration and does not appear in the first order equations.
-\item  Accounting for the thickness not appearing, the only other difference is the presence of a vertical diffusion of horizontal velocities. This is the the third term on the left in the above equations.
-\item  The first order equations must be solved on each of a set of horizontal layers. Layers communicate with each other through the vertical diffusion term.
+%\item  The vertically integrated model includes the ice thickness, $H$, in each term. This is a reflection of the integration and does not appear in the first-order equations.
+%\item  Accounting for the thickness not appearing, the only other difference is the presence of a vertical diffusion of horizontal velocities. This is the the third term on the left in the above equations.
+\item  The the third term on the left-hand side represents the vertical diffusion of horizontal velocities. In a shallow-ice model, this term alone accounts for all ice dynamics and balances the entire body force in the $x$ direction (the term on the right-hand side). Note that the velocity gradients are in the vertical \textit{only}, which is why the solution is ``local" (in map view).
+
+\item  The first-order equations must be solved for each of a set of horizontal layers (the number of which is defined by the resolution in the vertical, here $dz$). These layers communicate with each other through the vertical diffusion term.
+
+\item  The first and second sets of terms on the left-hand side represent the resistance to the body-force term that result from ``membrane stresses". That is, stresses arising from horizontal velocity gradients. It is these horizontal gradients that make this a ``non-local" (elliptic) problem.
+
+\item  The lack of these membrane stress terms in the shallow-ice momentum balance is the primary reason for their failure to realistically simulate the flow in the parts of ice sheets we are most interested in -- outlet glaciers, ice streams, and ice shelves -- where horizontal stress gradients are not small, or may even be the dominant terms.  
+
 \end{enumerate}
 
-Both sets of equations are non-linear elliptical equations and much of the same technology can be used solve them. Additional complications come in when we account for boundary conditions at the lateral margins of the domain and at the upper and lower surfaces of the flow (note that for the vertically integrated flow, there are no explicit boundary conditions for the upper and lower surfaces; they are accounted for and incorporated during the vertical integration).
+%Both sets of equations are non-linear elliptical equations and much of the same technology can be used solve them. 
+Additional complications come in when we account for boundary conditions at the lateral margins of the domain and at the upper and lower surfaces of the flow. We describe these boundary conditions in more detail below.
+% (note that for the vertically integrated flow, there are no explicit boundary conditions for the upper and lower surfaces; they are accounted for and incorporated during the vertical integration).
 
 \subsection{Higher-order CISM}
 
