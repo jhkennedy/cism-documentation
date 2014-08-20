@@ -2,6 +2,16 @@
 \section{Higher-Order Momentum Balance}
 \label{sc:higher-order-mom}
 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.65\columnwidth]{\dir/figs/GIS.eps}
+   \end{center}
+  \caption{Observation-based balance velocities for Greenland (left) and depth-averaged speed from higher-order CISM (right) with basal sliding coefficients optimized to match the balance velocities (after Price et al., $PNAS$, \textbf{108}(22), 2011).}
+  \label{fig:GIS_PNAS}
+\end{figure} 
+
+The higher-order dynamics scheme currently implemented in CISM (some output from which is shown in Figure \ref{fig:GIS_PNAS}) is discussed in more detail in the following sections. First, the derivation of the equations themselves is discussed, followed by a discussion and derivation of the boundary conditions. Generic solution methods for the nonlinear system of equations are then discussed. Finally, there is a brief discussion on the solution of the thickness evolution equation, which as noted above requires a different approach than in shallow-ice models.
+
 \subsection{Derivation of the Blatter-Pattyn Equations}
 
 The higher-order dynamics scheme implemented in CISM is based on the so-called Blatter-Pattyn model. The starting point for this model is the full Stokes equations

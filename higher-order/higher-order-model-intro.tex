@@ -63,7 +63,7 @@ The term higher-order comes from scaling analyses of the Stokes equations for wh
 
 A good review paper that goes into a fair amount of detail about the various ice flow modeling approximations, their derivations, and their applicability, is the recent review by \citet{Schoof:2013is}.
 
-\subsection{Practical differences between shallow-ice and higher-order models}
+\subsection{Shallow-ice vs. higher-order models: practical differences}
 
 \begin{figure}
   \begin{center}
@@ -141,28 +141,9 @@ Based on these equations, we can point out a few of the important differences be
 \end{enumerate}
 
 %Both sets of equations are non-linear elliptical equations and much of the same technology can be used solve them. 
-Additional complications come in when we account for boundary conditions at the lateral margins of the domain and at the upper and lower surfaces of the flow. We describe these boundary conditions in more detail below.
+Additional complications come in when we account for boundary conditions at the lateral margins of the domain and at the upper and lower surfaces of the flow. We describe both the governing equations above and these boundary conditions in more detail in the sections below.
 % (note that for the vertically integrated flow, there are no explicit boundary conditions for the upper and lower surfaces; they are accounted for and incorporated during the vertical integration).
 
-\subsection{Higher-order CISM}
+%\subsection{Higher-order CISM}
 
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.65\columnwidth]{\dir/figs/GIS.eps}
-   \end{center}
-  \caption{Observation-based balance velocities for Greenland (left) and depth-averaged speed from higher-order CISM (right) with basal sliding coefficients optimized to match the balance velocities (after Price et al., $PNAS$, \textbf{108}(22), 2011).}
-  \label{fig:GIS_PNAS}
-\end{figure} 
-
-The higher-order dynamics scheme currently implemented in CISM (some output from which is shown in Figure \ref{fig:GIS_PNAS}) is discussed in more detail in the following chapters. First, the derivation of the equations themselves is discussed, followed by a discussion of the boundary conditions. Solutions methods for the nonlinear system of equations are then discussed. Finally, there is a brief discussion on the solution of the thickness evolution equation. 
-
-A very useful higher-order model intercomparison project (ISMIP-HOM) was organized by Frank Pattyn from the Université Libre de Bruxelles. That project, which resulted in a set of "benchmark" experiments for higher-order models, is reported on formally in Pattyn et al. (2008). 
-
-%\section{References}
-%\begin{itemize}
-%\item  \href{http://www.agu.org/journals/jf/jf0903/2008JF001179/}{Bueler, E. and J. Brown. Shallow shelf approximation as a "sliding law" in a thermomechanically coupled ice sheet model. \textit{J. Geophys. Res.}, F03008, doi:10.1029/2008JF001179, 2009.} 
-%\item  \href{http://www.nature.com/nature/journal/v458/n7236/full/nature07809.html}{Pollard, D. and R.M. DeConto. Modelling West Antarctic ice sheet growth and collapse through the past five million years. \textit{Nature}, \textbf{458}, doi:10.1038/nature07809, 2009.}
-%\item  \href{http://www.agu.org/journals/jb/jb0308/2002JB002329/}{Pattyn, F. A new three-dimensional higher-order thermomechanical ice sheet model: Basic sensitivity, ice stream development, and ice flow across subglacial lakes, \textit{J. Geophys. Res.}, \textbf{108}(B8), 2003.}
-%\item  {Pattyn, F. and 20 others. Benchmark experiments for higher-order and full Stokes ice sheet models (ISMIP-HOM), \textit{The Cryosphere}, \textbf{2}, 2008.}
-%\end{itemize}
-%\end{document}
+%A very useful higher-order model intercomparison project (ISMIP-HOM) was organized by Frank Pattyn from the Université Libre de Bruxelles. That project, which resulted in a set of "benchmark" experiments for higher-order models, is reported on formally in Pattyn et al. (2008). 
