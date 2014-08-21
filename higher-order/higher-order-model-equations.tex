@@ -14,7 +14,7 @@ The higher-order dynamics scheme currently implemented in CISM (some output from
 
 \subsection{Derivation of the Blatter-Pattyn Equations}
 
-The higher-order dynamics scheme implemented in CISM is based on the so-called Blatter-Pattyn model. The starting point for this model is the full Stokes equations
+The higher-order dynamics scheme implemented in CISM is based on the 1st-order accurate Stokes approximation (also often referred to as the ``Blatter-Pattyn" model). The starting point for this model is the full, nonlinear Stokes equations given by
 
 \begin{align*}
   & x:\quad \frac{\partial \tau _{xx}}{\partial x}-\frac{\partial P}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=0 \\ 
@@ -33,11 +33,9 @@ There are a number of ways to argue that, due to the shallowness of ice sheets (
  & z:\quad \frac{\partial \tau _{zz}}{\partial z}-\frac{\partial P}{\partial z}=\rho g \\ 
 \end{align*}
 
-The arguments that support this reduction are fairly complex, either based on a variational analysis or an asymptotic analysis. Two of the papers given in the references below ({\textit{Dukowicz et al.}, 2010}; {\textit{Schoof and Hindmarsh}, 2010}) provide more details on the mathematical background that allows us to state that these equations are first-order accurate approximations to the Stokes equations. 
+The arguments that support this reduction are fairly complex, either based on a variational analysis or an asymptotic analysis. \citet{Schoof:2010dl} and \citet{DUKOWICZ:2010wb} provide more details on the mathematical background that allows us to state that these equations are first-order accurate approximations to the Stokes equations. 
 
-We continue by noting that the 3rd (vertical) balance equation above can be integrated through the depth of the ice sheet to give an expression for the pressure, $P=\rho g\left( s-z \right)+\tau _{zz}(z)$
-
-This is simply a statement the the full vertical normal stress is balanced by the hydrostatic pressure (the so-called \textit{hydrostatic assumption}). This expression can be substituted into the horizontal pressure gradient terms above to remove pressure from the equations. For example, for the \textit{x} component of velocity we have
+We continue by noting that the 3rd (vertical) balance equation above can be integrated through the depth of the ice sheet to give an expression for the pressure, $P=\rho g\left( s-z \right)+\tau _{zz}(z)$. This is simply a statement the the full vertical normal stress is balanced by the hydrostatic pressure (the so-called \textit{hydrostatic assumption}). This expression can be substituted into the horizontal pressure gradient terms above to remove pressure from the equations. For example, for the \textit{x} component of velocity we have
 
 \begin{align*}
   & x:\quad \frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\frac{\partial P}{\partial x} \\ 
@@ -45,23 +43,28 @@ This is simply a statement the the full vertical normal stress is balanced by th
  & x:\quad \frac{\partial \tau _{xx}}{\partial x}-\frac{\partial \tau _{zz}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x} \\ 
 \end{align*}
 
-Now we can use the incompressibility and stress-strain colinearity constraints to rewrite the vertical normal deviatoric stress in terms of horizontal normal deviatoric stresses. This allows us to write the horizontal balance equations in terms of horizontal stress gradients only. Again, for the \textit{x} direction we have
+Now we can use the incompressibility and stress-strain colinearity constraints to rewrite the vertical normal deviatoric stress in terms of horizontal normal deviatoric stresses,
 
 \begin{align*}
-  & \tau _{zz}=-\tau _{xx}-\tau _{yy} \\ 
- & -\frac{\partial \tau _{zz}}{\partial x}=-\frac{\partial }{\partial x}\left( -\tau _{xx}-\tau _{yy} \right)=\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x} \\ 
- & \frac{\partial \tau _{xx}}{\partial x}-\frac{\partial \tau _{zz}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x}\quad ...\text{becomes}... \\ 
- & 2\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x}\quad  \\ 
+  & \tau _{zz}=-\tau _{xx}-\tau _{yy} \text{             ... taking gradients with respect to $x$ ... } \\ 
+ & -\frac{\partial \tau _{zz}}{\partial x}=-\frac{\partial }{\partial x}\left( -\tau _{xx}-\tau _{yy} \right)=\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x}.  \\
+\end{align*}
+ 
+Substituting this expression for the $x$ derivative of the vertical normal deviatoric stress back into our horizontal stress balance equation above we obtain,
+ 
+\begin{align*}
+ & \frac{\partial \tau _{xx}}{\partial x}-\frac{\partial \tau _{zz}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x}\quad \text{    ... becomes ... } \\
+ & 2\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x}\quad. \\
 \end{align*}
 
-Note that at this point we have removed the vertical balance equation entirely; it has been incorporated into the horizontal balance equations using incompressibility. The horizontal balance equations are now: 
+Note that at this point we have removed the vertical balance equation entirely; it has been incorporated into the horizontal balance equations through incompressibility. The horizontal balance equations are now: 
 
 \begin{align*}
-  & x:\quad 2\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x}\quad  \\ 
- & y:\quad 2\frac{\partial \tau _{yy}}{\partial y}+\frac{\partial \tau _{xx}}{\partial y}+\frac{\partial \tau _{xy}}{\partial x}+\frac{\partial \tau _{yz}}{\partial z}=\rho g\frac{\partial s}{\partial y} \\ 
+  & x:\quad 2\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x}\quad,  \\ 
+ & y:\quad 2\frac{\partial \tau _{yy}}{\partial y}+\frac{\partial \tau _{xx}}{\partial y}+\frac{\partial \tau _{xy}}{\partial x}+\frac{\partial \tau _{yz}}{\partial z}=\rho g\frac{\partial s}{\partial y}. \\
 \end{align*}
 
-Next, we want to write these equations in terms of velocities, since that is what we are ultimately solving for. The link between stress gradients and velocities is through the constitutive law for ice (here we'll assume Glen's law) -- relating strain rates to stresses -- and the definition of the strain rate tensor -- relating strain rates to velocity gradients.
+Next, we want to write these equations in terms of velocities, since that is what we are ultimately solving for. The link between stresses  and velocities is through the constitutive law for ice (here we assume Nye's generalization of Glen's law) -- relating strain rates to stresses -- and the definition of the strain rate tensor -- relating strain rates to velocity gradients.
 
 \begin{align*}
   & 1.\quad \tau _{ij}=B\dot{\varepsilon }_{e}^{\frac{1-n}{n}}\dot{\varepsilon }_{ij},\quad B=B(T) \\ 
@@ -74,28 +77,32 @@ Next, we want to write these equations in terms of velocities, since that is wha
 In order, the four expressions above give: 
 
 \begin{enumerate}
-\item  Glen's flow law (actually, the inverse flow-law here) where $B(T) = A(T)^{\frac{1-n}{n}}$ is a temperature dependent pre-factor
-\item  The definition of the strain rate tensor in terms of velocity gradients
-\item  The definition of the effective strain rate, $\dot{\varepsilon }_{e}$, a norm of the strain rate tensor
-\item  A definition for the "effective viscosity" (after rearranging some terms in (1))
-\item  Items (1)-(4) allow us to write the relationship between stress and strain in a standard Newtonian way, but with a non-Newtonian (nonlinear) viscosity
+\item  Glen's flow law\footnote{Technically, we are using the \textit{inverse} form of the flow-law here.}, where $B(T) = A(T)^{\frac{1-n}{n}}$ is the temperature dependent rate factor
+\item  The definition of the strain-rate tensor in terms of velocity gradients
+\item  The definition of the effective strain rate, $\dot{\varepsilon }_{e}$, a norm of the strain-rate tensor
+\item  A definition for the ``effective viscosity" (after rearranging some terms in (1))
+\item  Items (1)-(4) allow us to write the relationship between stress and strain in a standard ``Newtonian" way, but with a non-Newtonian (nonlinear) viscosity
 \end{enumerate}
 
-Now taking these definitions into our stress balance equations above and expanding in terms of strain rates, velocity gradients, and effective viscosities, we have (for the \textit{x} direction only):
+Now, taking these definitions into our stress balance equations above and expanding in terms of strain rates, velocity gradients, and the effective viscosity, we have (for the \textit{x} direction only):
 
 \begin{align*}
-  & x:\quad 2\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x} \\ 
- & x:\quad 2\frac{\partial }{\partial x}\left( 2\eta \dot{\varepsilon }_{xx} \right)+\frac{\partial }{\partial x}\left( 2\eta \dot{\varepsilon }_{yy} \right)+\frac{\partial }{\partial y}\left( 2\eta \dot{\varepsilon }_{xy} \right)+\frac{\partial }{\partial z}\left( 2\eta \dot{\varepsilon }_{xz} \right)=\rho g\frac{\partial s}{\partial x} \\ 
- & x:\quad 4\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial x} \right)+2\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial y}\left[ \eta \left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right)=\rho g\frac{\partial s}{\partial x} \\ 
+  & x:\quad 2\frac{\partial \tau _{xx}}{\partial x}+\frac{\partial \tau _{yy}}{\partial x}+\frac{\partial \tau _{xy}}{\partial y}+\frac{\partial \tau _{xz}}{\partial z}=\rho g\frac{\partial s}{\partial x}, \\ 
+ & x:\quad 2\frac{\partial }{\partial x}\left( 2\eta \dot{\varepsilon }_{xx} \right)+\frac{\partial }{\partial x}\left( 2\eta \dot{\varepsilon }_{yy} \right)+\frac{\partial }{\partial y}\left( 2\eta \dot{\varepsilon }_{xy} \right)+\frac{\partial }{\partial z}\left( 2\eta \dot{\varepsilon }_{xz} \right)=\rho g\frac{\partial s}{\partial x}, \\ 
+ & x:\quad 4\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial x} \right)+2\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial y}\left[ \eta \left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right)=\rho g\frac{\partial s}{\partial x}. \\ 
 \end{align*}
 
-
-An analogous expression describes the \textit{y} direction momentum balance equation. For actually solving the system of equations, it is advantageous to combine all \textit{v} gradient terms for the \textit{x} balance equation and move them to the right-hand side (and vice versa for the \textit{y} balance equation). This gives the final form of the equations to be discretized and solved:
-
+An analogous expression describes the \textit{y} direction momentum balance equation. 
+%For actually solving the system of equations, it is advantageous to combine all \textit{v} gradient terms for the \textit{x} balance equation and move them to the right-hand side (and vice versa for the \textit{y} balance equation). 
+Thus, the final form of the equations to be discretized and solved is given by:
 
 \begin{align*}
-  & x:\quad 4\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial y} \right)+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right)=-2\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial y} \right)-\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial x} \right)+\rho g\frac{\partial s}{\partial x} \\ 
- & y:\quad 4\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial x} \right)+\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right)=-2\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial x} \right)-\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial y} \right)+\rho g\frac{\partial s}{\partial y} \\ 
+  & x:\quad 4\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial y} \right)
+  +2\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial x} \right)
+  +\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right)=\rho g\frac{\partial s}{\partial x}, \\ 
+ & y:\quad 4\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial x} \right)
+ +2\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial y} \right)
+ +\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right)=\rho g\frac{\partial s}{\partial y}. \\ 
 \end{align*}
 
 %\section{References}
