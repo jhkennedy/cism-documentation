@@ -220,12 +220,12 @@ For an ice shelf, the surface and basal velocities are equal, in which case the 
 \end{align*}
 
 \subsection{Summary}
-Note that the form for ALL of the boundary conditions above is very similar. In fact, all that differs among the equations for the free surface, the specified basal traction, and the lateral shelf boundary condition is (1) the definition of the normal vectors and (2) the existence and definition of a source term. Here are the \textit{x} direction equations again for the three cases:
+Note that the form for \textit{all} of the boundary conditions above is very similar. In fact, all that differs among the equations for the free surface, the specified basal traction, and the lateral shelf boundary condition is (1) the definition of the normal vectors and (2) the existence and definition of a source term. Here are the \textit{x} direction equations again for the three cases:
 
 \begin{align*}
-  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial s}{\partial x}+ \frac{\partial u}{\partial y}\frac{\partial s}{\partial y}-\frac{\partial u}{\partial z}=-2 \frac{\partial v}{\partial y}\frac{\partial s}{\partial x}-\frac{\partial v}{\partial x}\frac{\partial s}{\partial y}, \\ 
-  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial b}{\partial x}+\frac{\partial u}{\partial y}\frac{\partial b}{\partial y}-\frac{\partial u}{\partial z}=-2\frac{\partial v}{\partial y}\frac{\partial b}{\partial x}-\frac{\partial v}{\partial x}\frac{\partial b}{\partial y}-\frac{\tau _{bx}}{\eta }, \\ 
-  & \hat{x}:\quad 4\frac{\partial u}{\partial x}n_{x}+\frac{\partial u}{\partial y}n_{y}=-2\frac{\partial v}{\partial y}n_{x}-\frac{\partial v}{\partial x}n_{y}+\frac{\rho gH}{2\eta }\left( 1-\frac{\rho }{\rho _{w}} \right)n_{x}. \\
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial s}{\partial x}+ \frac{\partial u}{\partial y}\frac{\partial s}{\partial y}+2 \frac{\partial v}{\partial y}\frac{\partial s}{\partial x}+\frac{\partial v}{\partial x}\frac{\partial s}{\partial y}-\frac{\partial u}{\partial z}=0, \\ 
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}\frac{\partial b}{\partial x}+\frac{\partial u}{\partial y}\frac{\partial b}{\partial y}+2\frac{\partial v}{\partial y}\frac{\partial b}{\partial x}+\frac{\partial v}{\partial x}\frac{\partial b}{\partial y}-\frac{\partial u}{\partial z}=\frac{\tau _{bx}}{\eta }, \\ 
+  & \hat{x}:\quad 4\frac{\partial u}{\partial x}n_{x}+\frac{\partial u}{\partial y}n_{y}+2\frac{\partial v}{\partial y}n_{x}+\frac{\partial v}{\partial x}n_{y}=\frac{\rho gH}{2\eta }\left( 1-\frac{\rho }{\rho _{w}} \right)n_{x}. \\
 \end{align*}
 
 In the first equation (free surface), the normals are related to the ice sheet surface slope and the source term is zero (which subsequently allows us to divide through by the effective viscosity and remove it from the equations). In the second equation (specified basal traction), the normals are related to the bedrock slopes and the source term is related to the assumed relationship between the basal shear stress and the basal sliding rate. In the last equation, the normals are defined by the shape of the ice-shelf front in map view, the vertical velocity gradient terms are absent, and the source term is related to the pressure from the adjacent column of ocean water.
