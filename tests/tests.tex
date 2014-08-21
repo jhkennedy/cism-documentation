@@ -21,12 +21,12 @@ There are a few ways this can be done:
 \begin{itemize}
   \item Softlink the executable into the directory, e.g.:
 
-        \texttt{ln -s ../../builds/mac-gnu/cism\_driver/cism\_driver .}
+        \texttt{ln -s ../../builds/mac-gnu/cism\_driver/cism\_driver ./}
 
         This is the recommended procedure when doing development so that the test
         will always be using the most up-to-date version of the executable.
 
-  \item Use the -e command line option for test case run scripts that support it, e.g.:
+  \item Use the -e command line option to point to include an explicit path for the executable (for test case run scripts that support this option), e.g.:
 
         \texttt{./dome.py -e ../../builds/mac-gnu/cism\_driver/cism\_driver}
 
