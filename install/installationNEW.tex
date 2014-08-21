@@ -502,29 +502,29 @@ Many of these options pertain to the parallel build which is discussed in more d
 
 \texttt{CISM\_BUILD\_EXTRA\_EXECUTABLES} & Toggle to build other executables, off by default \\
 
-\texttt{CISM\_BUILD\_GLINT} & Toggle to build glint, off by default \\
-
-\texttt{CISM\_BUILD\_GLINT\_EXAMPLE} & Toggle to build glint\_example, off by default \\
-
-\texttt{CISM\_BUILD\_SIMPLE\_BISICLES} &  Toggle to build simple\_bisicles, off by default \\
-
 \texttt{CISM\_BUILD\_SIMPLE\_GLIDE} &  Toggle to build simple\_glide, on by default \\
 
 \texttt{CISM\_COUPLED} & Toggle to build CISM for use with CESM, off by default \\
+
+\texttt{CISM\_ENABLE\_BISICLES} & Toggle to build a BISICLES-capable cism\_driver, off by default  \\
 
 \texttt{CISM\_FORCE\_FORTRAN\_LINKER} & Toggle to force using a fortran linker for building executables, off by default \\
 
 \texttt{CISM\_GNU} & Toggle to set compilation flags needed for the gnu compiler, off by default \\
 
-\texttt{CISM\_INCLUDE\_IMPLICIT\_LINK\_LIB} & Toggle to explicitly include the CMAKE\_Fortran\_IMPLICIT\_LINK\_LIBRARIES on the link line \\
+\texttt{CISM\_INCLUDE\_IMPLICIT\_LINK\_LIB} & Toggle to explicitly include the CMAKE\_Fortran\_IMPLICIT\_LINK\_LIBRARIES on the link line, on by default \\
 
 \texttt{CISM\_MPI\_MODE} & Toggle to Configure with MPI: defaults to ON \\
 
+\texttt{CISM\_NETCDF\_LIBS} &  Netcdf Library Names(s) \\
+
+\texttt{GLIMMER\_NO\_EXECUTABLE} & Set to  ON  to just build libraries (default:OFF) \\
+
 \texttt{CISM\_SERIAL\_MODE} & Toggle to Configure in Serial mode: defaults to OFF \\
 
-\texttt{CISM\_STATIC\_LINKING} &  Toggle to set static linking for executables, off by default \\
+\texttt{CISM\_SOURCEMOD\_DIR} &  Path to SourceMod directory of F90 files to replace CISM files \\
 
-\texttt{CISM\_USE\_CISM\_FRONT\_END} &  Toggle to use cism\_driver or cism\_cesm\_interface with cism\_front\_end, off by default \\
+\texttt{CISM\_STATIC\_LINKING} &  Toggle to set static linking for executables, off by default \\
 
 \texttt{CISM\_USE\_DEFAULT\_IO} &  Toggle to use default i/o files rather than running python script, off by default \\
 
@@ -534,11 +534,17 @@ Many of these options pertain to the parallel build which is discussed in more d
 
 \texttt{CISM\_USE\_TRILINOS} & Toggle to use Trilinos external solver libraries, on by default \\
 
-\texttt{GLIMMER\_NETCDF\_LIBS} &  Netcdf Library Names(s) \\
+%% older options below here %%
 
-\texttt{GLIMMER\_NO\_EXECUTABLE} & Set to  ON  to just build libraries (default:OFF) \\
+%\texttt{CISM\_USE\_CISM\_FRONT\_END} &  Toggle to use cism\_driver or cism\_cesm\_interface with cism\_front\_end, off by default \\
 
-\texttt{GLIMMER\_SOURCEMOD\_DIR} &  Path to SourceMod directory of F90 files to replace Glimmer files \\
+%\texttt{CISM\_BUILD\_GLINT} & Toggle to build glint, off by default \\
+
+%\texttt{CISM\_BUILD\_GLINT\_EXAMPLE} & Toggle to build glint\_example, off by default \\
+
+%% some probably not important options here %%
+
+%\texttt{CISM\_NETCDFF\_FOUND} & Path to NetCDF libraries  \textbf{** do we need to include this here? **} \\                                                                                                                        
 
 \hline
 \end{tabular}
