@@ -243,7 +243,7 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \hline
     \multicolumn{2}{|l|}{\texttt{[ho\_options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section determine how various components of the higher-order extensions to the ice sheet model are treated. Defaults are indicated in bold. As noted above, higher-order model options are currently NOT scientifically supported.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section determine how various components of the higher-order extensions to the ice sheet model (Glissade/Glam) are treated. Defaults are indicated in bold. These options have no effect on the Shallow-Ice (Glide) dycore.  As noted above, higher-order model options are currently NOT scientifically supported.}\\
     \hline
 %% which_ho_nonlinear
     \texttt{which\_ho\_nonlinear} & 
@@ -274,7 +274,7 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
 {\bf TODO: Should this be moved from ho\_options to options?} \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & calculate dissipation in temperature equation assuming SIA ice dynamics \\
-      1* & calculate dissipation in temperature equation assuming 1st-order ice dynamics \\
+      1 & calculate dissipation in temperature equation assuming 1st-order ice dynamics \\
     \end{tabular}\\    
 %% which_ho_babc
     \texttt{which\_ho\_babc} & 
@@ -357,7 +357,7 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \hline
     \multicolumn{2}{|l|}{\texttt{[parameters]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Set values for various parameters.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Set values for various parameters.  Parameters with a * after them are specific to the higher-order dycores (Glissade/Glam).}\\
     \hline
     \texttt{log\_level} & (integer) set to a value between 0, no messages, and 6, all messages are displayed to stdout. By default messages are only logged to file.\\
     \texttt{ice\_limit} & (real) below this limit ice is only accumulated/ablated; ice dynamics are switched on once the ice thickness is above this value. (default = 100.0 m) \\

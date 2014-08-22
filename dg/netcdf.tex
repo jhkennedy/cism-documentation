@@ -1,5 +1,10 @@
 \section{netCDF I/O}
-The netCDF\footnote{\texttt{http://www.unidata.ucar.edu/packages/netcdf/}} library is used for platform independent, binary file I/O. GLIMMER makes use of the f90 netCDF interface. The majority of the source files are automatically generated from template files and a variable definition file using a python script. The netCDF files adhere to the CF\footnote{\texttt{http://www.cgd.ucar.edu/cms/eaton/cf-metadata/index.html}} convention for naming climatic variables. The netCDF files also store parameters used to define the geographic projection.
+The netCDF\footnote{\texttt{http://www.unidata.ucar.edu/packages/netcdf/}} library 
+is used for platform independent, binary file I/O. CISM makes use of the f90 netCDF interface. 
+The majority of the source files are automatically generated from template files and 
+a variable definition file using a python script. The netCDF files adhere to the 
+CF\footnote{\texttt{http://www.cgd.ucar.edu/cms/eaton/cf-metadata/index.html}} 
+convention for naming climatic variables. The netCDF files also store parameters used to define the geographic projection.
 
 The netCDF related functionality is split up so that other subsystems of the model 
 can easily define their own variable sets without the need to recompile the main model. 
