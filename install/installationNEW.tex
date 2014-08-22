@@ -455,7 +455,7 @@ If you encounter an error when using the included scripts, you may need to modif
 such as the location of your NetCDF libraries or your compiler names.  Other errors you might 
 encounter may indicate that some of the supporting software (above) is missing.
 
-\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to instead do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command. I've already changed the gcc documentation above to reflect this. It would be good for someone else to confirm this if / when they do a clean install on a new machine.} 
+%\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to instead do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command. I've already changed the gcc documentation above to reflect this. It would be good for someone else to confirm this if / when they do a clean install on a new machine.} 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 For building on a Mac, you should be able to build the by doing the following:
@@ -636,11 +636,6 @@ can be done with the following command:
 	sudo port select --set mpi openmpi-gcc46-fortran
 \end{verbatim}
 
-\textbf{SP: For the above instructions to work with the current mac cake build script, one needs to point the mpi libs in that script to, e.g. ``mpif90" as opposed to
-``openmpif90", as currently written. With that change to the current build script (changes on 3 lines), the build works ``out of the box", with no 
-additional changes / tweaks needed as part of the software installation process. Need to confirm w/ Doug R. if when we can make that change and commit back up
-to the repo.}
-
 %Before using the OpenMPI compilers, we need to specify some critical shell environmental variables, so that OpenMPI "wraps" the right 
 %compilers during the build process. In the \texttt{bash} shell these would be specified as follows (or using ``setenv'' in \texttt{csh} or \texttt{tsch}): 
 %\textbf{SP: this info needs to be updated/confirmed}
@@ -668,13 +663,13 @@ Install OpenMPI with:
 % =====================================
 \subsection{Install Trilinos solver libraries}
 % =====================================
-\textbf{*** Steve: I have not checked over this section yet ***}
 
 Trilinos is a modern, open source, C++ based library of parallel nonlinear and linear solvers, 
-preconditioning and mesh-partitioning tools, and much more. It can be downloaded for free 
-\href{http://trilinos.sandia.gov/index.html}{here} (the software is free, but you are 
-required to enter your email address to download it). The documentation below assumes 
-that you are working with version 11.4.* and was specifically tested using version 11.4.3. 
+preconditioning and mesh-partitioning tools, and much more. It can be downloaded 
+\href{trilinos.sandia.gov/download/}{here}\footnote{trilinos.sandia.gov/download/}
+ (the software is free, but you are required to enter your email address to download it). 
+The documentation below assumes that you are working with version 11.4.* and was specifically 
+tested using version 11.4.3. 
 
 Building Trilinos requires Cmake version 2.8 or later, which ideally you've already 
 installed as discussed above. Note that Trilinos is not needed to run the default 
@@ -694,13 +689,13 @@ The easiest way to satisfy this requirement is to have separate ``source'', ``bu
 for example, in \texttt{/usr/local/}, you could set up the following three directories:
 
 \begin{verbatim}
+trilinos-11.4.3-Source/
 trilinos-11.4.3-Build/
 trilinos-11.4.3-Install/
-trilinos-11.4.3-Source/
 \end{verbatim}
 
 The ``source'' directory will be created on its own when you uncompress the tar.gz archive 
-that you download (while you do not have to keep the source code where you build and install 
+that you download (you do not have to keep the source code where you build and install 
 the Trilinos libraries but you will need to remember the path to where that source code 
 lives on your computer). 
 
@@ -720,7 +715,7 @@ but other locations are fine to use too (e.g., in your home/User directory).
 Also note the explicit path in the MPI lines, e.g.,
 
 \begin{verbatim}
--D MPI_EXEC="/opt/local/openmpiexec" \
+-D MPI_EXEC="/opt/local/mpiexec" \
 \end{verbatim}
 
 Since some Macs may come with their own pre-installed OpenMPI libraries, it is important here to specify the path to the version we previously installed using Macports.
@@ -729,7 +724,7 @@ Since some Macs may come with their own pre-installed OpenMPI libraries, it is i
 Find the example script most appropriate for your system, copy it to the \texttt{trilinos-11.4.3-Build} directory, and modify it if necessary (e.g., adjust paths, compiler locations, etc.).
 Execute it with: 
 
-\texttt{./do-cmake}
+\texttt{./do-cmake}\footnote{Note that here we've assumed that the name of the configure script is `do-cmake'. This script name may differ depending on what you have called it or if you've copied and modified one of the scripts from \texttt{./utils/trilinos\_config\_scripts\_examples}.}
 
 from within your \texttt{trilinos-11.4.3-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
 
@@ -779,7 +774,8 @@ Trilinos_ENABLE_TESTS:BOOL
 variable in the do-cmake script can be set to ``OFF''to disable building of the tests). 
 Screen output will tell you if and how many tests failed. In general, we have seen 
 one or two tests fail while still having a perfectly good and working Trilinos library. 
-Query the CISM users/developers list \textbf{SP: link here?} if you have questions 
+Query the \href{file:///Users/sprice/cism-website/documentation.html}{CISM users / developers lists}
+\footnote{file:///Users/sprice/cism-website/documentation.html} if you have questions 
 about specific Trilinos tests failing. 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
