@@ -131,13 +131,14 @@ Additional options (e.g., running and plotting for multiple tests simultaneously
 % =====================================
 \subsection{Confined Shelf}
 % =====================================
-This test setup is from tests 3 and 4 from the more ``simple"
-(i.e. not Ross) EISMINT-shelf test cases.  It tests an idealized ice shelf in a 
-confined embayment.  Grounded ice is not explicitly modeled but included in the 
+This test setup is from tests 3 and 4 from the idealized (i.e. not Ross) EISMINT-shelf test 
+cases.  It simulates the flow within an idealized, 500 m thick ice shelf in a 
+confined, rectangular embayment.  Grounded ice is not explicitly modeled but included in the 
 model setup as Dirichlet boundary conditions for velocity along the ice shelf edges.
-Detailed information on this test can be found at:
-\url{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}
-in the shelf-descr.pdf document.
+More detailed information on this test case can be found 
+\href{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}{here}
+\footnote{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html} in the 
+``shelf-descr.pdf" document.
 
 Note that the Confined Shelf and Circular Shelf experiments are both in the 
 \texttt{tests/higher-order/shelf} directory and share some files.
@@ -175,8 +176,9 @@ An example is shown in Figure \ref{fig:confinedshelf-results}.
 % =====================================
 \subsection{Circular Shelf}
 % =====================================
-This test models a circular ice shelf that is grounded at single point in the center
-of the shelf.  It tests 
+This test is a variant on the confined shelf test case discussed above. It simulates the flow within a circular ice shelf with a uniform thickness
+of 1000 m, which is grounded at a single grid point at its center. This test case confirms a working ``floating ice" boundary condition implementation
+in two dimensions (i.e, in map plane view) and also confirms radial symmetry. 
 
 Note that the Confined Shelf and Circular Shelf experiments are both in the 
 \texttt{tests/higher-order/shelf} directory and share some files.
@@ -213,11 +215,12 @@ An example is shown in Figure \ref{fig:circularshelf-results}.
 % =====================================
 \subsection{Ross Ice Shelf}
 % =====================================
-This experiment was designed to model the Ross Ice Shelf of Antarctica.
-For information about the experiment and its results see:
-\url{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}
+This experiment was designed to simulate the flow of the Ross Ice Shelf of Antarctica under idealized conditions (e.g., constant and uniform
+flow-law rate factor). For more information about the experiment and its results see 
+\href{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}{here}\footnote{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}. 
+Also, see \citet{MacAyeal:1996vn} for a discussion of the official model intercomparison results.
 
-This experiment will typically take about 10 minutes on a single processor.
+This experiment will typically take about 10 minutes to run on a single processor.
 
 \subsubsection{Provided Files}
 
@@ -243,7 +246,8 @@ and another can be used to visualize the results:
 
 \subsubsection{Results}
 The \texttt{plotRoss.py} script will generate a figure of the velocity field
-calculated for the Ross Ice Shelf.  The result should look very similar to Figures \ref{fig:rossresults1} and \ref{fig:rossresults2}.
+calculated for the Ross Ice Shelf.  The results should look very similar to Figures \ref{fig:rossresults1} and \ref{fig:rossresults2}. You can
+compare these with similar figures in the paper by \citet{MacAyeal:1996vn}.
 
 \begin{figure}[H!]
 	\centering
@@ -265,8 +269,8 @@ calculated for the Ross Ice Shelf.  The result should look very similar to Figur
 % =====================================
 \subsection{Other Tests}
 % =====================================
-Additional higher-order tests are in development (slab, stream).  Instructions
-for how to run them are in each directory, but these tests have not yet been 
-scientifically validated, so use at your own risk.
+Additional higher-order tests that are still in development (e.g., ``slab" and ``stream") are also included in the \texttt{./tests/higher-order/}
+directory. Instructions for how to run these tests are included in each directory. However, since these tests have not yet been validated yet, 
+they are for use at your own risk.
 
 

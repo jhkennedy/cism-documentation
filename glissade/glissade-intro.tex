@@ -3,4 +3,182 @@
 \section{Introduction}
 \label{sc:glissade-intro}
 
-Some text here
+Some introductory text that might be useful here, but that was out of place in a previous section 
+(taken from the end of ./modeling-intro/modeling-intro.tex), has been pasted into the respective .tex file
+for this section (./glissade/glissade-intro.tex) but is commented out for now.
+
+
+%3D, thermo-mechanically coupled ice sheet models. 3D refers to the
+%explicit vertical layering of the model for computing temperature.
+%Thermo-mechanical means that the ice viscosity is sensitive to
+%temperature, and an iterative procedure must be used to find the flow
+%rates from temperature. Both models exploit the often used shallow ice
+%approximation \textbackslash{}citep\{hutter83\}, which accounts for the
+%membrane like nature of ice sheets by reducing the stress tensor to only
+%leading order terms resulting from simple shear. The shallow ice
+%approximation, when combined with the non-linear constituative relation
+%given by Glen's flow law \textbackslash{}citep\{paterson94\}, leads to
+%the following expression for horizontal velocities
+%
+%$\begin{matrix}
+%u_i(z) &=& -2 (\rho g)^n \vert \nabla s\vert ^{n-1} \frac{\partial s}{\partial i} 
+%\int_h^z A(\theta^*)(s-z)^n dz + u_i(h)\\
+%i &=& x,y.
+%\end{matrix}$
+%
+%All parameters and symbols used in this paper appear in table
+%\textbackslash{}ref\{symbols\}. It is worth noting that all quantities
+%used to find the horizontal velocities are computed locally. The shallow
+%ice approximation eliminates terms resulting from transverse or lateral
+%stresses. The temperature sensitivity of ice flow is given by an
+%Arrhenius relation,
+%
+%$
+%A(\theta^*) = a \exp \left(\frac{-Q}{R\theta^*}\right).
+%$
+%
+%Which, in typical ice temperature ranges (-50 -{}- 0 C$^\circ$) varies
+%over 3 orders of magnitude. However because most shear occurs at the
+%base, and the base is warmed by dissipation and geothermal heat flow, a
+%more appropriate range is -20 -{}- 0 C$^\circ$. This gives a range of
+%$A$ over about a factor of 30.
+%
+%Assuming that horizontal diffusion is negligible, again due to the
+%membrane nature or very small aspect ratio (ratio of vertical to lateral
+%extent) of ice sheets, the ice temperature field is found from the
+%conservation of energy
+%
+%$ 
+%\frac{\partial \theta}{\partial t} = \frac{k}{\rho c}
+%\frac{\partial^2
+%\theta}{\partial z^2} -
+%\mathbf{u} \cdot \nabla \theta -
+%u_z \frac{\partial \theta}{\partial z} 
+%+ \frac{g(s-z)}{c}\frac{\partial \mathbf{u}}{\partial z} \cdot \nabla s.
+%$
+%
+%The terms on the right hand side from left to right are vertical
+%diffusion, horizontal advection, vertical advection, and dissipation
+%(using only the shallow ice stress tensor). Equation
+%\textbackslash{}ref\{temp\} is subject to the boundary conditions
+%
+%$\begin{matrix}
+%\theta - \theta_s(x,y) = & 0 &~\forall z=s \\
+%k \nabla \theta \cdot \mathbf{\hat n}(h) =& -G(x,y) + \mathbf{u} \cdot \tau_d
+%&~\forall z=h.
+%\end{matrix}$
+%
+%The upper surface is set to a mean annual temperature ($\theta_s$), and
+%the lower surface is accounting for the heat sources from both
+%geothermal heat ($G$) flux, and frictional heat generated when ice
+%slides over the bed. The temperatures are constrained by the melting
+%point corrected for pressure via the Clausius-{}-Clapeyron gradient
+%
+%$
+%\theta^* = \theta - \beta (s-z)
+%$
+%
+%The vertical advection term in equation \textbackslash{}ref\{temp\}
+%requires vertical velocities. They are found from incompressibility,
+%
+%$
+%\frac{\partial u_x}{\partial x} + 
+%\frac{\partial u_y}{\partial y} +
+%\frac{\partial u_z}{\partial z} = 0,
+%$
+%
+%by integrating with respect to $z$, giving
+%
+%$
+%u_z(z) = -\int_h^z \left( \frac{\partial u_x}{\partial x} + \frac{\partial
+%u_y}{\partial y}\right ) dz + M + \mathbf{u}(h) \cdot \nabla h.
+%$
+%
+%Were the complete accounting must include the melt rate and bed
+%topography. Basal melt rates computed from the jump boundary condition
+%at the bed,
+%
+%$
+%M = \frac{1}{\rho L} \left ( k \frac{\partial
+%\theta(h)}{\partial z} + G + \mathbf{u} \cdot \tau_d \right ).
+%$
+%
+%Having solved for the temperature dependent velocity fields, changes in
+%the ice sheet's geometry are computed from the continuity equation
+%
+%$
+%\frac{\partial H}{\partial t} = - \nabla \cdot (\mathbf{\bar u} H) + B - M.
+%$
+%
+%Both models use the finite difference methods for descritization of the
+%partial differential equations. GLIMMER differs from PISM in that it
+%offers a choice of implicit schemes for solving equation
+%\textbackslash{}ref\{continuity\}, whereas PISM uses an explicit scheme
+%\textbackslash{}citep\{press92\}. Further, GLIMMER utilizes a rescaled,
+%or $\sigma$ vertical coordinate \textbackslash{}citep\{lliboutry87\} and
+%PISM does not. PISM uses the PETSc
+%\textbackslash{}citep\{petsc-user-ref\} library to achieve parallelism
+%and has the capacity to include a more complete stress formulation, but
+%that capacity was not used here. Additional discussion of the field
+%equations and numerical methods used in GLIMMER can be found in
+%\textbackslash{}citet\{payne97\} and \textbackslash{}citet\{payne99\}.
+%
+%The ice sheet model CISM uses a finite difference method to solve the
+%governing thermodynamic equations for ice using the \{\textbackslash{}it
+%shallow ice approximation\}. This is the approach generally adopted for
+%modeling large ice masses. The assumption is made that slopes at the
+%upper and lower surfaces are sufficiently small that normal stress
+%components can be neglected. This leads to a \{\textbackslash{}it
+%local\} balance between the gravitational driving stress and the basal
+%shear stress and expressions for the shear stresses
+%
+%$\begin{matrix}
+%\tau_{xz}(z)&=&-\rho g \left(s - z \right) \frac{\partial s}{\partial x}  \\
+%\tau_{yz}(z)&=&-\rho g \left(s - z \right) \frac{\partial s}{\partial y}
+%\end{matrix}$
+%
+%Evolution of the ice thickness uses equation
+%\textbackslash{}ref\{equation:mabalfinc\} and the temperature solver
+%uses a version of equation \textbackslash{}ref\{equation:enbalfin\}
+%simplified to neglect horizontal diffusion (a typical simplification).
+%
+%The model equations are solved on a regular grid using the Glen flow law
+%(equation \textbackslash{}ref\{equation:Glen\}) and appropriate boundary
+%conditions for the upper and lower surfaces. These include the surface
+%ice accumulation rate and temperature and a geothermal gradient (applied
+%at the base of a bedrock layer with specified thermal properties). Basal
+%traction may also be specified, in the situation where ice is at the
+%melt temperature at the base. Isostatic adjustment of the land surface
+%beneath the ice sheet, not discussed here, is also included.
+%
+%\subsubsection{numerical scheme}
+%
+%The continuous functions represented by the model governing equations
+%cannot be solved exactly. Instead, they are discretized so that finite
+%approximations of their solutions may be made. There are a variety of
+%numerical techniques available for this purpose, GLIMMER makes use of a
+%finite difference method.
+%
+%In brief, the model domain (a region of Earth's surface, for example,
+%Greenland) is subdivided into a regularly-spaced horizontal grid and
+%derivatives are approximated along the grid directions. The grid is
+%fixed in space over the course of the model run. Model variables such as
+%ice thickness are updated at each time step according to the numerical
+%approximations of the governing equations. The vertical dimension is
+%treated using a non-dimensional ``stretch'' coordinate so that an
+%evolving ice thickness may be accommodated. The scaling is:
+%
+%$
+%\zeta~=~\frac{s-z}{H}
+%$
+%
+%so that $\zeta=1$ at the surface $s$ and $\zeta=0$ at the base. The
+%governing equations must be re-written in the new, $(x, y, \zeta)$
+%coordinate system.
+%
+%If you would like to read more about the inner workings of GLIMMER, its
+%documentation is available at the class website. This is not necessary
+%for the present lab exercise.
+
+
+
