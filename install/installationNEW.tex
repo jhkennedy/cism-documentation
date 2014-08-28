@@ -803,14 +803,14 @@ After successfully building Trilinos, create an environment variable called \tex
 so the CISM build process can find the Trilinos installation.  For example, if you 
 are using the bash shell and your current directory is the Trilinos install directory, you can do:
 \begin{verbatim}
-export GLIMMER_TRILINOS_DIR=$PWD
+export CISM_TRILINOS_DIR=$PWD
 \end{verbatim}
 (Note that you may prefer to modify your .bashrc or .bash\_profile (or similar)
 to set this environment variable on every login.)
 
 Alternatively, you can modify the CISM parallel build script (below) so that the line:
 \begin{verbatim}
--D GLIMMER_TRILINOS_DIR=$GLIMMER_TRILINOS_DIR \
+-D CISM_TRILINOS_DIR=$CISM_TRILINOS_DIR \
 \end{verbatim}
 is set to the Trilinos installation directory.
 
