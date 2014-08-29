@@ -253,19 +253,19 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \end{tabular}\\     
 %% which_ho_sparse
     \texttt{which\_ho\_sparse} & 
-{\bf TODO: Bill, check these descriptions for accuracy?  Also, do we need notes about which options are glissade vs. glam specific?} \\ &
+%\\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       -1 & Solve sparse linear system using SLAP library with incomplete Cholesky method\\
-      {\bf 0} & Solve sparse linear system with incomplete LU-preconditioned biconjugate gradient method\\
-      1 & Solve sparse linear system with incomplete LU-preconditioned GMRES method\\
-      2 & Solve sparse linear system with conjugate gradient method (parallel code only)\\
-      3 & Solve sparse linear system with conjugate gradient method with Chronopoulos-Gear preconditioner (parallel code only)\\
-      4 & Solve sparse linear system using Trilinos, incomplete LU-preconditioned GMRES method (Trilinos compatible build only)\\
+      {\bf 0} & Solve sparse linear system using SLAP library with incomplete LU-preconditioned biconjugate gradient method\\
+      1 & Solve sparse linear system using SLAP library with incomplete LU-preconditioned GMRES method\\
+      2 & Solve sparse linear system using preconditioned conjugate gradient method: standard algorithm (glissade only)\\
+      3 & Solve sparse linear system with preconditioned conjugate gradient method: Chronopoulos-Gear algorithm (glissade only)\\
+      4 & Solve sparse linear system using Trilinos, incomplete LU-preconditioned GMRES method (Trilinos-compatible build only)\\
     \end{tabular}\\     
 %% which_ho_efvs
     \texttt{which\_ho\_efvs} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      0 & use a constant value for the effective viscosity: 2336041.42829 Pa yr (Value used by ISMIP-HOM Test F)\\
+      0 & use a constant value for the effective viscosity. The default value is 2336041 Pa yr, as used by ISMIP-HOM Test F.\\
       1 & set the effective viscosity to a value based on the flow rate factor: efvs $= 0.5 * A^{-1/n}$\\
       {\bf 2} & use the effective strain rate for the calc. of the effective viscosity (i.e., full nonlinear treatment) \\
     \end{tabular}\\  
@@ -366,7 +366,8 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \texttt{calving\_fraction} & (real) fraction of ice lost due to calving (applies to "marine\_margin" option 2). (default = 0.8)\\
     \texttt{geothermal} & (real) constant geothermal heat flux. (default = -0.05 W m$^{-2}$)\\
     \texttt{flow\_factor} & (real) the flow law is enhanced with this factor (default = 3.0)\\
-     \texttt{default\_flwa} * & Flow law parameter A to use in isothermal experiments (flow\_law set to 0).  Default value is $10^{-16}$ Pa$^{-n}$ yr$^{-1}$. \\
+    \texttt{default\_flwa} & Flow law parameter A to use in isothermal experiments (flow\_law set to 0).  Default value is $10^{-16}$ Pa$^{-n}$ yr$^{-1}$. \\
+    \texttt{efvs\_constant} * & Constant value of effective viscosity when using \texttt{which\_ho\_efvs}=0. Default value is 2336041 Pa yr, as in ISMIP-HOM Test F. \\
     \texttt{hydro\_time} & (real) basal hydrology time constant (default = 1000.0 yr) {\bf TODO: IS THIS STILL USED?}\\
     \texttt{basal\_tract\_const} & constant basal traction parameter. You can load a nc file with a variable called \texttt{soft} if you want a spatially varying bed softness parameter. \\
     \texttt{basal\_tract\_max} & Max value for basal traction when using \texttt{slip\_coeff}=4. \\
