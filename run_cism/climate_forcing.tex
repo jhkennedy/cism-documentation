@@ -1,38 +1,43 @@
 \section{Climate Forcing Configuration}
+The core ice sheet model is connected to the climate via the surface mass balance (SMB) (\texttt{acab} field) 
+and air temperature (\texttt{artm} field) and (optionally) a scalar value for eustatic sea level. 
+This climate forcing can come from:
+\begin{itemize}
+  \item  climate schemes included in the CISM code:
+    \begin{itemize}
+      \item EISMINT 1 and 2
+      \item annual and daily PDD schemes
+    \end{itemize}
 
-Something about climate forcing options for GLIMMER-CISM. Essentially, this include EISMINT and GLINT, and the SMB schemes, which we are unfamiliar with. I'm lumping them all in here simply 
-because they have something to do w/ climate and running the model. Other ``drivers" and climate forcing stuff that we don't support anymore has been commented out of this build.
+  \item  data input into the model:
+    \begin{itemize}
+      \item directly as user-supplied \texttt{acab} and \texttt{artm} fields
+      \item from a global or regional climate model (e.g., CESM, GENIE, either from data or coupled) throught the GLINT interface
+    \end{itemize}
+\end{itemize}
 
 
-
-%\subsection{Climate Drivers}
-%\label{subsec:climdrive}
-\textbf{SP: Matt, can you take a stab at correcting / updating this section? Maybe we don't even need it anymore since we aren't really supporting most of the old climate drivers?}
-The core ice sheet model, GLIDE, is connected to the climate via the surface mass balance and temperature fields and (optionally) a scalar value for eustatic sea level. These drivers can be derived from simple assumptions, e.g. uniform mass balance or EISMINT tests, or from climate model output, e.g. GENIE or a regional climate model. These components, and how they relate to each other, are outlined in Figure \ref{ug.glide}.
-%
-%\begin{figure}[htbp]
-% \begin{center}
-%   \includegraphics[width=0.9\textwidth]{\dir/figs/glide.eps}
-% \end{center}
-% \caption{Outline of the GLIDE and Climate components.}
-%\label{ug.glide}
-%\end{figure}
-%
 
 %________________________________________________
 %________________________________________________
 %
-%	EISMINT "driver" (does this exist anymore?) described here
+%	EISMINT "driver"
 %________________________________________________
 %________________________________________________
-
-
-\subsection{EISMINT Driver}\label{driver:eismint}
-
-** Note sure if this even formally exists. I'm guessing this is called during the EISMINT test cases, but if there is no obvious way for someone to ``get" at it, I wonder if 
-we need to bother describing in detail here. Oddly, this only talks about EISMINT 1. **
+\subsection{EISMINT Climate Forcing}\label{driver:eismint}
+CISM includes a set of idealized climate forcings used in the 
+European Ice Sheet Modeling INiTiative (EISMINT) Phase 1 and 2
+series of experiments.  These forcings calculate surface mass balance and 
+air temperature fields for predefined experiments.  See Chapter \ref{chp:testcases}
+for details of how to run the individual tests, and see the EISMINT publications
+for a more detailed description of the tests and the forcings associated with each.
+\citet{Huybrechts1996} describe EISMINT Phase 1, and \citet{Payne2000} describe EISMINT Phase 2.
 
 \subsubsection{Configuration}
+The various EISMINT climate forcings are enabled by adding one of the following
+sections to the configuration file used for running CISM.  See the files associated
+with the EISMINT test cases (Chapter \ref{chp:testcases}) for examples of their usage
+for each of the specific experiment setups described in \citet{Huybrechts1996} and \citet{Payne2000}.
 
 \begin{center}
   \tablefirsthead{%
@@ -49,25 +54,46 @@ we need to bother describing in detail here. Oddly, this only talks about EISMIN
     \hline}
   \tablelasttail{\hline}
   \begin{supertabular*}{\textwidth}{@{\extracolsep{\fill}}|l|p{11cm}|}
+
 %%%% EISMINT-1 fixed margin
     \hline
     \multicolumn{2}{|l|}{\texttt{[EISMINT-1 fixed margin]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{EISMINT 1 fixed margin scenario.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{EISMINT 1 fixed margin scenario. Some of the EISMINT-1 fixed margin tests use periodic, time-varying forcing.
+}\\
     \hline
-    \texttt{temperature} & (real(2)) Temperature forcing $$T_{\mbox{surface}}=t_1+t_2d$$ where $$d=\max\{|x-x_{\mbox{summit}}|,|y-y_{\mbox{summit}}|\}$$\\
+    \texttt{temperature} & (real(2 values)) Temperature forcing $$T_{\mbox{surface}}=t_1+t_2d$$ where $$d=\max\{|x-x_{\mbox{summit}}|,|y-y_{\mbox{summit}}|\}$$\\
     \texttt{massbalance} & (real) Mass balance forcing \\
     \texttt{period} & (real) period of time--dependent forcing (switched off when set to 0) $$\Delta T=10\sin\frac{2\pi t}{T}$$ and $$\Delta M=0.2sin\frac{2\pi t}{T}$$\\
+    \texttt{mb\_amplitude} & (real) amplitude of the surface mass balance when \texttt{period} is greater than 0 \\
     \hline
+    \hline
+    \hline
+
 %%%% EISMINT-1 moving margin
     \hline
     \multicolumn{2}{|l|}{\texttt{[EISMINT-1 moving margin]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{EISMINT 1 moving margin scenario.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{EISMINT 1 moving margin scenario.  Some of the EISMINT-1 moving margin tests use periodic, time-varying forcing.
+
+}\\
     \hline
-    \texttt{temperature} & (real(2)) Temperature forcing $$T_{\mbox{surface}}=t_1-t_2H$$ where $H$ is the ice thickness\\
-    \texttt{massbalance} & (real(3)) Mass balance forcing $$M=\min\{m_1,m_2(m_3-d)\}$$ where $$d=\sqrt{(x-x_{\mbox{summit}})^2+(y-y_{\mbox{summit}})^2}$$\\
+    \texttt{temperature} & (real(2 values)) Temperature forcing $$T_{\mbox{surface}}=t_1-t_2H$$ where $H$ is the ice thickness\\
+    \texttt{massbalance} & (real(3 values)) Mass balance forcing $$M=\min\{m_1,m_2(m_3-d)\}$$ where $$d=\sqrt{(x-x_{\mbox{summit}})^2+(y-y_{\mbox{summit}})^2}$$\\
     \texttt{period} & (real) period of time--dependent forcing (switched off when set to 0) $$\Delta T=10\sin\frac{2\pi t}{T}$$ and $$M=\min\left\{m_1,m_2\left(m_3+100sin\frac{2\pi t}{T}-d\right)\right\}$$\\
+    \texttt{mb\_amplitude} & (real) amplitude of the surface mass balance when \texttt{period} is greater than 0 \\
+    \hline
+    \hline
+    \hline
+
+%%%% EISMINT-2
+    \hline
+    \multicolumn{2}{|l|}{\texttt{[EISMINT-2]}}\\
+    \hline
+    \multicolumn{2}{|p{0.95\textwidth}|}{EISMINT 2 climate forcing.  Both surface mass balance and air temperature are dependent solely on position and not on ice-surface elevation.}\\
+    \hline
+    \texttt{temperature} & (real(2 values)) Temperature forcing $$T_{\mbox{surface}}=t_1-t_2d$$ where $d$ is the distance from the summit, $$d=\sqrt{(x-x_{\mbox{summit}})^2+(y-y_{\mbox{summit}})^2}$$\\
+    \texttt{massbalance} & (real(3 values)) Mass balance forcing $$M=\min\{m_1,m_2(m_3-d)\}$$ where $d$ is the distance from the summit, $$d=\sqrt{(x-x_{\mbox{summit}})^2+(y-y_{\mbox{summit}})^2}$$\\
     \hline
   \end{supertabular*}
 \end{center}
