@@ -9,6 +9,7 @@
 # ===================================
 
 # Location of source directory - needed for autogenerating variables only
+#top_srcdir = /Users/mhoffman/documents/cism/trunk
 top_srcdir = /Users/sprice/work/modeling/cism/seacism
 
 # commands to make documentation
@@ -101,14 +102,14 @@ graphics: $(ug_graphics) $(num_graphics) $(numgnu_graphics) $(dg_graphics)
 # path where the varlist .tex file will be created
 vpath %.tex ./ug
 # list of variable list tex files to be generated
-var_lists = glide_varlist.tex eis_varlist.tex glint_varlist.tex
+var_lists = glide_varlist.tex glint_varlist.tex   # eis_varlist.tex  <-- eis is no longer in the code
 varlists: $(var_lists)
 
 # how to auto-generate the variable list .tex files
 glide_varlist.tex: $(top_srcdir)/libglide/glide_vars.def ./ug/varlist.tex.in
 	cd ug; $(PYTHON) $(top_srcdir)/utils/build/generate_ncvars.py $(top_srcdir)/libglide/glide_vars.def varlist.tex.in; cd ..
-eis_varlist.tex: $(top_srcdir)/example-drivers/eis/src/eis_vars.def ./ug/varlist.tex.in
-	cd ug; $(PYTHON) $(top_srcdir)/utils/build/generate_ncvars.py $(top_srcdir)/example-drivers/eis/src/eis_vars.def varlist.tex.in; cd ..
+#eis_varlist.tex: $(top_srcdir)/example-drivers/eis/src/eis_vars.def ./ug/varlist.tex.in
+#	cd ug; $(PYTHON) $(top_srcdir)/utils/build/generate_ncvars.py $(top_srcdir)/example-drivers/eis/src/eis_vars.def varlist.tex.in; cd ..
 glint_varlist.tex: $(top_srcdir)/libglint/glint_vars.def ./ug/varlist.tex.in
 	cd ug; $(PYTHON) $(top_srcdir)/utils/build/generate_ncvars.py $(top_srcdir)/libglint/glint_vars.def varlist.tex.in; cd ..
 
