@@ -2,63 +2,80 @@
 \section{Higher-Order Model Boundary Conditions}
 \label{sc:higher-order-bcs}
 
-We will go through an approximate derivation of the boundary conditions that are implemented with CISM's higher-order scheme. By approximate we mean that some of the derivation is guided by physical intuition and reasonable arguments, rather than through the application of rigorous mathematics. In the end, we derive the same set of equations as when following the more rigorous approach (see, e.g. \citet{DUKOWICZ:2010wb}). We will look at the derivation in three parts, (1) the free surface boundary condition, (2) the specified basal traction boundary condition, and (3) lateral boundary conditions.
+We now carry out an approximate derivation of the boundary conditions that are implemented with CISM's higher-order scheme. By approximate we mean that some of the derivation is guided by physical intuition and reasonable arguments, rather than rigorous mathematics. In the end, we derive the same set of equations as when following the more rigorous approach (see, e.g. \citet{DUKOWICZ:2010wb}). We will look at the derivation in three parts, (1) the free surface boundary condition, (2) the basal traction boundary condition, and (3) lateral boundary conditions.
 
-\subsection{Stress Free Surface}
-At the ice surface, a stress-free boundary condition is applied. The traction vector, $T_i$, must be continuous across the ice sheet surface and, assuming that atmospheric pressure and surface tension are small, we have
+\subsection{Stress-free Surface}
+At the upper ice surface, a stress-free boundary condition is applied. The traction vector $T_i$ must be continuous across the ice sheet surface and, assuming that atmospheric pressure and surface tension are small, we have
 
-\begin{align*}
- & T_{i}=-T_{i(boundary)}\approx 0, \\ 
- & T_{i}=\sigma _{ij}n_{j}=\sigma _{i1}n_{1}+\sigma _{i2}n_{2}+\sigma _{i3}n_{3}=0, \\
-\end{align*}
+\begin{equation}
+  \label{ho.eq.surface_traction}
+  \begin{split}
+    & T_{i} = -T_{i(\textrm{boundary})}\approx 0, \\ 
+    & T_{i} = \sigma _{ij}n_{j} = \sigma _{i1}n_{1} + \sigma _{i2}n_{2} + \sigma _{i3}n_{3} = 0, \\
+  \end{split}
+\end{equation}
 
+\noindent
 where the $n_i$ are the components of the outward facing, unit normal vector in Cartesian coordinates.
 
 For a function \textit{F(x,y,z) = z -- f(x,y) = 0}, where \textit{z = f(x,y)} defines the surface, the gradient of \textit{F(x,y,z)} gives the components of the surface normal vector. For the case of the ice sheet surface, $s = f(x,y)$ and the surface normal is given by
 
-\begin{align*}
-n_{i}=\left( -\frac{\partial s}{\partial x},-\frac{\partial s}{\partial y},1 \right)\frac{1}{a},
-\end{align*}
+\begin{equation}
+  n_{i}=\left( -\frac{\partial s}{\partial x},-\frac{\partial s}{\partial y},1 \right)\frac{1}{a},
+\end{equation}
 
+\noindent
 where
 
-\begin{align*}
-a=\sqrt{\left( \frac{\partial s}{\partial x} \right)^{2}+\left( \frac{\partial s}{\partial y} \right)^{2}+1^{2}}.
-\end{align*}
+\begin{equation}
+  a = \sqrt{\left( \frac{\partial s}{\partial x} \right)^{2} + \left( \frac{\partial s}{\partial y} \right)^{2} + 1}.
+\end{equation}
 
-The expression above for $T_i$ gives three equations that must be satisfied for a free surface boundary condition:
+\noindent
+Eq. \eqref{ho.eq.surface_traction} gives three equations that must be satisfied at the free surface:
 
-\begin{align*}
-  & i=x:\quad T_{x}=\sigma _{xx}n_{x}+\sigma _{xy}n_{y}+\sigma _{xz}n_{z}=0, \\ 
- & i=y:\quad T_{y}=\sigma _{yx}n_{x}+\sigma _{yy}n_{y}+\sigma _{yz}n_{z}=0, \\ 
- & i=z:\quad T_{z}=\sigma _{zx}n_{x}+\sigma _{zy}n_{y}+\sigma _{zz}n_{z}=0. \\ 
-\end{align*}
+\begin{equation}
+  \begin{split}
+    & i=x: \quad T_{x} = \sigma _{xx}n_{x} + \sigma _{xy}n_{y} + \sigma _{xz}n_{z}=0, \\ 
+    & i=y: \quad T_{y} = \sigma _{yx}n_{x} + \sigma _{yy}n_{y} + \sigma _{yz}n_{z}=0, \\ 
+    & i=z: \quad T_{z} = \sigma _{zx}n_{x} + \sigma _{zy}n_{y} + \sigma _{zz}n_{z}=0. \\ 
+  \end{split}
+\end{equation}
 
-Expanding the last one and expressing stresses in terms of strain rates and pressures, where $\eta$ is the effective viscosity defined above, gives
+\noindent
+Expanding the $z$ equation and expressing stresses in terms of strain rates and pressures, where $\eta$ is the effective viscosity defined above, gives
 
-\begin{align*}
-\left( 2\eta \dot{\varepsilon }_{zx} \right)n_{x}+\left( 2\eta \dot{\varepsilon }_{zy} \right)n_{y}+\left( 2\eta \dot{\varepsilon }_{zz}-P \right)n_{z}=0.
-\end{align*}
+\begin{equation}
+  \left( 2\eta \dot{\varepsilon }_{zx} \right)n_{x}+\left( 2\eta \dot{\varepsilon }_{zy} \right)n_{y}+\left( 2\eta \dot{\varepsilon }_{zz}-P \right)n_{z}=0.
+\end{equation}
 
-When solved for the pressure this gives
+\noindent
+Solving for the pressure gives
 
-\begin{align*}
-Pn_{z}=\left( 2\eta \dot{\varepsilon }_{zz} \right)n_{z}+\left( 2\eta \dot{\varepsilon }_{zx} \right)n_{x}+\left( 2\eta \dot{\varepsilon }_{zy} \right)n_{y}.
-\end{align*}
+\begin{equation}
+  Pn_{z} = \left( 2\eta \dot{\varepsilon }_{zz} \right)n_{z}+\left( 2\eta \dot{\varepsilon }_{zx} \right)n_{x}+\left( 2\eta \dot{\varepsilon }_{zy} \right)n_{y}.
+\end{equation}
 
-Expanding the above expression in terms of velocity gradients and normal vector components we have
+\noindent
+Expanding in terms of velocity gradients and normal vector components, we find
 
-\begin{align*}
-P=2\eta \frac{\partial w}{\partial z}-\left( \eta \frac{\partial u}{\partial z} \right)\frac{\partial s}{\partial x}-\left( \eta \frac{\partial v}{\partial z} \right)\frac{\partial s}{\partial y},
-\end{align*}
+\begin{equation}
+  P = 2\eta \frac{\partial w}{\partial z}-\left( \eta \frac{\partial u}{\partial z} \right)\frac{\partial s}{\partial x}-\left( \eta \frac{\partial v}{\partial z} \right)\frac{\partial s}{\partial y},
+\end{equation}
 
-where we have made the usual 1st-order approximation that 
+where we have made the usual first-order approximation that 
 
-\begin{align*}
-\frac{\partial w}{\partial x}=\frac{\partial w}{\partial y}\approx 0.
-\end{align*}
+\begin{equation}
+  \frac{\partial w}{\partial x}=\frac{\partial w}{\partial y}\approx 0.
+\end{equation}
 
-Now we use this expression for the pressure and expand the two horizontal boundary condition expressions
+\noindent
+\textit{(WHL: and also assumed $a \approx 1$?)}
+
+\textbf{WHL: The rest of this section derives BC discretizations that were used in Glam but are not necessary
+in a finite-element approach. So I think the remaining text could be rewritten a bit and considerably shortened.}
+
+We use this expression for the pressure and expand the two horizontal boundary condition expressions
 
 \begin{align*}
   & i=x:\quad T_{x}=\sigma _{xx}n_{x}+\sigma _{xy}n_{y}+\sigma _{xz}n_{z}=0, \\ 
