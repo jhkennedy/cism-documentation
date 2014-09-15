@@ -3,9 +3,43 @@
 \section{Introduction}
 \label{sc:glissade-intro}
 
-Some introductory text that might be useful here, but that was out of place in a previous section 
-(taken from the end of ./modeling-intro/modeling-intro.tex), has been pasted into the respective .tex file
-for this section (./glissade/glissade-intro.tex) but is commented out for now.
+CISM includes a higher-order dynamical core called Glissade.  (The name ``Glissade'' was originally an acronym,
+but as with ``Glimmer'' the acronym has never been widely used.) Glissade is the successor to the shallow-ice
+Glide dycore in the original Glimmer code.  Like Glide, Glissade solves equations for conservation of momentum
+(i.e., an appropriate approximation of Stokes flow), mass, and internal energy. Glissade numerics, however,
+differ substantially from Glide numerics:
+
+\begin{itemize}
+
+\item \textit{Velocity:}
+Glide is limited to the shallow-ice approximation (SIA), whereas Glissade can solve several Stokes
+approximations.  The most accurate and complex scheme is a 3D first-order Blatter-Pattyn solver, 
+described in Section (cite section).  
+Glissade can also solve the shallow-shelf equations and the shallow-ice equations.
+
+\item \textit{Mass and tracer transport:}
+Glide solves a diffusion equation for tranport of mass (i.e., thickness); this equation incorporates the local shallow-ice
+velocities. Since Glissade solves for higher-order flow that may have a large advective (as oppposed to diffusive)
+component, a different approach is needed.  Glissade has two mass- and energy-conserving transport options, 
+described below in Section (cite section): 
+incremental remapping (the more complex and accurate scheme) and first-order upwind. These schemes
+transfer both mass and internal energy in the horizontal direction, followed by a vertical remapping step
+that restores the vertical grid to a sigma coordinate.
+
+\item \textit{Temperature:}
+To evolve the ice temperature, Glide solves a prognostic equation that incorporates horizontal advection as well
+as vertical heat diffusion and internal dissipation.  In Glissade, temperature advection is handled by the
+transport scheme, and a separate vertical temperature solver handles vertical diffusion and internal dissipation.
+The vertical solver is local; each ice column calculation is independent of every other column calculation.
+
+\end{itemize}
+
+Glissade numerics are described in detail below.
+
+
+%Some introductory text that might be useful here, but that was out of place in a previous section 
+%(taken from the end of ./modeling-intro/modeling-intro.tex), has been pasted into the respective .tex file
+%for this section (./glissade/glissade-intro.tex) but is commented out for now.
 
 
 %3D, thermo-mechanically coupled ice sheet models. 3D refers to the

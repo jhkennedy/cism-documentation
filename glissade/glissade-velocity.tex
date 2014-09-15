@@ -1,0 +1,103 @@
+
+\section{Velocity solver}
+\label{sc:glissade-velocity}
+
+Glissade computes the ice velocity by solving an appropriate
+approximation of the Stokes equations, given the 2D surface elevation and thickness fields and
+the 3D temperature field.
+Section (cite section) describes assembly and solution of the matrix problem for the 3D first-order
+Blatter-Pattyn approximation.  Section (cite section) then discusses assembly and solution
+methods for simpler approximations, including the SIA and SSA.
+
+\subsection{Blatter-Pattyn approximation}
+
+The basic equations of the Blatter-Pattyn approximation in Cartesian coordinates, repeated from Section (cite section), are 
+
+\begin{equation}
+  \label{gliss.eq.stress_balance}
+  \begin{split}
+    x: \quad \frac{\partial }{\partial x}\left( 4 \eta \frac{\partial u}{\partial x} +  2 \eta \frac{\partial v}{\partial y} \right) + \frac{\partial }{\partial y}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) = \rho g\frac{\partial s}{\partial x}, \\
+    y: \quad \frac{\partial }{\partial y}\left( 4 \eta \frac{\partial v}{\partial y} +  2 \eta \frac{\partial u}{\partial x} \right) + \frac{\partial }{\partial x}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) = \rho g\frac{\partial s}{\partial y},  \\
+  \end{split}
+\end{equation}
+
+\noindent
+where $u$ and $v$ are the components of horizontal velocity, $\eta$ is the effective viscosity, $s$ is the ice surface elevation,
+$\rho$ is the density of ice (assumed constant), and $g$ is gravitational acceleration.  
+
+As in Glide, the equations are discretized on two structured, rectangular horizontal meshes: an unstaggered mesh
+of dimension $(nx,ny)$ and a staggered mesh of dimension $(nx-1,ny-1)$.  The rectangles
+are called \textit{cells}, and the corners of each cell (where four rectangles meet) are called \textit{vertices}.
+The vertical levels of the mesh are based on a terrain-following sigma coordinate system (insert sigma equation).
+There are $nz$ \textit{levels} in the vertical, with $nz-1$ \textit{layers} between these levels.
+An \textit{element} is the region associated with a particular cell and layer; thus there are
+$(nx)(ny)(nz-1)$ elements on the mesh.  A \textit{node} is a point where eight elements intersect (or where four elements
+intersect at the upper and lower surface). There are $(nx-1)(ny-1)(nz)$ nodes on the mesh.
+
+Scalar 2D fields such as ice thickness $H$ and surface elevation $s$ are defined for each cell.
+Scalar 3D fields such as ice temperature $T$ lie at the center of each element (i.e., in each layer
+associated with each cell). Gradients of 2D scalar fields (e.g., the surface slope $\nabla s$) are defined at vertices.
+The velocity components live at nodes.
+
+The effective viscosity is defined by
+
+\begin{equation}
+  \eta \equiv \frac{1}{2} A^{\frac{-1}{n}} \dot{\varepsilon }_{e}^{\frac{1-n}{n}},
+\end{equation}
+
+\noindent
+where $A$ is the temperature-dependent flow factor in Glen's law, and $\dot{\varepsilon }_{e}$ is the effective strain rate,
+given in the Blatter-Pattyn approximation by 
+
+\begin{equation}
+{{\dot{\varepsilon }}^{2}}_{e}={{\dot{\varepsilon }}^{2}}_{xx}+{{\dot{\varepsilon }}^{2}}_{yy}+{{\dot{\varepsilon }}_{xx}}{{\dot{\varepsilon }}_{yy}}+{{\dot{\varepsilon }}^{2}}_{xy}+{{\dot{\varepsilon }}^{2}}_{xz}+{{\dot{\varepsilon }}^{2}}_{yz}.
+\end{equation}
+
+\noindent
+Both $A$ and $\dot{\varepsilon }_{e}$ are 3D fields co-located with the temperature $T$.
+
+Given $T$, $s$, $H$, and an initial guess for $u$ and $v$, the problem is to solve Eq. \eqref{gliss.eq.stress_balance}
+for $u$ and $v$.  This problem can be written in the form
+
+\begin{equation}
+  \mathbf{A} \mathbf{x} = \mathbf{b},
+\end{equation}
+
+\noindent
+or more fully,
+
+\begin{equation}
+  \label{gliss.eq.matrix}
+  \begin{matrix}
+    \left[ \begin{matrix}
+        \mathbf{A}_{\mathbf{uu}} & \mathbf{A}_{\mathbf{uv}}  \\
+        \mathbf{A}_{\mathbf{vu}} & \mathbf{A}_{\mathbf{vv}}  \\
+      \end{matrix} \right]\left[ \begin{matrix}
+        \mathbf{u}  \\
+        \mathbf{v}  \\
+      \end{matrix} \right]=\left[ \begin{matrix}
+        \mathbf{b}_{\mathbf{u}}  \\
+        \mathbf{b}_{\mathbf{v}}  \\
+      \end{matrix} \right], \\ 
+    \\ 
+    \mathbf{A}_{\mathbf{uu}}\mathbf{u} + \mathbf{A}_{\mathbf{uv}}\mathbf{v} =\mathbf{b}_{\mathbf{u}},
+    \quad \quad \mathbf{A}_{\mathbf{vu}}\mathbf{u} + \mathbf{A}_{\mathbf{vv}}\mathbf{v} =\mathbf{b}_{\mathbf{v}}. \\ 
+  \end{matrix}
+\end{equation}
+
+\noindent
+Eq. \eqref{gliss.eq.matrix} explicitly shows the four parts of the total matrix $\mathbf{A}$,
+with the $u$ and $v$ components of the solution and right-hand-side vectors separated into two subvectors.
+In Glissade, $\mathbf{A}$ is always symmetric and positive-definite.
+
+Since $\mathbf{A}$ depends (through $\eta$) on $u$ and $v$, the problem is nonlinear and must be solved iteratively
+as described in Section (insert section ref).  For a given nonlinear iteration, we compute $\eta$ based on the
+current guess for the velocity field, then solve a linear problem of the form \eqref{gliss.eq.matrix}.
+Then we update $\eta$ and repeat until the solution converges to within a given tolerance.  This procedure
+is known as Picard iteration.
+
+The following sections describe how the matrix equations are assembled and solved. 
+
+\subsubsection{Assembly}
+
+
