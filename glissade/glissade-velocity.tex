@@ -189,9 +189,6 @@ The first terms on the left-hand-side for the $x$ and $y$ components, respective
 
 \begin{equation}
   \label{gliss.eq.weak_form_velo}
-  \scalebox{1.2}{
-    $
-%  \begin{split}
   \begin{aligned}
     & x: \int\limits_{\Omega }{2\eta \left[ \begin{matrix}
           2\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y} & \frac{1}{2}\left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right) & \frac{1}{2}\frac{\partial u}{\partial z}  \\
@@ -207,10 +204,7 @@ The first terms on the left-hand-side for the $x$ and $y$ components, respective
       \frac{\partial \varphi }{\partial y}  \\[6pt]
       \frac{\partial \varphi }{\partial z}  \\
     \end{matrix} \right\},  \\
-%  \end{split}
   \end{aligned}
-  $
-  }
 \end{equation}
 
 \noindent
@@ -230,9 +224,9 @@ Inserting the velocity expressions \eqref{gliss.eq.velo_expansion} in \eqref{gli
 \noindent
 Each row or column vector has eight terms, one for each node of the element.
 
-The terms in \eqref{gliss.eq.element_matrix} can be evaluated to give the coefficients of a set of four $8\text{x}8$ element matrices.
-Each row of an element matrix is associated with $u$ or $v$ at a given node.  The columns in that row contain coefficients
-linking that node to $u$ or $v$ at all eight nodes of the element (with the diagonal coefficient linking the node to itself).  
+The terms in \eqref{gliss.eq.element_matrix} can be computed to give the terms of a set of four $8\text{x}8$ element matrices.
+Each row of an element matrix is associated with $u$ or $v$ at a given node.  The columns in that row contain terms
+linking that node to $u$ or $v$ at the other nodes of the element (with the diagonal term linking the node to itself).  
 
 In the $x$ component of \eqref{gliss.eq.element_matrix}, 
 the terms in row $i$ that multiply $u_j$ are given by
@@ -303,14 +297,14 @@ Thus we have
 \begin{equation}
   \label{gliss.eq.basis_functions}
   \begin{matrix}
-    {{\varphi }_{1}}=(1-\hat{x})(1-\hat{y})(1-\hat{z})/8  \\[3pt]
-    {{\varphi }_{2}}=(1+\hat{x})(1-\hat{y})(1-\hat{z})/8  \\[3pt]
-    {{\varphi }_{3}}=(1+\hat{x})(1+\hat{y})(1-\hat{z})/8  \\[3pt]
-    {{\varphi }_{4}}=(1-\hat{x})(1+\hat{y})(1-\hat{z})/8  \\[3pt]
-    {{\varphi }_{5}}=(1-\hat{x})(1-\hat{y})(1+\hat{z})/8  \\[3pt]
-    {{\varphi }_{6}}=(1+\hat{x})(1-\hat{y})(1+\hat{z})/8  \\[3pt]
-    {{\varphi }_{7}}=(1+\hat{x})(1+\hat{y})(1+\hat{z})/8  \\[3pt]
-    {{\varphi }_{8}}=(1-\hat{x})(1+\hat{y})(1+\hat{z})/8  \\
+    {{\varphi }_{1}}=(1-\hat{x})(1-\hat{y})(1-\hat{z})/8,  \\[3pt]
+    {{\varphi }_{2}}=(1+\hat{x})(1-\hat{y})(1-\hat{z})/8,  \\[3pt]
+    {{\varphi }_{3}}=(1+\hat{x})(1+\hat{y})(1-\hat{z})/8,  \\[3pt]
+    {{\varphi }_{4}}=(1-\hat{x})(1+\hat{y})(1-\hat{z})/8,  \\[3pt]
+    {{\varphi }_{5}}=(1-\hat{x})(1-\hat{y})(1+\hat{z})/8,  \\[3pt]
+    {{\varphi }_{6}}=(1+\hat{x})(1-\hat{y})(1+\hat{z})/8,  \\[3pt]
+    {{\varphi }_{7}}=(1+\hat{x})(1+\hat{y})(1+\hat{z})/8,  \\[3pt]
+    {{\varphi }_{8}}=(1-\hat{x})(1+\hat{y})(1+\hat{z})/8.  \\
   \end{matrix}
 \end{equation} 
 
@@ -430,17 +424,166 @@ over element volume $\Omega$, we compute the sum over quadrature points
 
 \begin{equation}
   \label{gliss.eq.sum_over_qp}
-  \sum\limits_{\text{p}=1}^{8}{{{w}_{\text{p}}}{{\eta }_{\text{p}}}{{\left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}_{\text{p}}}}|J_{\text{p}}|,
+  \sum\limits_{p=1}^{8}{{{w}_{p}}{{\eta }_{p}}{{\left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}_{p}}}|J_{p}|,
 \end{equation}
 
 \noindent
 where $|J|$ is the determinant of the Jacobian \eqref{gliss.eq.Jacobian_eval}. For our choice of quadrature points,
-each point has $w_{\text{p}} = 1$.
+each point has $w_p = 1$.
 
+Once we have all the terms of an element matrix $K_{uu}, K_{uv}, K_{vu} and K_{vv}$, these terms
+are inserted into the corresponding global matrices $A_{uu}, A_{uv}, A_{vu} and A_{vv}$.
+If written in full, each $A$ matrix would have as many rows and columns as there are active nodes.
+These matrices, however, are sparse, with a maximum of 27 nonzero terms per row (corresponding to
+a node and its 26 nearest neighbors in a 3D hexahedral lattice).
+Glissade therefore assembles and stores matrices of dimension $(27,nz,nx-1,ny-1)$.
+The 27 terms of the first dimension are indexed such that each index has a geometric meaning.
+For example, suppose we are labeling columns for the matrix row corresponding to node $(k,i,j)$. 
+Then index 1 corresponds to the node with coordinates $(k-1,i-1,j-1)$, index 14 corresponds to the
+node itself (i.e., the diagonal term of the row), and index 27 is associated with the node at $(k+1,i+1,j+1)$.
+The $A$ matrices can be reformatted as needed before they are passed to a particular solver. 
+
+Insertion of terms from element matrices into the global matrices is a matter of bookkeeping.
+For example, the first row of $K_{uu}$ corresponds to a particular node of element $(k,i,j)$.
+This node is associated with a row of global matrix $A_{uu}$ (the row
+with indices $(k-1,i-1,j-1)$).  Each of the eight terms in this row of $K_{uu}$ is associated with one of
+the 27 potentially nonzero columns of $A_{uu}$.  Glissade determines the correct column
+and adds the $K_{uu}$ term to the corresponding term in $A_{uu}$.  This process proceeds
+until the code has looped over all the active elements and filled the global matrices.
 
 The rest of the assembly process consists of evaluating the other terms in \eqref{gliss.eq.weak_form}
-(e.g., the gravitational forcing and basal traction) and applying Dirichlet boundary conditions,
+(i.e., the gravitational forcing and the lateral and basal boundary conditions) and applying Dirichlet boundary conditions,
 if applicable. We consider these in turn.
 
+The gravitational forcing terms in \eqref{gliss.eq.weak_form} are
 
- 
+\begin{equation}
+  \label{gliss.eq.gravity_forcing}
+  \begin{split}
+    x: \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial x}} {{\varphi }_{1}}\text{ d}\Omega, \\
+    y: \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial y}} {{\varphi }_{2}}\text{ d}\Omega. \\
+  \end{split}
+\end{equation}
+
+To compute these terms we evaluate $\frac{\partial s}{\partial x}$ and $\frac{\partial s}{\partial y}$
+at each active vertex.  A standard centered approximation at node $(i,j)$ is
+
+\begin{equation}
+  \label{gliss.eq.dsdx_centered}
+  \frac{\partial s}{\partial x}(i,j) = \frac{s(i+1,j+1)+s(i+1,j)-s(i,j+1)-s(i,j)}{2\Delta x}
+\end{equation}
+
+\noindent
+(and similarly for $\frac{\partial s}{\partial y}$). This approximation works
+well when the ice geometry is fixed but can cause problems when the geometry is evolving.
+Problems arise because checkerboard noise in $s$ (which is common on structured meshes)
+is invisible to the momentum balance; it is canceled out by the centered averaging in \eqref{gliss.eq.dsdx_centered}.
+Checkerboard noise can therefore persist and grow.  To damp this noise, it is sufficient to use an upstream average:
+
+\begin{equation}
+  \label{gliss.eq.dsdx_upstream}
+  \frac{\partial s}{\partial x}(i,j) = \frac{1.5 (s(i+1,j+1) - s(i,j+1)) - 0.5 (s(i+1,j+2) - s(i,j+2))}{\Delta x}
+\end{equation}
+
+\noindent
+Here, ``upstream'' means in the direction of increasing surface elevation. Both \eqref{gliss.eq.dsdx_centered}
+and \eqref{gliss.eq.dsdx_upstream} are second-order accurate.
+Given $\frac{\partial s}{\partial x}$ at the nodes of a cell,
+the gravitational forcing terms are evaluated at each of four quadrature points using
+
+\begin{equation}
+  \frac{\partial s}{\partial x} = \sum\limits_{n=1}^{4}{{{\varphi }_{n}}}{{\left( \frac{\partial s}{\partial x} \right)}_{n}},
+\end{equation}
+
+\noindent
+where the sums are taken over bilinear basis functions in reference squares (cf. \eqref{gliss.eq.basis_functions}):
+
+\begin{equation}
+  \label{gliss.eq.basis_functions_2d}
+  \begin{matrix}
+    {{\varphi }_{1}}=(1-\hat{x})(1-\hat{y})/4,  \\[3pt]
+    {{\varphi }_{2}}=(1+\hat{x})(1-\hat{y})/4,  \\[3pt]
+    {{\varphi }_{3}}=(1+\hat{x})(1+\hat{y})/4,  \\[3pt]
+    {{\varphi }_{4}}=(1-\hat{x})(1+\hat{y})/4.
+  \end{matrix}
+\end{equation} 
+
+\noindent
+In analogy to the 3D case discussed above, the four quadrature points of a reference square are located at
+$(\hat{x},\hat{y}) = (\pm 1/\sqrt{3}, \pm 1/\sqrt{3}$).  The integral of $\rho g \frac{\partial s}{\partial x} \varphi$
+over the cell is evaluated as a sum over quadrature points (cf. \eqref{gliss.eq.sum_over_qp}):
+
+\begin{equation}
+  \label{gliss.eq.sum_over_qp_gravity}
+  \sum\limits_{p=1}^{4} { w_p \rho g (\frac{\partial s}{\partial x})_p \varphi_p |J_p|},
+\end{equation}
+
+\noindent
+where $|J_p|$ is the determinant of the Jacobian (the 2D analog of \eqref{gliss.eq.Jacobian_eval}),
+and $w_p = 1$ for each quadrature point. The procedure for $\frac{\partial s}{\partial y}$ is analogous.
+Glissade uses these terms to assemble the load vectors $b_u$ and $b_v$ (see \eqref{gliss.eq.matrix} 
+for each active node $(k,i,j)$.
+
+It remains to incorporate basal and lateral boundary conditions.  At the basal boundary we assume
+a friction law of the form $\tau_x = -\beta u, \tau_y = -\beta v$.  The coefficient $\beta$ is defined
+at each vertex and can vary spatially.  If $\beta$ depends on the velocity, as in some friction laws,
+then it is evaluated using the velocity from the previous iteration to keep the problem linear.
+
+The terms in \eqref{gliss.eq.weak_form} to be evaluated are
+
+\begin{equation}
+  \label{gliss.eq.basal_bc}
+  \begin{split}
+    x: \int\limits_{{{\Gamma }_{\beta }}} \beta u{{\varphi }_{1}} d\Gamma , \\
+    y: \int\limits_{{{\Gamma }_{\beta }}} \beta v{{\varphi }_{2}} d\Gamma , \\
+  \end{split}
+\end{equation}
+
+\noindent
+where $\Gamma$ denotes the basal boundary. We consider the term in the $x$ equation; the $y$ term is analogous. 
+
+We integrate terms over 2D rectangular cells, as for the gravitational load vector.
+Four bilinear basis functions \eqref{gliss.eq.basis_functions_2d} are defined in a reference square,
+and we compute the Jacobian for the 2D transformation between the reference square and the lower face of the cell.
+Cells have four quadrature points with $w_p = 1$ as described above.  Given $\beta$ at the nodes,
+we evaluate $\beta$ at quadrature points using
+
+\begin{equation}
+  \beta = \sum\limits_{n=1}^{4} {\beta_n \varphi_n}.
+\end{equation}
+
+\noindent
+The integrand at a quadrature point has the form
+\begin{equation}
+  \label{gliss.eq.beta_integrand}
+  \beta \varphi_i \varphi_j,
+\end{equation}
+
+\noindent
+where the second $\varphi$ term arises from the finite-element expansion of $u$ at a quadrature point:
+
+\begin{equation}
+  u = \sum\limits_{n=1}^{4} {u_n \varphi_n}.
+\end{equation}
+
+The integral of \eqref{gliss.eq.beta_integrand} over a cell is again evaluated as a sum over quadrature points:
+
+\begin{equation}
+  \label{gliss.eq.sum_over_qp_beta}
+  \sum\limits_{p=1}^{4} {w_p \beta_p (\varphi_i \varphi_j)_p |J_p|},
+\end{equation}
+
+\noindent
+This procedure \eqref{gliss.eq.beta_integrand} generates a 4\text{x}4 matrix
+describing the connections between each node and its neighbors in a rectangular cell.
+This is a 2D analog of the element matrices discussed above.  Since the $x$ term in
+\eqref{gliss.eq.basal_bc} contains $u$ but not $v$, and the $y$ equation contains
+$v$ but not $u$, we form 2D matrices $K_{uu}$ and $K_{vv}$, but not $K_{uv}$ and $K_{vu}$.
+Glissade then inserts each term of $K_{uu}$ into the global matrix $A_{uu}$, and
+similarly for $K_{vv}$ and $A_{vv}$.
+
+
+
+
+
+
