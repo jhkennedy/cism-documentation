@@ -724,9 +724,9 @@ Since some Macs may come with their own pre-installed OpenMPI libraries, it is i
 Find the example script most appropriate for your system, copy it to the \texttt{trilinos-11.4.3-Build} directory, and modify it if necessary (e.g., adjust paths, compiler locations, etc.).
 Execute it with: 
 
-\texttt{./do-cmake}\footnote{Note that here we've assumed that the name of the configure script is `do-cmake'. This script name may differ depending on what you have called it or if you've copied and modified one of the scripts from \texttt{./utils/trilinos\_config\_scripts\_examples}.}
+\texttt{source ./do-cmake}\footnote{Note that here we've assumed that the name of the configure script is `do-cmake'. This script name may differ depending on what you have called it or if you've copied and modified one of the scripts from \texttt{./utils/trilinos\_config\_scripts\_examples}.}
 
-from within your \texttt{trilinos-11.4.3-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
+from within your \texttt{trilinos-11.4.3-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo source ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
 
 \begin{verbatim}
 ...
