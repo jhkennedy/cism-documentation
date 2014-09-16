@@ -29,35 +29,47 @@ As in Glide, the equations are discretized on two structured, rectangular horizo
 of dimension $(nx,ny)$ and a staggered mesh of dimension $(nx-1,ny-1)$.  The rectangles
 are called \textit{cells}, and the corners of each cell (where four rectangles meet) are called \textit{vertices}.
 The vertical levels of the mesh are based on a terrain-following sigma coordinate system (insert sigma equation).
-There are $nz$ \textit{levels} in the vertical, with $nz-1$ \textit{layers} between these levels.
-An \textit{element} is the region associated with a particular cell and layer; thus there are
+There are $nz$ \textit{levels} in the vertical direction, with $nz-1$ \textit{layers} between these levels.
+An \textit{element} is the region associated with a particular cell and layer; there are
 $(nx)(ny)(nz-1)$ elements on the mesh.  A \textit{node} is a point where eight elements intersect (or where four elements
-intersect at the upper and lower surface). There are $(nx-1)(ny-1)(nz)$ nodes on the mesh.
+intersect at the upper or lower surface). There are $(nx-1)(ny-1)(nz)$ nodes on the mesh.
 
 Scalar 2D fields such as ice thickness $H$ and surface elevation $s$ are defined for each cell.
 Scalar 3D fields such as ice temperature $T$ lie at the center of each element (i.e., in each layer
 associated with each cell). Gradients of 2D scalar fields (e.g., the surface slope $\nabla s$) are defined at vertices.
-The velocity components live at nodes.
+The velocity components $u$ and $v$ live at nodes.
 
-The effective viscosity is defined by
+An \textit{active cell} is a cell whose ice thickness exceeds a minimum threshold.  Each active cell is associated with
+a column of $nz-1$ active elements.  An \textit{active vertex} is any vertex of an active cell.  Each active vertex is
+associated with $nz$ active nodes, including nodes at the surface and bed.
+
+The effective viscosity is defined in each active element by
 
 \begin{equation}
+  \label{gliss.eq.effective_viscosity}
   \eta \equiv \frac{1}{2} A^{\frac{-1}{n}} \dot{\varepsilon }_{e}^{\frac{1-n}{n}},
 \end{equation}
 
 \noindent
-where $A$ is the temperature-dependent flow factor in Glen's law, and $\dot{\varepsilon }_{e}$ is the effective strain rate,
+where $A$ is the temperature-dependent rate factor in Glen's flow law, and $\dot{\varepsilon }_{e}$ is the effective strain rate,
 given in the Blatter-Pattyn approximation by 
 
 \begin{equation}
-{{\dot{\varepsilon }}^{2}}_{e}={{\dot{\varepsilon }}^{2}}_{xx}+{{\dot{\varepsilon }}^{2}}_{yy}+{{\dot{\varepsilon }}_{xx}}{{\dot{\varepsilon }}_{yy}}+{{\dot{\varepsilon }}^{2}}_{xy}+{{\dot{\varepsilon }}^{2}}_{xz}+{{\dot{\varepsilon }}^{2}}_{yz}.
+  \label{gliss.eq.effective_strain_rate}
+        {{\dot{\varepsilon }}^{2}}_{e}={{\dot{\varepsilon }}^{2}}_{xx}+{{\dot{\varepsilon }}^{2}}_{yy}+{{\dot{\varepsilon }}_{xx}}{{\dot{\varepsilon }}_{yy}}+{{\dot{\varepsilon }}^{2}}_{xy}+{{\dot{\varepsilon }}^{2}}_{xz}+{{\dot{\varepsilon }}^{2}}_{yz},
 \end{equation}
 
 \noindent
-Both $A$ and $\dot{\varepsilon }_{e}$ are 3D fields co-located with the temperature $T$.
+where
+
+\begin{equation}
+  \dot{\varepsilon }_{ij} = \frac{1}{2}\left( \frac{\partial u_{i}}{\partial x_{j}} + \frac{\partial u_{j}}{\partial x_{i}} \right).
+\end{equation}
+
+\noindent
 
 Given $T$, $s$, $H$, and an initial guess for $u$ and $v$, the problem is to solve Eq. \eqref{gliss.eq.stress_balance}
-for $u$ and $v$.  This problem can be written in the form
+for $u$ and $v$ at each active node.  (At inactive nodes we assume $u=v=0$.)  This problem can be written in the form
 
 \begin{equation}
   \mathbf{A} \mathbf{x} = \mathbf{b},
@@ -87,12 +99,12 @@ or more fully,
 
 \noindent
 Eq. \eqref{gliss.eq.matrix} explicitly shows the four parts of the total matrix $\mathbf{A}$,
-with the $u$ and $v$ components of the solution and right-hand-side vectors separated into two subvectors.
+with the solution and right-hand-side vectors separated into $u$ and $v$ components.
 In Glissade, $\mathbf{A}$ is always symmetric and positive-definite.
 
 Since $\mathbf{A}$ depends (through $\eta$) on $u$ and $v$, the problem is nonlinear and must be solved iteratively
 as described in Section (insert section ref).  For a given nonlinear iteration, we compute $\eta$ based on the
-current guess for the velocity field, then solve a linear problem of the form \eqref{gliss.eq.matrix}.
+current guess for the velocity field and solve a linear problem of the form \eqref{gliss.eq.matrix}.
 Then we update $\eta$ and repeat until the solution converges to within a given tolerance.  This procedure
 is known as Picard iteration.
 
@@ -100,4 +112,335 @@ The following sections describe how the matrix equations are assembled and solve
 
 \subsubsection{Assembly}
 
+The coupled PDEs \eqref{gliss.eq.stress_balance} are discretized using the finite-element method.
+Here we give a detailed but non-rigorous description of the method as applied to the Blatter-Pattyn
+approximation on the CISM mesh.
+We refer the reader to standard texts (one or two references here) for a full discussion of finite elements.
 
+The PDEs, with appropriate boundary conditions, are solved by dividing the full domain into 
+subdomains, or elements, and representing the solution on each element.
+On the CISM mesh, the elements are hexahedra (rectangles
+in map view), each of which has eight nodes that are shared with its neighbors.
+The solution is approximated as a sum over basis functions $\varphi$. One basis function
+is associated with each active node.  Its value is $\varphi = 1$ at that node,
+with $\varphi = 0$ at all other nodes. The solution at a given point
+within an element can be represented as a sum of basis functions multiplied by nodal values:
+
+\begin{equation}
+\label{gliss.eq.velo_expansion}  
+   u=\sum\limits_{n}{{{\varphi }_{n}}{{u}_{n}}}, \quad v=\sum\limits_{n}{{{\varphi }_{n}}{{v}_{n}}},  \\
+\end{equation}
+
+\noindent
+where the sum is over the nodes of the element, $u_n$ and $v_n$ are nodal
+values of the solution, and $\varphi_n$ varies smoothly between 0 and 1 within the element.
+The fact that $\varphi = 0$ except in a small region ensures that the sum includes only
+as many terms as there are nodes per element.
+
+Glissade uses standard finite-element techniques to represent the PDE on each element and assemble
+the element equations into a global set of algebraic equations of the form \eqref{gliss.eq.matrix}.
+The scheme is formally equivalent to that described by \citet{Perego2012} (henceforth PGB).
+Note that \eqref{gliss.eq.stress_balance} can be written as
+
+\begin{equation}
+  \label{gliss.eq.Perego12}
+  \begin{split}
+    -\nabla \cdot (2\eta {{{\dot{\varepsilon }}}_{1}}) = -\rho g\frac{\partial s}{\partial x}, \\
+    -\nabla \cdot (2\eta {{{\dot{\varepsilon }}}_{2}}) = -\rho g\frac{\partial s}{\partial y}, \\
+  \end{split}
+\end{equation}
+
+\noindent
+where
+
+\begin{equation}
+  \label{gliss.eq.Perego13}
+  {{{\dot{\varepsilon }}}_{1}}=\left[ \begin{matrix}
+      2{{{\dot{\varepsilon }}}_{xx}}+{{{\dot{\varepsilon }}}_{yy}} \\ 
+      {{{\dot{\varepsilon }}}_{xy}} \\ 
+      {{{\dot{\varepsilon }}}_{xz}} \\ 
+    \end{matrix} \right], \quad
+  {{{\dot{\varepsilon }}}_{2}}=\left[ \begin{matrix}
+      {{{\dot{\varepsilon }}}_{xy}} \\ 
+      {{{\dot{\varepsilon }}}_{xx}}+2{{{\dot{\varepsilon }}}_{yy}} \\ 
+      {{{\dot{\varepsilon }}}_{yz}} \\ 
+    \end{matrix} \right].  \\
+\end{equation}
+
+\noindent
+(These are Eqs. 12 and 13 in PGB.)  We rewrite the equations in \textit{weak form} (see PGB Eq. 15), which
+is obtained by multiplying \eqref{gliss.eq.Perego12} by the basis functions and integrating over the domain, using 
+integration by parts to eliminate the second derivative:
+
+\begin{equation}
+  \label{gliss.eq.weak_form}
+  \begin{split}
+    x: \quad \int\limits_{\Omega }{2\eta {{{\dot{\varepsilon }}}_{1}}(u,v)\cdot \nabla {{\varphi }_{1}}\text{ }d\Omega }+\int\limits_{{{\Gamma }_{\beta }}}{\beta u{{\varphi }_{1}}d\Gamma +\int\limits_{\Omega }{\rho g\frac{\partial s}{\partial x}}}{{\varphi }_{1}}\text{ d}\Omega =\text{0},  \\
+    y: \quad \int\limits_{\Omega }{2\eta {{{\dot{\varepsilon }}}_{2}}(u,v)\cdot \nabla {{\varphi }_{2}}\text{ }d\Omega }+\int\limits_{{{\Gamma }_{\beta }}}{\beta v{{\varphi }_{2}}d\Gamma +\int\limits_{\Omega }{\rho g\frac{\partial s}{\partial y}}}{{\varphi }_{2}}\text{ d}\Omega =\text{0},  \\
+  \end{split}
+\end{equation}
+
+\noindent
+where $\Omega$ represents the domain volume, $\Gamma$ denotes the lower boundary, and $\beta$ is a basal traction parameter
+that can vary spatially.  These equations can also be obtained from a variational principle as described by \citet{DUKOWICZ:2010wb}.
+
+Next we rewrite \eqref{gliss.eq.weak_form} in terms of velocity components.
+The first terms on the left-hand-side for the $x$ and $y$ components, respectively, are
+
+\begin{equation}
+  \label{gliss.eq.weak_form_velo}
+  \scalebox{1.2}{
+    $
+%  \begin{split}
+  \begin{aligned}
+    & x: \int\limits_{\Omega }{2\eta \left[ \begin{matrix}
+          2\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y} & \frac{1}{2}\left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right) & \frac{1}{2}\frac{\partial u}{\partial z}  \\
+\end{matrix} \right]}\left\{ \begin{matrix}
+      \frac{\partial \varphi }{\partial x}  \\[6pt]
+      \frac{\partial \varphi }{\partial y}  \\[6pt]
+      \frac{\partial \varphi }{\partial z}  \\
+    \end{matrix} \right\},  \\
+    & y: \int\limits_{\Omega }{2\eta \left[ \begin{matrix}
+          \frac{1}{2}\left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x} \right) & 2\frac{\partial v}{\partial y}+\frac{\partial u}{\partial x} & \frac{1}{2}\frac{\partial v}{\partial z}  \\
+        \end{matrix} \right]}\left\{ \begin{matrix}
+      \frac{\partial \varphi }{\partial x}  \\[6pt]
+      \frac{\partial \varphi }{\partial y}  \\[6pt]
+      \frac{\partial \varphi }{\partial z}  \\
+    \end{matrix} \right\},  \\
+%  \end{split}
+  \end{aligned}
+  $
+  }
+\end{equation}
+
+\noindent
+where brackets denote row vectors and braces denote column vectors.
+We will evaluate \eqref{gliss.eq.weak_form_velo} for each active element.  Recall that hexahedral elements have eight nodes,
+with $u$ and $v$ to be determined at each active node.
+Inserting the velocity expressions \eqref{gliss.eq.velo_expansion} in \eqref{gliss.eq.weak_form_velo}, we obtain
+
+\begin{equation}
+  \label{gliss.eq.element_matrix}
+  \begin{split}
+    x: \int\limits_{\Omega }{2\eta \left( \frac{\partial {{\varphi }_{i}}}{\partial x}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\}+\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\} \right)+\frac{\partial {{\varphi }_{i}}}{\partial y}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\} \right)+\frac{\partial {{\varphi }_{i}}}{\partial z}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial z} \right]\left\{ {{u}_{j}} \right\} \right) \right)},  \\
+    y: \int\limits_{\Omega }{2\eta \left( \frac{\partial {{\varphi }_{i}}}{\partial y}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\}+\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\} \right)+\frac{\partial {{\varphi }_{i}}}{\partial x}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\} \right)+\frac{\partial {{\varphi }_{i}}}{\partial z}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial z} \right]\left\{ {{v}_{j}} \right\} \right) \right)}.  \\
+  \end{split}
+\end{equation}
+
+\noindent
+Each row or column vector has eight terms, one for each node of the element.
+
+The terms in \eqref{gliss.eq.element_matrix} can be evaluated to give the coefficients of a set of four $8\text{x}8$ element matrices.
+Each row of an element matrix is associated with $u$ or $v$ at a given node.  The columns in that row contain coefficients
+linking that node to $u$ or $v$ at all eight nodes of the element (with the diagonal coefficient linking the node to itself).  
+
+In the $x$ component of \eqref{gliss.eq.element_matrix}, 
+the terms in row $i$ that multiply $u_j$ are given by
+ 
+\begin{equation}
+  \label{gliss.eq.matrix_Kuu}
+  \int\limits_{\Omega }{\eta \left( 4\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi }_{j}}}{\partial x}+\frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi}_{j}}}{\partial y}+\frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}d\Omega
+\end{equation}
+
+\noindent
+Letting $i$ and $j$ range from 1 to 8, \eqref{gliss.eq.matrix_Kuu} gives the 64 terms of the $8\text{x}8$ element matrix $K_{uu}$,
+which links the $u$ value at each node to the $u$ values at all eight nodes.
+Similarly, the 64 terms of element matrix $K_{uv}$, which links $u$ at a given node to $v$ at all eight nodes,
+are given by
+
+\begin{equation}
+  \label{gliss.eq.matrix_Kuv}
+  \int\limits_{\Omega }{\eta \left( 2\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi }_{j}}}{\partial y}+\frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi }_{j}}}{\partial x} \right)}d\Omega
+\end{equation}
+
+Likewise, two $8\text{x}8$ matrices are associated with the $y$ equation in \eqref{gliss.eq.element_matrix}.  
+The terms of $K_{vu}$, which connects $v$ at a given node to $u$ at all eight nodes, are given by
+
+\begin{equation}
+  \label{gliss.eq.matrix_Kvu}
+  \int\limits_{\Omega }{\eta \left( 2\frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi }_{j}}}{\partial x}+\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi }_{j}}}{\partial y} \right)}d\Omega
+\end{equation}
+
+\noindent
+Finally, the terms of $K_{vv}$, which links $v$ at a given node to $v$ at all eight nodes, are given by
+
+\begin{equation}
+  \label{gliss.eq.matrix_Kvv}
+  \int\limits_{\Omega }{\eta \left( 4\frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi }_{j}}}{\partial y}+\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi}_{j}}}{\partial x}+\frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}d\Omega
+\end{equation}
+
+Because of the symmetry of the underlying PDEs, $K_{uu}$ and $K_{vv}$ are symmetric,
+and $K_{uv} = K_{vu}^{T}$.  Note that $K_{vv}$ can be obtained from $K_{uu}$, and
+$K_{vu}$ from $K_{uv}$, simply by exchanging $x$ and $y$.  The terms
+containing $z$ (i.e., the vertical shear stresses associated with the shallow-ice approximation)
+appear only in $K_{uu}$ and $K_{vv}$.  The terms containing $x$ and $y$ (i.e.,
+the membrane stresses) appear in all four element matrices.
+
+Eqs. \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} lie at the heart of the code 
+(in subroutine \textit{compute\_element\_matrix} of module \textit{glissade\_velo\_higher.F90}).
+Together with the expressions for the effective viscosity $\eta$ (discussed below),
+these expressions contain the physical contents specific to the Blatter-Pattyn approximation. 
+
+Given the weak form \eqref{gliss.eq.weak_form} of the equations, each of the 64 coefficients in each
+element matrix must be integrated over the element.  (Since $\varphi$ varies over the element,
+the integrands in \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} 
+have a different value at each point.)  
+This is done for a given element by evaluating the integrand at each of 
+eight \textit{quadrature points} and taking a weighted sum over quadrature points.
+We have to specify the form of the basis functions, then transform the basis functions to
+the geometry of the element (which is irregular in the vertical because of the sigma
+coordinate) and evaluate the basis function derivatives at the quadrature points.
+
+Glissade uses trilinear basis functions defined on a reference hexahedron.  
+This hexahedron is centered at the origin $(0,0,0)$ in local reference coordinates 
+$(\hat{x}, \hat{y}, \hat{z}$). 
+The eight nodes are located at $(\hat{x}, \hat{y}, \hat{z}) = (\pm 1, \pm 1, \pm 1)$.
+By convention, nodes 1--4 are the nodes of the lower face, proceeding counterclockwise
+from the southwest corner $(\hat{x}, \hat{y}) = (±1, ±1)$, and nodes 5--8 are the nodes
+of the upper face, also moving counterclockwise from the southwest corner.
+Thus we have
+
+\begin{equation}
+  \label{gliss.eq.basis_functions}
+  \begin{matrix}
+    {{\varphi }_{1}}=(1-\hat{x})(1-\hat{y})(1-\hat{z})/8  \\[3pt]
+    {{\varphi }_{2}}=(1+\hat{x})(1-\hat{y})(1-\hat{z})/8  \\[3pt]
+    {{\varphi }_{3}}=(1+\hat{x})(1+\hat{y})(1-\hat{z})/8  \\[3pt]
+    {{\varphi }_{4}}=(1-\hat{x})(1+\hat{y})(1-\hat{z})/8  \\[3pt]
+    {{\varphi }_{5}}=(1-\hat{x})(1-\hat{y})(1+\hat{z})/8  \\[3pt]
+    {{\varphi }_{6}}=(1+\hat{x})(1-\hat{y})(1+\hat{z})/8  \\[3pt]
+    {{\varphi }_{7}}=(1+\hat{x})(1+\hat{y})(1+\hat{z})/8  \\[3pt]
+    {{\varphi }_{8}}=(1-\hat{x})(1+\hat{y})(1+\hat{z})/8  \\
+  \end{matrix}
+\end{equation} 
+
+\noindent
+It is easy to see that for each $n$ we have $\varphi_n = 1$ at a single node, with $\varphi_n = 0$ at the other nodes.
+
+The integrands in \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} 
+are written in terms of real Cartesian coordinates $(x,y,z)$ rather than reference coordinates. 
+Spatial derivatives in real coordinates are related to spatial derivatives in reference coordinates by
+
+\begin{equation}
+  \label{gliss.eq.real_to_reference}
+  \scalebox{1.2}{
+    $
+  \left\{ \begin{matrix}
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}  \\[6pt]
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}  \\[6pt]
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}  \\
+  \end{matrix} \right\} = 
+  \left[ \begin{matrix}
+      \frac{\partial x}{\partial \hat{x}} & \frac{\partial y}{\partial \hat{x}} & \frac{\partial z}{\partial \hat{x}}  \\[6pt]
+      \frac{\partial x}{\partial \hat{y}} & \frac{\partial y}{\partial \hat{y}} & \frac{\partial z}{\partial \hat{y}}  \\[6pt]
+      \frac{\partial x}{\partial \hat{z}} & \frac{\partial y}{\partial \hat{z}} & \frac{\partial z}{\partial \hat{z}}  \\
+    \end{matrix} \right]
+  \left\{ \begin{matrix}
+    \frac{\partial {{\varphi }_{n}}}{\partial x}  \\[6pt]
+    \frac{\partial {{\varphi }_{n}}}{\partial y}  \\[6pt]
+    \frac{\partial {{\varphi }_{n}}}{\partial z}  \\
+  \end{matrix} \right\} =
+   [J]\left\{ \begin{matrix}
+     \frac{\partial {{\varphi }_{n}}}{\partial x}  \\[6pt]
+     \frac{\partial {{\varphi }_{n}}}{\partial y}  \\[6pt]
+     \frac{\partial {{\varphi }_{n}}}{\partial z}  \\
+   \end{matrix} \right\},
+   $
+  }
+\end{equation}
+
+\noindent
+where $[J]$ is the Jacobian of the transformation between coordinate systems.  
+Given the finite-element expansion
+
+\begin{equation}
+   x = \sum\limits_{n}{{{\varphi }_{n}}{{x}_{n}}},
+\end{equation}
+
+\noindent
+we can evaluate $[J]$ at point $(\hat{x},\hat{y},\hat{z})$ as
+
+\begin{equation}
+  \scalebox{1.2}{
+  $
+  \label{gliss.eq.Jacobian_eval}
+        [J(\hat{x},\hat{y},\hat{z})]=\left[ \begin{matrix}
+            \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{x}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{y}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{z}_{n}}}  \\[6pt]
+            \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{x}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{y}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{z}_{n}}}  \\[6pt]
+            \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}{{x}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}{{y}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}{{z}_{n}}}  \\
+          \end{matrix} \right].
+        $
+        }
+\end{equation}
+
+Given the derivatives of $\varphi$ at $(\hat{x},\hat{y},\hat{z})$, we can compute the sums
+in \eqref{gliss.eq.Jacobian_eval} and invert \eqref{gliss.eq.real_to_reference} to obtain the 
+basis function derivatives in terms of $(x,y,z)$:
+
+\begin{equation}
+  \label{gliss.eq.reference_to_real}
+  \scalebox{1.2}{
+    $
+  \left\{ \begin{matrix}
+     \frac{\partial {{\varphi }_{n}}}{\partial x}  \\[6pt]
+     \frac{\partial {{\varphi }_{n}}}{\partial y}  \\[6pt]
+     \frac{\partial {{\varphi }_{n}}}{\partial z}  \\
+  \end{matrix} \right\} =
+          [J^{-1}]  \left\{ \begin{matrix}
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}  \\[6pt]
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}  \\[6pt]
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}  \\
+  \end{matrix} \right\}. 
+          $
+          }
+\end{equation}
+
+\noindent
+The left-hand side of \eqref{gliss.eq.reference_to_real} contains the terms needed to evaluate
+element matrix coefficients in \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv}.
+
+Eqs. \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} also contain the viscosity $\eta$,
+which must be evaluated at each quadrature point.
+In the Blatter-Pattyn approximation $\eta$ is given by \eqref{gliss.eq.effective_viscosity};
+it is a function of the flow factor $A$ and the effective strain rate defined by \eqref{gliss.eq.effective_strain_rate}.
+We approximate $A$ by its value at the element center, where $T$ is defined.
+The (squared) effective strain rate, ${{\dot{\varepsilon }}^{2}}_{e}$, is found at each quadrature point
+by summing over strain-rate components.  We have
+
+\begin{equation}
+  \label{gliss.eq.strain_rates}
+  \frac{\partial u}{\partial x}=\sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial x}}{{u}_{n}}, \quad
+  \frac{\partial v}{\partial x}=\sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial x}}{{v}_{n}},
+\end{equation}
+
+\noindent
+and similarly for the $y$ and $z$ derivatives.
+
+We now have the tools needed to evaluated the integrands \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv}
+at quadrature points. For integrating over a hexahedron, there are eight quadrature points are located at
+reference coordinates $(\hat{x},\hat{y},\hat{z}) = (\pm 1/\sqrt{3}, \pm 1/\sqrt{3}, \pm 1\sqrt{3})$.
+To evaluate an integral of the form
+
+\begin{equation}
+  \int\limits_{\Omega }{\eta \left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}d\Omega
+\end{equation}
+
+\noindent
+over element volume $\Omega$, we compute the sum over quadrature points
+
+\begin{equation}
+  \label{gliss.eq.sum_over_qp}
+  \sum\limits_{\text{p}=1}^{8}{{{w}_{\text{p}}}{{\eta }_{\text{p}}}{{\left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}_{\text{p}}}}|J_{\text{p}}|,
+\end{equation}
+
+\noindent
+where $|J|$ is the determinant of the Jacobian \eqref{gliss.eq.Jacobian_eval}. For our choice of quadrature points,
+each point has $w_{\text{p}} = 1$.
+
+
+The rest of the assembly process consists of evaluating the other terms in \eqref{gliss.eq.weak_form}
+(e.g., the gravitational forcing and basal traction) and applying Dirichlet boundary conditions,
+if applicable. We consider these in turn.
+
+
+ 
