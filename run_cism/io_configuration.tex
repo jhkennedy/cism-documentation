@@ -10,6 +10,13 @@ for an input file specifies which time slice from the input file should be used 
 the initial condition.  (Note this is an integer specifying the time level, not
 the actual time.)
 
+Input files can contain any of a large number of model fields that are specified as being
+``loadable". These fields are marked with asterisks in the netCDF model variable
+table listed in Appendix \ref{ch:appendix_vars}. The option for a given variable to be ``loadable" 
+or not can be changed within the \texttt{glide\_vars.def} file, described in X. The standard 
+test cases discussed in Chapter \ref{chp:testcases} provide good examples for the types 
+of variables that might be specified for standard model setups.    
+
 Forcing files are new in CISM 2.0 and are input files that are read on every 
 time step to allow time-dependent
 forcing to be applied during a simulation.  Any inputtable fields can be included
@@ -25,6 +32,18 @@ Forcing files are processed in the same order they occur in the configuration fi
 on each time step thus potentially overwriting previously loaded fields from other
 forcing files.  The ``dome'' test case (\texttt{tests/higher-order/dome}) includes 
 an example of how to use time-dependent forcing.
+
+One special input field is the \texttt{kinbcmask} field, which is used to specify locations (that is,
+indices in the horizontal grid plane) on the staggered (velocity) grid where Dirichlet boundary 
+conditions are to be applied. This input field is used in conjunction with the \texttt{uvel} and 
+\texttt{vvel} fields; at any location where the value of \texttt{kinbcmask} is set to 1, the input field
+values of \texttt{uvel} and \texttt{vvel} for that same column will be applied as Dirichlet boundary
+conditions on the velocity solution. If \texttt{uvel} and \texttt{vvel} are not included in the input file, 
+zero velocity will be specified throughout the column for any location where \texttt{kinbcmask} is 
+set to 1. An example of this application can be seen in the confined shelf test case described 
+in Chapter \ref{sc:ho-tests}. The construction of the relevant input \texttt{kinbcmask} field 
+is done by the python script that constructs the other input fields for this test case 
+(the \texttt{confined-shelf.py} script).  
 
 \begin{center}
   \tablefirsthead{%
