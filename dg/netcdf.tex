@@ -32,10 +32,10 @@ the documentation of \texttt{generate\_ncvars.py}
 All netCDF variables are defined in control files, \texttt{MOD\_vars.def}, 
 where \texttt{MOD} is the name of the model subsystem. Variables can be modified/added by
 editing these files to provide I/O functionality for additional variables 
-beyond those listed in Appendix \ref{ug.sec.varlist}. \textbf{A common example would be to modify 
+beyond those listed in Appendix \ref{ug.sec.varlist}. A common example would be to modify 
 the file \texttt{glide\_vars.def} in \texttt{./libglide} so that 
 additional standard variables could be treated as ``loadable" on input, or so that other standard 
-variables internal to the code could be written to NetCDF output.}
+variables internal to the code could be written to NetCDF output.
 Note that if \texttt{MOD\_vars.def} is modified the cmake configure script
 must be re-sourced before running ``make'' for those changes to be applied.
 
