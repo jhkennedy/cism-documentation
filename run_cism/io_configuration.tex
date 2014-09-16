@@ -11,10 +11,10 @@ the initial condition.  (Note this is an integer specifying the time level, not
 the actual time.)
 
 Input files can contain any of a large number of model fields that are specified as being
-``loadable". These fields are marked with asterisks in the netCDF model variable
+``loadable". These fields are marked with asterisks in the NetCDF model variable
 table listed in Appendix \ref{ch:appendix_vars}. The option for a given variable to be ``loadable" 
-or not can be changed within the \texttt{glide\_vars.def} file, described in X. The standard 
-test cases discussed in Chapter \ref{chp:testcases} provide good examples for the types 
+or not can be changed within the \texttt{glide\_vars.def} file, as described in Appendix \ref{app:NetCDFio}. 
+The standard test cases discussed in Chapter \ref{chp:testcases} provide good examples for the types 
 of variables that might be specified for standard model setups.    
 
 Forcing files are new in CISM 2.0 and are input files that are read on every 
@@ -67,7 +67,7 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF default]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be modified in the \texttt{[output]} section. The model automatically attaches a time stamp and the model version to the netCDF output file.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be modified in the \texttt{[output]} section. The model automatically attaches a time stamp and the model version to the NetCDF output file.}\\
     \hline
     \texttt{title}& Title of the experiment\\
     \texttt{institution} & Institution at which the experiment was run\\
@@ -83,8 +83,8 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.}\\
     \hline
-    \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
-    \texttt{time}& The time slice (not actual time) to be read from the netCDF file. The first time slice is read by default.\\
+    \texttt{name}& The name of the NetCDF file to be read. Typically NetCDF files end with \texttt{.nc}.\\
+    \texttt{time}& The time slice (not actual time) to be read from the NetCDF file. The first time slice is read by default.\\
     \hline
 
 %%%% CF Forcing
@@ -95,7 +95,7 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
     \hline
-    \texttt{name}& The name of the netCDF file to be read. Typically netCDF files end with \texttt{.nc}.\\
+    \texttt{name}& The name of the NetCDF file to be read. Typically NetCDF files end with \texttt{.nc}.\\
     \hline
 
 %%%% CF output
@@ -104,13 +104,13 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF output]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{This section of the netCDF parameter file controls how often selected  variables are written to file.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{This section of the NetCDF parameter file controls how often selected  variables are written to file.}\\
     \hline
-    \texttt{name} & The name of the output netCDF file. Typically netCDF files end with \texttt{.nc}.\\
+    \texttt{name} & The name of the output NetCDF file. Typically NetCDF files end with \texttt{.nc}.\\
     \texttt{start} & Start writing to file when this time is reached (default: first time slice).\\
     \texttt{stop} & Stop writin to file when this time is reached (default: last time slice). \\
     \texttt{frequency} & The time interval in years, determining how often selected variables are written to file.\\
-    \texttt{xtype} & Set the floating point representation used in netCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). \\
+    \texttt{xtype} & Set the floating point representation used in NetCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). \\
     \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. Variable \texttt{restart} selects all variables necessary for a restart.\\
     \hline
   \end{supertabular*}
