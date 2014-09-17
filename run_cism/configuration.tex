@@ -14,9 +14,10 @@ sections, what they control, and the available options for each section are desc
 in the tables below.
 
 TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Currently, only the shallow ice dycore is scientifically supported. 
+\textbf{Steve: I think we should remove this. With the current results we get from standard test cases, like ismip-hom, I think we can claim that Glissade 
+is as scientifically validation as any other FO approximation dycore out there. Not much point in releasing it if we can't say we stand behind it scientifically.}
 
-
-
+\textbf{TO DO: Make sure that defaults listed below are in agreement with current test case defaults! I (SP) checked some of them but could use a 2nd look.}
 
 \begin{center}
   \tablefirsthead{%
@@ -89,19 +90,22 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \hline
     \multicolumn{2}{|l|}{\texttt{[time]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps, etc. {\bf TODO: Address/remove this note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps, etc. {\bf TODO: Address/remove this note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps. \textbf{Steve: I don't actually know what the question is here or what this note is supposed to be about.}}\\
     \hline
     \texttt{tstart} & (real) Start time of the model in years\\
     \texttt{tend} & (real) End time of the model in years\\
     \texttt{dt} & (real) size of time step in years\\
-    \texttt{subcyc} & (integer) number of time steps to subcycle within dt using a steady velocity field {\bf TODO: Support both subcyc and ntem/nvel?  Explain the difference?}\\
+    \texttt{subcyc} & (integer) number of time steps to subcycle within dt using a steady velocity field {\bf TODO: Support both subcyc and ntem/nvel?  Explain the difference?
+    Steve: I've never tried / tested ntem and nvel, so I don't know if/how they work. I have used subcyc though, and we did test that as part of this release.}\\
     \texttt{ntem} & (real) time step multiplier setting the ice temperature update interval\\
     \texttt{nvel} & (real) time step multiplier setting the velocity update interval\\
-    \texttt{profile} & (integer) profile frequency (number of time steps) {\bf TODO: more useful description of what profiling is?}\\
+    \texttt{profile} & (integer) profile frequency (number of time steps) {\bf TODO: more useful description of what profiling is? Steve: I've never used this either. 
+    Maybe we need to look into this to figure out what it does and if it works? Matt, my guess would be that Pat's profiling code is superior to this.}\\
     \texttt{dt\_diag} & (real) writing diagnostic variables to log file every dt\_diag yrs\\
     \texttt{idiag} & (int) x direction grid index for diagnostic variables to be written to log file\\
     \texttt{jdiag} & (int) y direction grid index for diagnostic variables to be written to log file\\
-    \texttt{ndiag} & (int) number of time steps between diagnostics. {\bf DEPRECATED}.  Use \texttt{dt\_diag}.\\
+    \texttt{ndiag} & (int) number of time steps between diagnostics. {\bf DEPRECATED}.  Use \texttt{dt\_diag}. \textbf{Steve: Should we then remove and replace this
+    with dt\_diag rather than using the old var name?}\\
 
 
 
@@ -111,25 +115,26 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \hline
     \multicolumn{2}{|l|}{\texttt{[options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.  Configuration number options with a * after them are specific to the higher-order dycores (Glissade/Glam).}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.  Configuration number options with a * after them are specific to the higher-order dycores (e.g., Glissade). Options with a ? after them are working, but are currently not scientifically supported, and are therefore for use at your own risk. Options with a ! after them are in development and anticipated as being supported in future code releases.}\\
     \hline
 %% dycore
     \texttt{dycore} & 
-      {\bf TODO: Add Felix, Bisicles?} \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0} & Glide (serial, 3d, Shallow-Ice-Approximation dynamical core)\\
-      1* & Glam (parallel, 3d, FDM, 1st-order-accurate dynamical core)  \\
-      2* & Glissade (parallel, 3d, FEM, 1st-order-accurate dynamical core)  \\
+      0 & Glide (serial, 3d, Shallow-Ice-Approximation dycore) \\
+      1*? & Glam (parallel, 3d, FDM, 1st-order-accurate dycore)  \\
+      {\bf 2*} & Glissade (parallel, 3d, FEM, 1st-order-accurate dycore)  \\
+      3*! & FELIX (parallel, 3d, FEM, 1st-order-accurate dycore)  \\
+      4*! & BISICLES (parallel, quasi 3d, FVM, L1L2 dycore)  \\
     \end{tabular}\\
 %% evolution
-    \texttt{evolution} & 
+    \texttt{evolution} (ice thickness) & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & pseudo-diffusion (Glide only)\\
       1 & ADI scheme  (Glide only)\\
       2 & diffusion (Glide only)\\
-      3* & incremental remapping (Glam/Glissade only) \\
-      4* & first-order upwind (Glam/Glissade only) \\
-      5* & evolve without changing ice thickness (Glam/Glissade only)  This can be useful when it is desired to run the model with a fixed geometry.  A useful example is during a temperature spinup. Note that on each time step this option evolves the geometry and tracers using incremental remapping and then resets geometry to its old value, so that tracer advection can still occur within a fixed geometry.  Therefore it is still subject to the advective CFL condition.\\
+      3* & incremental remapping \\
+      4* & first-order upwind  \\
+      5* & evolve without changing ice thickness. This can be useful when it is desired to run the model with a fixed geometry, e.g. during a temperature spinup. Note that on each time step this option evolves the geometry and tracers using incremental remapping and then resets geometry to its old value, so that tracer advection can still occur within a fixed geometry.  This evolution scheme is therefore still subject to the advective CFL condition.\\
     \end{tabular}\\
 %% temperature
     \texttt{temperature} & 
@@ -137,7 +142,7 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
       0 & Set each ice column to local surface air temperature \\
       {\bf 1} & prognostic temperature calculation \\
       2 & held steady at initial value \\
-      3 & prognostic temperature calculation using enthalpy formulation {\bf TODO: include this?} \\
+      3! & prognostic temperature calculation using enthalpy formulation \\
     \end{tabular}\\
 %% temperature init
     \texttt{temp\_init} & 
@@ -149,9 +154,9 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
 %% flow law
     \texttt{flow\_law} &  
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0}  & constant (using the value of default\_flwa)\\
-      1 & temp. dependent, Patterson and Budd (temp.=-5degC)\\
-      2 & temp. dependent, Patterson and Budd (function of variable temp.)\\
+      {\bf 0}  & constant (using the value of \texttt{default\_flwa)}\\
+      1 & temp. dependent, \citet{PatersonBudd:1982} (temp.=-5degC)\\
+      2 & temp. dependent, \citet{PatersonBudd:1982} (function of variable temp.)\\
     \end{tabular}\\
 %% basal water
     \texttt{basal\_water} & 
@@ -159,7 +164,7 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
       {\bf 0} & none \\
       1 & local water balance\\
       2 & Compute the steady-state, routing-based, basal water flux and water layer thickness \\
-      3 &  Use a constant basal water layer thickness everywhere, to enforce T=T\_pmp everywhere \\
+      3 &  Use a constant basal water layer thickness everywhere, to enforce T=T${_{pmp}}$ everywhere \\
     \end{tabular}\\
 %% basal mass balance
     \texttt{basal\_mass\_balance} & 
@@ -169,7 +174,7 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \end{tabular}\\
 %% slip coefficient
     \texttt{slip\_coeff} & 
-        slip coefficient for Glide only \\ &
+        slip coefficient (for Glide \textit{only}) \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & zero (no sliding) \\
       1 & set to a non--zero constant everywhere\\
@@ -180,20 +185,20 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \end{tabular}\\
 %% marine margin
     \texttt{marine\_margin} & 
-  {\bf TODO: KEEP ALL OF THESE?} \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & ignore marine margin\\
       {\bf 1} & Set thickness to zero if floating\\
       2 & Lose fraction of ice when edge cell\\
-      3 & Set thickness to zero if relaxed bedrock is below a given depth (variable "mlimit" in glide\_types)\\
-      4 & Set thickness to zero if present-day bedrock is below a given depth (variable "mlimit" in glide\_types)\\
-      5 & Huybrechts grounding line scheme {\bf TODO: elaborate on this.} \\
+      3 & Set thickness to zero if relaxed bedrock is below a given depth (variable ``mlimit" in glide\_types)\\
+      4 & Set thickness to zero if present-day bedrock is below a given depth (variable ``mlimit" in glide\_types)\\
+      5 & Huybrechts grounding line scheme {\bf TODO: elaborate on this. Steve: I would argue that we remove it
+      if we don't know what it does or don't want to support it (or at least we mark it as unsupported using the ? symbol).} \\
     \end{tabular}\\
 %% vertical integration
     \texttt{vertical\_integration} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0} & standard integration\\
-      1 & constrained so that upper boundary kinematic velocity is obeyed\\
+      {\bf 0} & standard integration (to obtain vertical velocity profile)\\
+      1 & constrained to obey kinematic velocity at upper surface boundary\\
     \end{tabular}\\
 %% geothermal heat flux
     \texttt{gthf} &  
@@ -216,16 +221,16 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
       2 & first time slice of input topography is assumed to be in isostatic
       equilibrium with ice thickness. \\
     \end{tabular}\\
-%% periodicity
-    \texttt{periodic\_ew} & 
-  {\bf TODO: Is this still used?  If so, do we need to add perdiodic\_ns?} \\&
-    \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0} & switched off\\
-      1 & periodic lateral EW boundary conditions (Glide SIA dycore only) \\
-    \end{tabular}\\
+%% periodicity					%% no longer used / supported
+%    \texttt{periodic\_ew} & 
+%  {\bf TODO: Is this still used?  If so, do we need to add perdiodic\_ns?} \\&
+%    \begin{tabular}[t]{lp{0.85\linewidth}}
+ %     {\bf 0} & switched off\\
+ %     1 & periodic lateral EW boundary conditions (Glide  dycore \textit{only}) \\
+ %   \end{tabular}\\
 %% restart
     \texttt{restart} &
-    Note: the alternate keyword {\bf hotstart} is retained for backwards compatibility. \\ &
+    \textit{Note:} alternate keyword {\bf hotstart} is retained for backwards compatibility. \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & normal start (initial guesses taken from input file or, if absent, using default options)\\
       1 & restart model using input from previous run (do not calc., e.g., temp., rate factor, or vel. fields)  
@@ -243,60 +248,62 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \hline
     \multicolumn{2}{|l|}{\texttt{[ho\_options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section determine how various components of the higher-order extensions to the ice sheet model (Glissade/Glam) are treated. Defaults are indicated in bold. These options have no effect on the Shallow-Ice (Glide) dycore.  As noted above, higher-order model options are currently NOT scientifically supported.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section determine how various components of the higher-order extensions to the ice sheet model (e.g., Glissade) are treated. Defaults are indicated in bold. These options have no effect on the Shallow-Ice (Glide) dycore. In this section, options marked with a * apply to a serial build of the model only and
+    options marked with a ! are under development and will be fully supported in future versions of the code (use now at your own risk!).}\\
     \hline
 %% which_ho_nonlinear
     \texttt{which\_ho\_nonlinear} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & treat nonlinearity in momentum balance using Picard iteration \\
-      1 & treat nonlinearity in momentum balance using Jacobian-Free Newton-Krylov iteration  \\
+      1 & treat nonlinearity in momentum balance using Jacobian-Free Newton-Krylov iteration (Glam \textit{only})  \\
     \end{tabular}\\     
 %% which_ho_sparse
     \texttt{which\_ho\_sparse} & 
 %\\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      -1 & Solve sparse linear system using SLAP library with incomplete Cholesky method\\
-      {\bf 0} & Solve sparse linear system using SLAP library with incomplete LU-preconditioned biconjugate gradient method\\
-      1 & Solve sparse linear system using SLAP library with incomplete LU-preconditioned GMRES method\\
-      2 & Solve sparse linear system using preconditioned conjugate gradient method: standard algorithm (glissade only)\\
-      3 & Solve sparse linear system with preconditioned conjugate gradient method: Chronopoulos-Gear algorithm (glissade only)\\
-      4 & Solve sparse linear system using Trilinos, incomplete LU-preconditioned GMRES method (Trilinos-compatible build only)\\
+      -1* & Solve sparse linear system using SLAP library with incomplete Cholesky method)\\
+      0* & Solve sparse linear system using SLAP library with incomplete LU-preconditioned biconjugate gradient method\\
+      1* & Solve sparse linear system using SLAP library with incomplete LU-preconditioned GMRES method\\
+      2 & Solve sparse linear system using preconditioned conjugate gradient method: standard algorithm (Glissade \textit{only}) \\
+      {\bf 3} & Solve sparse linear system with preconditioned conjugate gradient method: Chronopoulos-Gear algorithm (Glissade \textit{only})\\
+      4 & Solve sparse linear system using \textit{Trilinos}, incomplete LU-preconditioned GMRES method (\textit{Trilinos}-compatible build only)\\
     \end{tabular}\\     
 %% which_ho_efvs
     \texttt{which\_ho\_efvs} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      0 & use a constant value for the effective viscosity. The default value is 2336041 Pa yr, as used by ISMIP-HOM Test F.\\
+      0 & use a constant value for the effective viscosity. The default value is 2336041 Pa yr (as used by ISMIP-HOM Test F).\\
       1 & set the effective viscosity to a value based on the flow rate factor: efvs $= 0.5 * A^{-1/n}$\\
       {\bf 2} & use the effective strain rate for the calc. of the effective viscosity (i.e., full nonlinear treatment) \\
     \end{tabular}\\  
 %% which_disp
     \texttt{which\_disp} & 
-{\bf TODO: Should this be moved from ho\_options to options?} \\ &
+{\bf TODO: Should this be moved from ho\_options to options? Steve: I don't know ... what is written here is/was based on Glam.
+Bill, do you know if we are calculating the necessary info (strain-rates / stresses) from Glissade output for this option to be working as advertised?} \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & calculate dissipation in temperature equation assuming SIA ice dynamics \\
       1 & calculate dissipation in temperature equation assuming 1st-order ice dynamics \\
     \end{tabular}\\    
 %% which_ho_babc
     \texttt{which\_ho\_babc} & 
-        Implementation of basal boundary condition in higher-order dycore (Calculation of `beta' field.) {\bf TODO: include all of these?} \\ &
+        Implementation of basal boundary condition in higher-order dycore (Calculation of `beta' field.) \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & constant value \\
       1 & specify some simple pattern (hardcoded). Useful for debugging\\
-      2 & read yield stress (in Pa) from input field `mintauf' to simulate sliding 
-          over a plastic subglacial till (using Picard iteration)\\
+      2! & read map of yield stress (in Pa) from input field `mintauf' to simulate sliding 
+          over a plastic subglacial till (Picard-based solution) \\
       3 & calculate `beta' as linear (inverse) function of basal water thickness\\
       {\bf 4} & no slip everywhere in domain (`beta' set to very
           large value)\\
-      5 & read value of `beta' in from .nc input file using standard i/o \\
+      5 & read map of `beta' in from .nc input file using standard i/o \\
       6 & no slip everywhere in domain (using Dirichlet basal BC)\\
-      7 & read yield stress (in Pa) from input field `mintauf' to simulate sliding 
-          over a plastic subglacial till (using Newton iteration - under devel.)\\
+      7! & read map of yield stress (in Pa) from input field `mintauf' to simulate sliding 
+          over a plastic subglacial till (Newton-based solution)\\
       8 & Spatial field of `beta' required for ISMIP-HOM Test C \\
     \end{tabular}\\  
 %% which_ho_resid
     \texttt{which\_ho\_resid} &
-     Residual calculation method for the velocity solver in higher-order dycore
-     (iterations halt once residual falls below a specified absolute or relative value) \\ &
+     Residual calculation method for higher-order velocity solvers (e.g., Glissade). 
+     Nonlinear iterations are halted once the residual falls below a specified value) \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & use the maximum value of the normalized velocity vector update, defined by 
       $r = \frac{|vel_{k-1} - vel_k|}{vel_k}$ \\
@@ -307,16 +314,16 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \end{tabular}\\  
 %% which_ho_approx
     \texttt{which\_ho\_approx} &
-     Which Stokes approximation to use with the glissade dycore \\ &
+     Which reduced-order, Stokes-flow approximation to use with Glissade dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       -1 & Shallow-ice approximation, Glide-type calculation (uses glissade\_velo\_sia) \\
       0 & Shallow-ice approximation, vertical-shear stresses only (uses glissade\_velo\_higher) \\
-      1 & Shallow-shelf approximation, horizontal-plane stresses only (uses glissade\_velo\_higher) \\
+      1! & Shallow-shelf approximation, horizontal-plane stresses only (uses glissade\_velo\_higher) \\
       {\bf 2} & Blatter-Pattyn with both vertical-shear and horizontal-plane stresses (uses glissade\_velo\_higher) \\
     \end{tabular}\\  
 %% which_ho_precond
     \texttt{which\_ho\_precond} &
-     Which Stokes preconditioner to use in the glissade dycore \\ &
+     Which preconditioner to use in the linear PCG solve of the Glissade dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & No preconditioner \\
       1 & Diagonal preconditioner \\
@@ -324,10 +331,11 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \end{tabular}\\  
 %% which_ho_gradient
     \texttt{which\_ho\_gradient} &
-     Which gradient operator to use in the glissade dycore \\ &
+     Which spatial gradient operator to use in the Glissade dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & Centered gradient \\
-      {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0)}\\
+      {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0). Steve: Can we clarify if / that this only
+      applies at margins? That is, in the ice sheet center, the scheme defaults to using of centered gradients?}\\
     \end{tabular}\\  
 
 % MJH: Commenting out external dycore options for 2.0 release.
@@ -357,7 +365,7 @@ TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Cu
     \hline
     \multicolumn{2}{|l|}{\texttt{[parameters]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Set values for various parameters.  Parameters with a * after them are specific to the higher-order dycores (Glissade/Glam).}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Set values for various parameters.  Parameters with a * after them are specific to the higher-order dycores (e.g., Glissade).}\\
     \hline
     \texttt{log\_level} & (integer) set to a value between 0, no messages, and 6, all messages are displayed to stdout. By default messages are only logged to file.\\
     \texttt{ice\_limit} & (real) below this limit ice is only accumulated/ablated; ice dynamics are switched on once the ice thickness is above this value. (default = 100.0 m) \\
