@@ -22,11 +22,13 @@ Input and output files are managed by two separate linked lists. Elements of the
 Much of the code needed to do netCDF I/O is very repetitive and can therefore 
 be automatically generated. The code generator, \texttt{generate\_ncvars.py}, 
 is written in python and produces source files from a template \texttt{ncdf\_template.in} 
-and the variable definition file, see Section \ref{dg.sec.vdf}. The templates are 
+and the variable definition file, see Section \ref{dg.sec.vdf}. The templates are
 valid source files, all the generator does is replace special comments with 
-the code generated from the variable file. For further information check 
-the documentation of \texttt{generate\_ncvars.py}
-\footnote{run \texttt{pydoc generate\_ncvars.py}}. 
+the code generated from the variable file. 
+%% As of 9/15/14, Matt H. says this is not true/working.
+%For further information check	 
+%the documentation of \texttt{generate\_ncvars.py}
+%\footnote{run \texttt{pydoc generate\_ncvars.py}}. 
 
 \subsection{Variable Definition File}\label{dg.sec.vdf}
 All netCDF variables are defined in control files, \texttt{MOD\_vars.def}, 
