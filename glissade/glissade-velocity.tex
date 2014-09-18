@@ -5,13 +5,15 @@
 Glissade computes the ice velocity by solving an appropriate
 approximation of the Stokes equations, given the 2D surface elevation and thickness fields and
 the 3D temperature field.
-Section (cite section) describes assembly and solution of the matrix problem for the 3D first-order
-Blatter-Pattyn approximation.  Section (cite section) then discusses assembly and solution
-methods for simpler approximations, including the SIA and SSA.
+Section \ref{sc:glissade-blatter-pattyn} describes assembly and solution of the matrix problem for the 
+3D first-order Blatter-Pattyn approximation.  
+Section \ref{sc:glissade-other-approx} discusses simpler approximations, including the SIA and SSA.
 
 \subsection{Blatter-Pattyn approximation}
+\label{sc:glissade-blatter-pattyn}
 
-The basic equations of the Blatter-Pattyn approximation in Cartesian coordinates, repeated from Section (cite section), are 
+The basic equations of the Blatter-Pattyn approximation in Cartesian coordinates, repeated from 
+Section \ref{sc:higher-order-mom}, are 
 
 \begin{equation}
   \label{gliss.eq.stress_balance}
@@ -25,18 +27,19 @@ The basic equations of the Blatter-Pattyn approximation in Cartesian coordinates
 where $u$ and $v$ are the components of horizontal velocity, $\eta$ is the effective viscosity, $s$ is the ice surface elevation,
 $\rho$ is the density of ice (assumed constant), and $g$ is gravitational acceleration.  
 
-As in Glide, the equations are discretized on two structured, rectangular horizontal meshes: an unstaggered mesh
-of dimension $(nx,ny)$ and a staggered mesh of dimension $(nx-1,ny-1)$.  The rectangles
+As in Glide, the equations are discretized on a structured, rectangular horizontal mesh
+of dimension $(nx,ny)$, together with a staggered mesh of dimension $(nx-1,ny-1)$.  The rectangles on the unstaggered mesh
 are called \textit{cells}, and the corners of each cell (where four rectangles meet) are called \textit{vertices}.
-The vertical levels of the mesh are based on a terrain-following sigma coordinate system (insert sigma equation).
-There are $nz$ \textit{levels} in the vertical direction, with $nz-1$ \textit{layers} between these levels.
+The vertical \textit{levels} of the mesh are based on a terrain-following sigma coordinate system; 
+we define $\sigma = (s-z)/H$, where $H$ is the ice thickness. Thus $\sigma = 0$ at the top surface and $\sigma = 1$ at the bed. 
+There are $nz$ levels in the vertical direction, with $nz-1$ \textit{layers} between these levels.
 An \textit{element} is the region associated with a particular cell and layer; there are
 $(nx)(ny)(nz-1)$ elements on the mesh.  A \textit{node} is a point where eight elements intersect (or where four elements
 intersect at the upper or lower surface). There are $(nx-1)(ny-1)(nz)$ nodes on the mesh.
 
 Scalar 2D fields such as ice thickness $H$ and surface elevation $s$ are defined for each cell.
-Scalar 3D fields such as ice temperature $T$ lie at the center of each element (i.e., in each layer
-associated with each cell). Gradients of 2D scalar fields (e.g., the surface slope $\nabla s$) are defined at vertices.
+Scalar 3D fields such as ice temperature $T$ lie at the center of each element (i.e., at the midpoint of each layer
+associated with  each cell). Gradients of 2D scalar fields (e.g., the surface slope $\nabla s$) are defined at vertices.
 The velocity components $u$ and $v$ live at nodes.
 
 An \textit{active cell} is a cell whose ice thickness exceeds a minimum threshold.  Each active cell is associated with
@@ -69,7 +72,7 @@ where
 \noindent
 
 Given $T$, $s$, $H$, and an initial guess for $u$ and $v$, the problem is to solve Eq. \eqref{gliss.eq.stress_balance}
-for $u$ and $v$ at each active node.  (At inactive nodes we assume $u=v=0$.)  This problem can be written in the form
+for $u$ and $v$ at each active node.  (At inactive nodes we set $u=v=0$.)  This problem can be written in the form
 
 \begin{equation}
   \mathbf{A} \mathbf{x} = \mathbf{b},
@@ -90,23 +93,23 @@ or more fully,
       \end{matrix} \right]=\left[ \begin{matrix}
         \mathbf{b}_{\mathbf{u}}  \\
         \mathbf{b}_{\mathbf{v}}  \\
-      \end{matrix} \right], \\ 
+      \end{matrix} \right]. \\ 
     \\ 
-    \mathbf{A}_{\mathbf{uu}}\mathbf{u} + \mathbf{A}_{\mathbf{uv}}\mathbf{v} =\mathbf{b}_{\mathbf{u}},
-    \quad \quad \mathbf{A}_{\mathbf{vu}}\mathbf{u} + \mathbf{A}_{\mathbf{vv}}\mathbf{v} =\mathbf{b}_{\mathbf{v}}. \\ 
+%    \mathbf{A}_{\mathbf{uu}}\mathbf{u} + \mathbf{A}_{\mathbf{uv}}\mathbf{v} =\mathbf{b}_{\mathbf{u}},
+%    \quad \quad \mathbf{A}_{\mathbf{vu}}\mathbf{u} + \mathbf{A}_{\mathbf{vv}}\mathbf{v} =\mathbf{b}_{\mathbf{v}}. \\ 
   \end{matrix}
 \end{equation}
 
 \noindent
-Eq. \eqref{gliss.eq.matrix} explicitly shows the four parts of the total matrix $\mathbf{A}$,
+Eq. \eqref{gliss.eq.matrix} shows the four parts of the global matrix $\mathbf{A}$,
 with the solution and right-hand-side vectors separated into $u$ and $v$ components.
 In Glissade, $\mathbf{A}$ is always symmetric and positive-definite.
 
-Since $\mathbf{A}$ depends (through $\eta$) on $u$ and $v$, the problem is nonlinear and must be solved iteratively
-as described in Section (insert section ref).  For a given nonlinear iteration, we compute $\eta$ based on the
-current guess for the velocity field and solve a linear problem of the form \eqref{gliss.eq.matrix}.
-Then we update $\eta$ and repeat until the solution converges to within a given tolerance.  This procedure
-is known as Picard iteration.
+Since $\mathbf{A}$ depends (through $\eta$) on $u$ and $v$, the problem is nonlinear and must be solved iteratively.
+For each nonlinear iteration, Glissade computes $\eta$ based on the
+current guess for the velocity field and then solves a linear problem of the form \eqref{gliss.eq.matrix}.
+Then $\eta$ is updated and the process is repeated until the solution converges to within a given tolerance.
+This procedure is known as Picard iteration.
 
 The following sections describe how the matrix equations are assembled and solved. 
 
@@ -117,18 +120,20 @@ Here we give a detailed but non-rigorous description of the method as applied to
 approximation on the CISM mesh.
 We refer the reader to standard texts (one or two references here) for a full discussion of finite elements.
 
-The PDEs, with appropriate boundary conditions, are solved by dividing the full domain into 
-subdomains, or elements, and representing the solution on each element.
-On the CISM mesh, the elements are hexahedra (rectangles
-in map view), each of which has eight nodes that are shared with its neighbors.
-The solution is approximated as a sum over basis functions $\varphi$. One basis function
-is associated with each active node.  Its value is $\varphi = 1$ at that node,
-with $\varphi = 0$ at all other nodes. The solution at a given point
-within an element can be represented as a sum of basis functions multiplied by nodal values:
+The PDEs, with appropriate boundary conditions, are converted to a system of algebraic equations
+by dividing the full domain into subdomains, or elements, representing the solution on each element,
+and integrating over elements. On the CISM mesh, the elements are hexahedra (rectangles
+in map view), each of which has eight nodes shared with its neighbors.
+The solution is approximated as a sum over basis functions $\varphi$. 
+Each active node is associated with a basis function whose value is $\varphi = 1$ at that node,
+with $\varphi = 0$ at all other nodes. The solution at a point
+within an element can be represented as a sum of basis functions (evaluated at that point)
+multiplied by nodal values:
 
 \begin{equation}
 \label{gliss.eq.velo_expansion}  
-   u=\sum\limits_{n}{{{\varphi }_{n}}{{u}_{n}}}, \quad v=\sum\limits_{n}{{{\varphi }_{n}}{{v}_{n}}},  \\
+   u(x,y,z) = \sum\limits_{n}{{{\varphi }_{n}(x,y,z)}{{u}_{n}}}, \quad 
+   v(x,y,z) = \sum\limits_{n}{{{\varphi }_{n}(x,y,z)}{{v}_{n}}},  \\
 \end{equation}
 
 \noindent
@@ -175,17 +180,31 @@ integration by parts to eliminate the second derivative:
 \begin{equation}
   \label{gliss.eq.weak_form}
   \begin{split}
-    x: \quad \int\limits_{\Omega }{2\eta {{{\dot{\varepsilon }}}_{1}}(u,v)\cdot \nabla {{\varphi }_{1}}\text{ }d\Omega }+\int\limits_{{{\Gamma }_{\beta }}}{\beta u{{\varphi }_{1}}d\Gamma +\int\limits_{\Omega }{\rho g\frac{\partial s}{\partial x}}}{{\varphi }_{1}}\text{ d}\Omega =\text{0},  \\
-    y: \quad \int\limits_{\Omega }{2\eta {{{\dot{\varepsilon }}}_{2}}(u,v)\cdot \nabla {{\varphi }_{2}}\text{ }d\Omega }+\int\limits_{{{\Gamma }_{\beta }}}{\beta v{{\varphi }_{2}}d\Gamma +\int\limits_{\Omega }{\rho g\frac{\partial s}{\partial y}}}{{\varphi }_{2}}\text{ d}\Omega =\text{0},  \\
+    x: \quad \int\limits_{\Omega } {2\eta {{{\dot{\varepsilon }}}_{1}}(u,v)\cdot \nabla {{\varphi }_{1}} \text{ d}\Omega }
+      + \int\limits_{{\Gamma }_{B}} {\beta u{{\varphi }_{1}} \text{ d}\Gamma} 
+      + \int\limits_{{\Gamma }_{L}} {p n_1 {{\varphi }_{1}} \text{ d}\Gamma}
+      + \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial x}{{\varphi }_{1}} \text{ d}\Omega}
+      = \text{0},  \\
+    y: \quad \int\limits_{\Omega } {2\eta {{{\dot{\varepsilon }}}_{2}}(u,v)\cdot \nabla {{\varphi }_{2}} \text{ d}\Omega }
+      + \int\limits_{{\Gamma }_{B}} {\beta u{{\varphi }_{2}} \text{ d}\Gamma} 
+      + \int\limits_{{\Gamma }_{L}} {p n_2 {{\varphi }_{2}} \text{ d}\Gamma}
+      + \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial y}{{\varphi }_{2}} \text{ d}\Omega}
+      = \text{0},  \\
   \end{split}
 \end{equation}
 
 \noindent
-where $\Omega$ represents the domain volume, $\Gamma$ denotes the lower boundary, and $\beta$ is a basal traction parameter
-that can vary spatially.  These equations can also be obtained from a variational principle as described by \citet{DUKOWICZ:2010wb}.
+where $\Omega$ represents the domain volume, $\Gamma_{B}$ denotes the lower boundary, $\Gamma_{L}$ denotes the lateral
+boundary (e.g., the calving front of an ice shelf), $\beta$ is a basal traction parameter, $p$ is the pressure at the 
+lateral boundary, and $n_1$ and $n_2$ are components of the normal to $\Gamma$.
+These equations can also be obtained from a variational principle as described by \citet{DUKOWICZ:2010wb}.
 
-Next we rewrite \eqref{gliss.eq.weak_form} in terms of velocity components.
-The first terms on the left-hand-side for the $x$ and $y$ components, respectively, are
+The four terms of \eqref{gliss.eq.weak_form} describe internal ice streses, basal friction, lateral pressure,
+and the gravitational driving force, respectively.  Next we describe how these terms are summed over elements
+and assembled into the global matrix $\mathbf{A}$ and right-hand side vector $\mathbf{b}$.
+
+We start with the internal stress term, which is the most complex.
+We can rewrite the first term on the left-hand side of \eqref{gliss.eq.weak_form} in terms of velocity components:
 
 \begin{equation}
   \label{gliss.eq.weak_form_velo}
@@ -208,8 +227,8 @@ The first terms on the left-hand-side for the $x$ and $y$ components, respective
 \end{equation}
 
 \noindent
-where brackets denote row vectors and braces denote column vectors.
-We will evaluate \eqref{gliss.eq.weak_form_velo} for each active element.  Recall that hexahedral elements have eight nodes,
+where brackets are used for row vectors and braces for column vectors.
+Glissade evaluates \eqref{gliss.eq.weak_form_velo} for each active element.  Recall that hexahedral elements have eight nodes,
 with $u$ and $v$ to be determined at each active node.
 Inserting the velocity expressions \eqref{gliss.eq.velo_expansion} in \eqref{gliss.eq.weak_form_velo}, we obtain
 
@@ -223,7 +242,6 @@ Inserting the velocity expressions \eqref{gliss.eq.velo_expansion} in \eqref{gli
 
 \noindent
 Each row or column vector has eight terms, one for each node of the element.
-
 The terms in \eqref{gliss.eq.element_matrix} can be computed to give the terms of a set of four $8\text{x}8$ element matrices.
 Each row of an element matrix is associated with $u$ or $v$ at a given node.  The columns in that row contain terms
 linking that node to $u$ or $v$ at the other nodes of the element (with the diagonal term linking the node to itself).  
@@ -247,8 +265,8 @@ are given by
   \int\limits_{\Omega }{\eta \left( 2\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi }_{j}}}{\partial y}+\frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi }_{j}}}{\partial x} \right)}d\Omega
 \end{equation}
 
-Likewise, two $8\text{x}8$ matrices are associated with the $y$ equation in \eqref{gliss.eq.element_matrix}.  
-The terms of $K_{vu}$, which connects $v$ at a given node to $u$ at all eight nodes, are given by
+Likewise, two $8\text{x}8$ matrices are associated with the $y$ component of \eqref{gliss.eq.element_matrix}.  
+The terms of $K_{vu}$, which connects $v$ at a given node to $u$ at all nodes, are given by
 
 \begin{equation}
   \label{gliss.eq.matrix_Kvu}
@@ -256,7 +274,7 @@ The terms of $K_{vu}$, which connects $v$ at a given node to $u$ at all eight no
 \end{equation}
 
 \noindent
-Finally, the terms of $K_{vv}$, which links $v$ at a given node to $v$ at all eight nodes, are given by
+Finally, the terms of $K_{vv}$, which links $v$ at a given node to $v$ at all nodes, are given by
 
 \begin{equation}
   \label{gliss.eq.matrix_Kvv}
@@ -273,24 +291,24 @@ the membrane stresses) appear in all four element matrices.
 Eqs. \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} lie at the heart of the code 
 (in subroutine \textit{compute\_element\_matrix} of module \textit{glissade\_velo\_higher.F90}).
 Together with the expressions for the effective viscosity $\eta$ (discussed below),
-these expressions contain the physical contents specific to the Blatter-Pattyn approximation. 
+these expressions contain the physical contents of the Blatter-Pattyn approximation. 
 
-Given the weak form \eqref{gliss.eq.weak_form} of the equations, each of the 64 coefficients in each
+In the weak form of the equations, each of the 64 coefficients in each
 element matrix must be integrated over the element.  (Since $\varphi$ varies over the element,
 the integrands in \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} 
 have a different value at each point.)  
 This is done for a given element by evaluating the integrand at each of 
-eight \textit{quadrature points} and taking a weighted sum over quadrature points.
-We have to specify the form of the basis functions, then transform the basis functions to
+eight \textit{quadrature points} and summing over quadrature points.
+We first have to specify the form of the basis functions, then transform the basis functions to
 the geometry of the element (which is irregular in the vertical because of the sigma
 coordinate) and evaluate the basis function derivatives at the quadrature points.
 
-Glissade uses trilinear basis functions defined on a reference hexahedron.  
-This hexahedron is centered at the origin $(0,0,0)$ in local reference coordinates 
+Glissade uses trilinear basis functions defined on a reference cube.  
+This cube is centered at the origin $(0,0,0)$ in local reference coordinates 
 $(\hat{x}, \hat{y}, \hat{z}$). 
 The eight nodes are located at $(\hat{x}, \hat{y}, \hat{z}) = (\pm 1, \pm 1, \pm 1)$.
 By convention, nodes 1--4 are the nodes of the lower face, proceeding counterclockwise
-from the southwest corner $(\hat{x}, \hat{y}) = (±1, ±1)$, and nodes 5--8 are the nodes
+from the southwest corner $(\hat{x}, \hat{y}) = (-1, -1)$, and nodes 5--8 are the nodes
 of the upper face, also moving counterclockwise from the southwest corner.
 Thus we have
 
@@ -309,11 +327,12 @@ Thus we have
 \end{equation} 
 
 \noindent
-It is easy to see that for each $n$ we have $\varphi_n = 1$ at a single node, with $\varphi_n = 0$ at the other nodes.
+For each $n$ we have $\varphi_n = 1$ at a single node, with $\varphi_n = 0$ at the other nodes.
 
 The integrands in \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} 
-are written in terms of real Cartesian coordinates $(x,y,z)$ rather than reference coordinates. 
-Spatial derivatives in real coordinates are related to spatial derivatives in reference coordinates by
+are written in terms of real Cartesian coordinates $(x,y,z)$ rather than reference coordinates
+$(\hat{x},\hat{y},\hat{z})$.
+Spatial derivatives in real coordinates are related to derivatives in reference coordinates by
 
 \begin{equation}
   \label{gliss.eq.real_to_reference}
@@ -352,13 +371,15 @@ Given the finite-element expansion
 \end{equation}
 
 \noindent
-we can evaluate $[J]$ at point $(\hat{x},\hat{y},\hat{z})$ as
+along with the spatial derivatives of $\varphi$ at $(\hat{x},\hat{y},\hat{z})$
+(which are easily derived from \eqref{gliss.eq.basis_functions}),
+we can compute $[J(\hat{x},\hat{y},\hat{z})]$ as
 
 \begin{equation}
+  \label{gliss.eq.Jacobian_eval}
   \scalebox{1.2}{
   $
-  \label{gliss.eq.Jacobian_eval}
-        [J(\hat{x},\hat{y},\hat{z})]=\left[ \begin{matrix}
+        [J]=\left[ \begin{matrix}
             \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{x}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{y}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{z}_{n}}}  \\[6pt]
             \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{x}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{y}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{z}_{n}}}  \\[6pt]
             \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}{{x}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}{{y}_{n}}} & \sum\limits_{n=1}^{8}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{z}}{{z}_{n}}}  \\
@@ -367,8 +388,8 @@ we can evaluate $[J]$ at point $(\hat{x},\hat{y},\hat{z})$ as
         }
 \end{equation}
 
-Given the derivatives of $\varphi$ at $(\hat{x},\hat{y},\hat{z})$, we can compute the sums
-in \eqref{gliss.eq.Jacobian_eval} and invert \eqref{gliss.eq.real_to_reference} to obtain the 
+\noindent
+We then invert \eqref{gliss.eq.real_to_reference} to obtain the 
 basis function derivatives in terms of $(x,y,z)$:
 
 \begin{equation}
@@ -390,16 +411,16 @@ basis function derivatives in terms of $(x,y,z)$:
 \end{equation}
 
 \noindent
-The left-hand side of \eqref{gliss.eq.reference_to_real} contains the terms needed to evaluate
-element matrix coefficients in \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv}.
+The left-hand side of \eqref{gliss.eq.reference_to_real} contains the spatial derivatives 
+appearing in \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv}.
 
 Eqs. \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} also contain the viscosity $\eta$,
-which must be evaluated at each quadrature point.
-In the Blatter-Pattyn approximation $\eta$ is given by \eqref{gliss.eq.effective_viscosity};
+which is computed at each quadrature point.
+In the Blatter-Pattyn approximation, $\eta$ is given by \eqref{gliss.eq.effective_viscosity};
 it is a function of the flow factor $A$ and the effective strain rate defined by \eqref{gliss.eq.effective_strain_rate}.
-We approximate $A$ by its value at the element center, where $T$ is defined.
-The (squared) effective strain rate, ${{\dot{\varepsilon }}^{2}}_{e}$, is found at each quadrature point
-by summing over strain-rate components.  We have
+We approximate $A$ by its value at the element center.
+The (squared) effective strain rate, ${{\dot{\varepsilon }}^{2}}_{e}$, is evaluated at each quadrature point
+by summing over strain-rate components.  The $x$ components are given by
 
 \begin{equation}
   \label{gliss.eq.strain_rates}
@@ -408,12 +429,14 @@ by summing over strain-rate components.  We have
 \end{equation}
 
 \noindent
-and similarly for the $y$ and $z$ derivatives.
+and similarly for the $y$ and $z$ components.  The nodal velocities in \eqref{gliss.eq.strain_rates}
+are values from the previous iteration; otherwise the resulting system of equations would be nonlinear.
 
-We now have the tools needed to evaluated the integrands \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv}
-at quadrature points. For integrating over a hexahedron, there are eight quadrature points are located at
+We now have the information needed to compute the integrands \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv}
+at quadrature points. To integrate over a hexahedron, we take a weighted sum of the values at each
+of eight quadrature points.  These points are located at
 reference coordinates $(\hat{x},\hat{y},\hat{z}) = (\pm 1/\sqrt{3}, \pm 1/\sqrt{3}, \pm 1\sqrt{3})$.
-To evaluate an integral of the form
+Thus, to evaluate an integral of the form
 
 \begin{equation}
   \int\limits_{\Omega }{\eta \left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}d\Omega
@@ -424,79 +447,59 @@ over element volume $\Omega$, we compute the sum over quadrature points
 
 \begin{equation}
   \label{gliss.eq.sum_over_qp}
-  \sum\limits_{p=1}^{8}{{{w}_{p}}{{\eta }_{p}}{{\left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}_{p}}}|J_{p}|,
+  \sum\limits_{p=1}^{8}{{{w}_{p}}{{\eta }_{p}}{{\left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}_{p}}}|J_p|,
 \end{equation}
 
 \noindent
-where $|J|$ is the determinant of the Jacobian \eqref{gliss.eq.Jacobian_eval}. For our choice of quadrature points,
+where $|J|$ is the determinant of the Jacobian \eqref{gliss.eq.Jacobian_eval}. For this choice of quadrature points,
 each point has $w_p = 1$.
 
-Once we have all the terms of an element matrix $K_{uu}, K_{uv}, K_{vu} and K_{vv}$, these terms
-are inserted into the corresponding global matrices $A_{uu}, A_{uv}, A_{vu} and A_{vv}$.
-If written in full, each $A$ matrix would have as many rows and columns as there are active nodes.
+The terms of the element matrices $K_{uu}, K_{uv}, K_{vu}$ and $K_{vv}$
+are then inserted into the corresponding global matrices $A_{uu}, A_{uv}, A_{vu}$ and $A_{vv}$.
+This is mostly a matter of bookkeeping.
+For example, the first row of $K_{uu}$ corresponds to a particular node of element $(k,i,j)$
+(specifically, the node with indices $(k-1,i-1,j-1)$, given our convention for numbering nodes within elements).  
+This row is mapped to a row of the global matrix $A_{uu}$, 
+and each of the eight terms in this row is associated with a column of $A_{uu}$.  
+Glissade determines the correct column
+and adds the $K_{uu}$ term to the corresponding term in $A_{uu}$.  This process proceeds
+until the code has looped over all the active elements and filled the global matrices.
+
+If written in full, each global matrix would have as many rows and columns as there are active nodes.
 These matrices, however, are sparse, with a maximum of 27 nonzero terms per row (corresponding to
 a node and its 26 nearest neighbors in a 3D hexahedral lattice).
-Glissade therefore assembles and stores matrices of dimension $(27,nz,nx-1,ny-1)$.
+Glissade therefore assembles and stores global matrices of dimension $(27,nz,nx-1,ny-1)$.
 The 27 terms of the first dimension are indexed such that each index has a geometric meaning.
 For example, suppose we are labeling columns for the matrix row corresponding to node $(k,i,j)$. 
 Then index 1 corresponds to the node with coordinates $(k-1,i-1,j-1)$, index 14 corresponds to the
 node itself (i.e., the diagonal term of the row), and index 27 is associated with the node at $(k+1,i+1,j+1)$.
-The $A$ matrices can be reformatted as needed before they are passed to a particular solver. 
+The global matrices can be reformatted as needed before being passed to a particular solver. 
 
-Insertion of terms from element matrices into the global matrices is a matter of bookkeeping.
-For example, the first row of $K_{uu}$ corresponds to a particular node of element $(k,i,j)$.
-This node is associated with a row of global matrix $A_{uu}$ (the row
-with indices $(k-1,i-1,j-1)$).  Each of the eight terms in this row of $K_{uu}$ is associated with one of
-the 27 potentially nonzero columns of $A_{uu}$.  Glissade determines the correct column
-and adds the $K_{uu}$ term to the corresponding term in $A_{uu}$.  This process proceeds
-until the code has looped over all the active elements and filled the global matrices.
+The remaining assembly consists of evaluating the other terms in \eqref{gliss.eq.weak_form}
+(i.e., the basal and lateral boundary conditions and the gravitational forcing) and implementing
+Dirichlet boundary conditions, if applicable. We consider these in turn.
 
-The rest of the assembly process consists of evaluating the other terms in \eqref{gliss.eq.weak_form}
-(i.e., the gravitational forcing and the lateral and basal boundary conditions) and applying Dirichlet boundary conditions,
-if applicable. We consider these in turn.
+We begin with boundary conditions.  At the basal boundary we assume
+a friction law of the form $\tau_x = -\beta u, \tau_y = -\beta v$.  The coefficient $\beta$ is defined
+at each vertex and can vary spatially.  If $\beta$ depends on the velocity, as in some friction laws,
+then it is calculated using the velocity from the previous iteration.
 
-The gravitational forcing terms in \eqref{gliss.eq.weak_form} are
+The basal boundary terms to be evaluated in \eqref{gliss.eq.weak_form} are
 
 \begin{equation}
-  \label{gliss.eq.gravity_forcing}
+  \label{gliss.eq.basal_bc}
   \begin{split}
-    x: \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial x}} {{\varphi }_{1}}\text{ d}\Omega, \\
-    y: \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial y}} {{\varphi }_{2}}\text{ d}\Omega. \\
+    x: \int\limits_{{\Gamma }_{B}} \beta u{{\varphi }_{1}} d\Gamma , \\
+    y: \int\limits_{{\Gamma }_{B}} \beta v{{\varphi }_{2}} d\Gamma . \\
   \end{split}
 \end{equation}
 
-To compute these terms we evaluate $\frac{\partial s}{\partial x}$ and $\frac{\partial s}{\partial y}$
-at each active vertex.  A standard centered approximation at node $(i,j)$ is
-
-\begin{equation}
-  \label{gliss.eq.dsdx_centered}
-  \frac{\partial s}{\partial x}(i,j) = \frac{s(i+1,j+1)+s(i+1,j)-s(i,j+1)-s(i,j)}{2\Delta x}
-\end{equation}
-
 \noindent
-(and similarly for $\frac{\partial s}{\partial y}$). This approximation works
-well when the ice geometry is fixed but can cause problems when the geometry is evolving.
-Problems arise because checkerboard noise in $s$ (which is common on structured meshes)
-is invisible to the momentum balance; it is canceled out by the centered averaging in \eqref{gliss.eq.dsdx_centered}.
-Checkerboard noise can therefore persist and grow.  To damp this noise, it is sufficient to use an upstream average:
-
-\begin{equation}
-  \label{gliss.eq.dsdx_upstream}
-  \frac{\partial s}{\partial x}(i,j) = \frac{1.5 (s(i+1,j+1) - s(i,j+1)) - 0.5 (s(i+1,j+2) - s(i,j+2))}{\Delta x}
-\end{equation}
-
-\noindent
-Here, ``upstream'' means in the direction of increasing surface elevation. Both \eqref{gliss.eq.dsdx_centered}
-and \eqref{gliss.eq.dsdx_upstream} are second-order accurate.
-Given $\frac{\partial s}{\partial x}$ at the nodes of a cell,
-the gravitational forcing terms are evaluated at each of four quadrature points using
-
-\begin{equation}
-  \frac{\partial s}{\partial x} = \sum\limits_{n=1}^{4}{{{\varphi }_{n}}}{{\left( \frac{\partial s}{\partial x} \right)}_{n}},
-\end{equation}
-
-\noindent
-where the sums are taken over bilinear basis functions in reference squares (cf. \eqref{gliss.eq.basis_functions}):
+The basal face of each cell is a rectangle. To integrate over a rectangle, we 
+sum over terms at four quadrature points.  These points lie at $(\hat{x},\hat{y}) = (\pm 1/\sqrt{3}, \pm 1/\sqrt{3}$)
+in a reference square with center $(0,0)$ and vertices $(\pm1,\pm1)$.
+(This reference square is the 2D analog of the reference cube discussed above.)
+We define four bilinear basis functions on the square (cf. \eqref{gliss.eq.basis_functions}):
 
 \begin{equation}
   \label{gliss.eq.basis_functions_2d}
@@ -506,53 +509,41 @@ where the sums are taken over bilinear basis functions in reference squares (cf.
     {{\varphi }_{3}}=(1+\hat{x})(1+\hat{y})/4,  \\[3pt]
     {{\varphi }_{4}}=(1-\hat{x})(1+\hat{y})/4.
   \end{matrix}
-\end{equation} 
-
-\noindent
-In analogy to the 3D case discussed above, the four quadrature points of a reference square are located at
-$(\hat{x},\hat{y}) = (\pm 1/\sqrt{3}, \pm 1/\sqrt{3}$).  The integral of $\rho g \frac{\partial s}{\partial x} \varphi$
-over the cell is evaluated as a sum over quadrature points (cf. \eqref{gliss.eq.sum_over_qp}):
-
-\begin{equation}
-  \label{gliss.eq.sum_over_qp_gravity}
-  \sum\limits_{p=1}^{4} { w_p \rho g (\frac{\partial s}{\partial x})_p \varphi_p |J_p|},
 \end{equation}
 
 \noindent
-where $|J_p|$ is the determinant of the Jacobian (the 2D analog of \eqref{gliss.eq.Jacobian_eval}),
-and $w_p = 1$ for each quadrature point. The procedure for $\frac{\partial s}{\partial y}$ is analogous.
-Glissade uses these terms to assemble the load vectors $b_u$ and $b_v$ (see \eqref{gliss.eq.matrix} 
-for each active node $(k,i,j)$.
-
-It remains to incorporate basal and lateral boundary conditions.  At the basal boundary we assume
-a friction law of the form $\tau_x = -\beta u, \tau_y = -\beta v$.  The coefficient $\beta$ is defined
-at each vertex and can vary spatially.  If $\beta$ depends on the velocity, as in some friction laws,
-then it is evaluated using the velocity from the previous iteration to keep the problem linear.
-
-The terms in \eqref{gliss.eq.weak_form} to be evaluated are
+Given these basis functions and their spatial derivatives, we can compute the Jacobian
+for the transformation between the reference square and the rectangular cell face,
+using the 2D versions of \eqref{gliss.eq.Jacobian_eval} and \eqref{gliss.eq.reference_to_real}:
 
 \begin{equation}
-  \label{gliss.eq.basal_bc}
-  \begin{split}
-    x: \int\limits_{{{\Gamma }_{\beta }}} \beta u{{\varphi }_{1}} d\Gamma , \\
-    y: \int\limits_{{{\Gamma }_{\beta }}} \beta v{{\varphi }_{2}} d\Gamma , \\
-  \end{split}
+  \label{gliss.eq.Jacobian_eval_2d}
+  \scalebox{1.2}{
+  $
+        [J]=\left[ \begin{matrix}
+            \sum\limits_{n=1}^{4}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{x}_{n}}} & \sum\limits_{n=1}^{4}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}{{y}_{n}}} \\[6pt]
+            \sum\limits_{n=1}^{4}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{x}_{n}}} & \sum\limits_{n=1}^{4}{\frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}{{y}_{n}}} \\[6pt]
+          \end{matrix} \right],
+        $
+        }
 \end{equation}
-
-\noindent
-where $\Gamma$ denotes the basal boundary. We consider the term in the $x$ equation; the $y$ term is analogous. 
-
-We integrate terms over 2D rectangular cells, as for the gravitational load vector.
-Four bilinear basis functions \eqref{gliss.eq.basis_functions_2d} are defined in a reference square,
-and we compute the Jacobian for the 2D transformation between the reference square and the lower face of the cell.
-Cells have four quadrature points with $w_p = 1$ as described above.  Given $\beta$ at the nodes,
-we evaluate $\beta$ at quadrature points using
 
 \begin{equation}
-  \beta = \sum\limits_{n=1}^{4} {\beta_n \varphi_n}.
+  \label{gliss.eq.reference_to_real_2d}
+  \scalebox{1.2}{
+    $
+  \left\{ \begin{matrix}
+     \frac{\partial {{\varphi }_{n}}}{\partial x}  \\[6pt]
+     \frac{\partial {{\varphi }_{n}}}{\partial y}  \\
+  \end{matrix} \right\} =
+          [J^{-1}]  \left\{ \begin{matrix}
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{x}}  \\[6pt]
+    \frac{\partial {{\varphi }_{n}}}{\partial \hat{y}}  \\
+  \end{matrix} \right\}. 
+          $
+          }
 \end{equation}
 
-\noindent
 The integrand at a quadrature point has the form
 \begin{equation}
   \label{gliss.eq.beta_integrand}
@@ -566,7 +557,15 @@ where the second $\varphi$ term arises from the finite-element expansion of $u$ 
   u = \sum\limits_{n=1}^{4} {u_n \varphi_n}.
 \end{equation}
 
-The integral of \eqref{gliss.eq.beta_integrand} over a cell is again evaluated as a sum over quadrature points:
+\noindent
+We determine $\beta$ at quadrature points from the values at cell vertices:
+
+\begin{equation}
+  \beta = \sum\limits_{n=1}^{4} {\beta_n \varphi_n}.
+\end{equation}
+
+\noindent
+The integral of \eqref{gliss.eq.beta_integrand} over a cell is then computed as a sum over quadrature points:
 
 \begin{equation}
   \label{gliss.eq.sum_over_qp_beta}
@@ -574,13 +573,170 @@ The integral of \eqref{gliss.eq.beta_integrand} over a cell is again evaluated a
 \end{equation}
 
 \noindent
-This procedure \eqref{gliss.eq.beta_integrand} generates a 4\text{x}4 matrix
-describing the connections between each node and its neighbors in a rectangular cell.
-This is a 2D analog of the element matrices discussed above.  Since the $x$ term in
-\eqref{gliss.eq.basal_bc} contains $u$ but not $v$, and the $y$ equation contains
+where $w_p = 1$ for each point.  This procedure generates a 4\text{x}4 matrix
+describing the connections between each node and its neighbors in the cell.
+%This is a 2D analog of the element matrices discussed above.  
+Since the $x$ term in \eqref{gliss.eq.basal_bc} 
+contains $u$ but not $v$, and the $y$ term contains
 $v$ but not $u$, we form 2D matrices $K_{uu}$ and $K_{vv}$, but not $K_{uv}$ and $K_{vu}$.
-Glissade then inserts each term of $K_{uu}$ into the global matrix $A_{uu}$, and
+Each term of $K_{uu}$ is then inserted into the global matrix $A_{uu}$, and
 similarly for $K_{vv}$ and $A_{vv}$.
+
+
+The lateral boundary terms in \eqref{gliss.eq.weak_form} are
+
+\begin{equation}
+  \label{gliss.eq.lateral_bc}
+  \begin{split}
+    x: \int\limits_{{\Gamma }_{L}} {p n_1 {{\varphi }_{1}} \text{ d}\Gamma}, \\
+    y: \int\limits_{{\Gamma }_{L}} {p n_2 {{\varphi }_{2}} \text{ d}\Gamma}.
+  \end{split}
+\end{equation}
+
+\noindent
+Since these terms are independent of $u$ and $v$, they contribute to the load vectors
+$\mathbf{b_u}$ and $\mathbf{b_v}$ on the right-hand side of \eqref{gliss.eq.matrix}.
+They are integrated over the lateral faces of floating cells that border the ocean.
+(Grounded cells are assumed to have no lateral forcing at the margin.)
+
+The lateral faces bordering the ocean are quadrilaterals that can be mapped to a reference square.
+As for the basal boundary terms, the integral over each face is found by 
+summing over four quadrature points.
+Basis functions are given by \eqref{gliss.eq.basis_functions_2d}, and
+the Jacobian of the reference square is computed using \eqref{gliss.eq.Jacobian_eval_2d}.
+We evaluate the ice thickness $H$ at each quadrature point using
+
+\begin{equation}
+  \label{gliss.eq.thickness_qp}
+  H = \sum\limits_{n=1}^{4} {H_n \varphi_n},
+\end{equation}
+
+\noindent
+where the $H_n$ are nodal values.
+%(Each lateral face contains two pairs of nodes aligned in the vertical; aligned nodes
+%have the same values for $H$ and $s$.) 
+The integrands have the form $p_n \varphi$, where $p_n$ is the vertically averaged
+net pressure normal to the ice edge.  
+(We use the vertically averaged pressure to avoid issues with vertical shearing at the ice edge.)
+The net pressure is equal to the pressure
+directed outward from the ice toward the ocean by the weight of the ice, minus the (smaller)
+pressure directed inward from the ocean to the ice by the hydrostatic water pressure.
+The outward pressure is obtained by integrating $\rho_i g (s-z) dz$ from $s-H$ to $s$
+and then dividing by $H$; it is given by 
+
+\begin{equation}
+  \label{gliss.eq.lateral_pout}
+  p_{\text{out}} = \frac{\rho_i g H}{2},
+\end{equation}
+
+\noindent
+using $H$ from \eqref{gliss.eq.thickness_qp}.
+The inward pressure is found by integrating $(-\rho_w g z dz)$ from $s-H$ to 0
+and then dividing by $H-s$; it is given by
+
+\begin{equation}
+  \label{gliss.eq.lateral_pin1}
+  p_{\text{in}} = \frac{\rho_w g (s-H)^2}{2H}
+\end{equation}
+
+\noindent
+Assuming hydrostatic balance, we have $s-H = (\rho_i/\rho_w)H$. Thus \eqref{gliss.eq.lateral_pin1} becomes
+
+\begin{equation}
+  \label{gliss.eq.lateral_pin2}
+  p_{\text{in}} = \frac{\rho_i g H}{2} \frac{\rho_i}{\rho_w}
+\end{equation}
+
+\noindent
+Combining \eqref{gliss.eq.lateral_pout} and \eqref{gliss.eq.lateral_pin2} gives
+
+\begin{equation}
+  \label{gliss.eq.lateral_pnet}
+  p_{\text{net}} = \frac{\rho_i g H}{2} \left(1 - \frac{\rho_i}{\rho_w}\right),
+\end{equation}
+
+\noindent
+directed from the ice to the ocean.  
+The integral of the pressure terms over a lateral face is then found as a sum over quadrature points:
+
+\begin{equation}
+  \label{gliss.eq.sum_over_qp_lateral}
+  \sum\limits_{p=1}^{4} {\pm w_p (p_\text{net})_p (\varphi_i)_p |J_p|},
+\end{equation}
+
+\noindent
+where the sign depends on the orientation of the face.  The resulting pressure terms
+are inserted into the load vector (either $\mathbf{b_u}$ or $\mathbf{b_v}$, depending on the orientation)
+associated with each of the four nodes of the face.
+
+Finally, the gravitational forcing terms in \eqref{gliss.eq.weak_form} are
+
+\begin{equation}
+  \label{gliss.eq.gravity_forcing}
+  \begin{split}
+    x: \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial x}} {{\varphi }_{1}}\text{ d}\Omega, \\
+    y: \int\limits_{\Omega } {\rho g\frac{\partial s}{\partial y}} {{\varphi }_{2}}\text{ d}\Omega. \\
+  \end{split}
+\end{equation}
+
+\noindent
+To compute these terms we evaluate $\frac{\partial s}{\partial x}$ and $\frac{\partial s}{\partial y}$
+at each active vertex.  A standard centered approximation at vertex $(i,j)$ is
+
+\begin{equation}
+  \label{gliss.eq.dsdx_centered}
+  \frac{\partial s}{\partial x}(i,j) = \frac{s(i+1,j+1)+s(i+1,j)-s(i,j+1)-s(i,j)}{2\Delta x}
+\end{equation}
+
+\noindent
+(and similarly for $\frac{\partial s}{\partial y}$). This approximation works
+well when the ice geometry is fixed but can cause problems when the geometry is evolving.
+These problems arise because checkerboard noise in $s$ (which is common on structured meshes
+with the velocity at cell vertices) is invisible to the momentum balance; 
+it is canceled out by the centered averaging in \eqref{gliss.eq.dsdx_centered}.
+Checkerboard noise can therefore persist and grow.  To damp this noise, Glissade uses an upstream average:
+
+\begin{equation}
+  \label{gliss.eq.dsdx_upstream}
+  \frac{\partial s}{\partial x}(i,j) = \frac{1.5 (s(i+1,j+1) - s(i,j+1)) - 0.5 (s(i+1,j+2) - s(i,j+2))}{\Delta x}.
+\end{equation}
+
+\noindent
+Here, ``upstream'' means in the direction of increasing surface elevation. Both \eqref{gliss.eq.dsdx_centered}
+and \eqref{gliss.eq.dsdx_upstream} are second-order accurate.
+
+The integrals in \eqref{gliss.eq.gravity_forcing} are over 3D elements.
+Hence we map each hexahedral element to a reference cube as described above. 
+Given $\frac{\partial s}{\partial x}$ at the nodes of a cell,
+the surface slope terms at quadrature points are
+
+\begin{equation}
+  \frac{\partial s}{\partial x} = \sum\limits_{n=1}^{4}{{{\varphi }_{n}}}{{\left( \frac{\partial s}{\partial x} \right)}_{n}},
+\end{equation}
+
+\noindent
+where the basis function $\varphi$ are given by \eqref{gliss.eq.basis_functions}
+and the spatial derivatives are derived from \eqref{gliss.eq.Jacobian_eval} and \eqref{gliss.eq.reference_to_real}.
+The integral of $\rho g \frac{\partial s}{\partial x} \varphi$
+over an element is then evaluated as a sum over quadrature points:
+
+\begin{equation}
+  \label{gliss.eq.sum_over_qp_gravity}
+  \sum\limits_{p=1}^{8} { w_p \rho g \left(\frac{\partial s}{\partial x}\right)_p (\varphi_i)_p |J_p|},
+\end{equation}
+
+\noindent
+and similarly for the $\frac{\partial s}{\partial y}$ term.
+Glissade inserts these terms into the load vectors $\mathbf{b_u}$ and $\mathbf{b_v}$
+associated with each active node of the element.
+
+
+Next the Dirichlet BCs...
+
+\subsubsection{Solving the matrix equation}
+
+\subsection{Other Stokes approximations}
+\label{sc:glissade-other-approx}
 
 
 
