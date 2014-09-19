@@ -23,8 +23,8 @@ velocities. Since Glissade solves for higher-order flow that may have a large ad
 component, a different approach is needed.  Glissade has two mass- and energy-conserving transport options, 
 described in Section \ref{sc:glissade-transport}:
 incremental remapping (the more complex and accurate scheme) and first-order upwind. These schemes
-transfer both mass and internal energy in the horizontal direction, followed by a vertical remapping step
-that restores the vertical grid to a sigma coordinate.
+transfer both mass and internal energy in the horizontal direction, followed by a vertical remapping to
+the sigma coordinate system.
 
 \item \textit{Temperature:}
 To evolve the ice temperature, Glide solves a prognostic equation that incorporates horizontal advection as well
