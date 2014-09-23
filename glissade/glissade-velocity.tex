@@ -18,8 +18,12 @@ Section \ref{sc:higher-order-mom}, are
 \begin{equation}
   \label{gliss.eq.stress_balance}
   \begin{split}
-    x: \quad \frac{\partial }{\partial x}\left( 4 \eta \frac{\partial u}{\partial x} +  2 \eta \frac{\partial v}{\partial y} \right) + \frac{\partial }{\partial y}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) = \rho g\frac{\partial s}{\partial x}, \\
-    y: \quad \frac{\partial }{\partial y}\left( 4 \eta \frac{\partial v}{\partial y} +  2 \eta \frac{\partial u}{\partial x} \right) + \frac{\partial }{\partial x}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) = \rho g\frac{\partial s}{\partial y},  \\
+    x: \quad \frac{\partial }{\partial x}\left( 2 \eta \left(2\frac{\partial u}{\partial x} +  \eta \frac{\partial v}{\partial y} \right) \right) 
+    + \frac{\partial }{\partial y}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
+    +\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) = \rho g\frac{\partial s}{\partial x}, \\
+    y: \quad \frac{\partial }{\partial y}\left( 2 \eta \left( 2\frac{\partial v}{\partial y} + \eta \frac{\partial u}{\partial x} \right) \right) 
+    + \frac{\partial }{\partial x}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
+    +\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) = \rho g\frac{\partial s}{\partial y},  \\
   \end{split}
 \end{equation}
 
@@ -255,7 +259,9 @@ the terms that multiply $u_j$ are given by
  
 \begin{equation}
   \label{gliss.eq.matrix_Kuu}
-  \int\limits_{\Omega }{\eta \left( 4\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi }_{j}}}{\partial x}+\frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi}_{j}}}{\partial y}+\frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}d\Omega
+  \int\limits_{\Omega }{\eta \left( 4\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi }_{j}}}{\partial x} +
+    \frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi}_{j}}}{\partial y} + 
+    \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}d\Omega
 \end{equation}
 
 \noindent
@@ -833,10 +839,10 @@ $q$ and $z$ are work vectors; and $(r,z)$ is the dot product of two vectors.
 
 \item $r_0 = b - A x_0$, $d_0 = 0$, $\eta_0 = 1$ 
 
-\item do until converged:
+\item Do until converged:
   \begin{itemize}
 \renewcommand{\labelitemii}{$\star$}
-  \item solve $M z = r$ for $z$ (the preconditioning step)
+  \item Solve $M z = r$ for $z$ (the preconditioning step)
   \item $\eta_1 = (r,z)$
   \item $\beta = \eta_1/\eta_0$
   \item $d = z + \beta d$
@@ -850,7 +856,7 @@ $q$ and $z$ are work vectors; and $(r,z)$ is the dot product of two vectors.
 \end{itemize}
 
 \noindent
-Note that there are two dot products, one matrix-vector product, and one preconditioning step per iteration.
+There are two dot products, one matrix-vector product, and one preconditioning step per iteration.
 The convergence condition is $\sqrt{(r,r)}/\sqrt{(b,b)} < \epsilon$, where $\epsilon$ is a small tolerance
 ($10^{-8}$ by default).
 The convergence check is done every five iterations, as a compromise
@@ -978,8 +984,140 @@ have a JFNK option.
 \subsection{Other Stokes approximations}
 \label{sc:glissade-other-approx}
 
+In addition to the 3D Blatter-Pattyn approximation, Glissade can solve the simpler shallow-shelf
+and shallow-ice approximations.  Many of the steps are similar to those described in
+Section \ref{sc:glissade-blatter-pattyn}.
 
+\subsubsection{Shallow-shelf approximation}
 
+The shallow-shelf equations can be obtained by vertically integrating the 3D Blatter-Pattyn equations.
+They are valid when the basal shear stress is small or zero and the velocity is 
+(to a good approximation) vertically uniform.  The shallow-shelf analog of \eqref{gliss.eq.stress_balance} is
 
+\begin{equation}
+  \label{gliss.eq.stress_balance_ssa}
+  \begin{split}
+    x: \quad \frac{\partial }{\partial x}\left( 2 \bar{\eta} H \left(2\frac{\partial u}{\partial x} +  \bar{\eta} H \frac{\partial v}{\partial y} \right) \right) 
+    + \frac{\partial }{\partial y}\left[ \bar{\eta} H \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
+    = \rho g\frac{\partial s}{\partial x}, \\
+    y: \quad \frac{\partial }{\partial y}\left( 2 \bar{\eta} H \left( 2\frac{\partial v}{\partial y} + \bar{\eta} H \frac{\partial u}{\partial x} \right) \right) 
+    + \frac{\partial }{\partial x}\left[ \bar{\eta} H \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
+    = \rho g\frac{\partial s}{\partial y}.  \\
+  \end{split}
+\end{equation}
+
+\noindent
+The SSA equations in weak form resemble \eqref{gliss.eq.weak_form},
+except that the internal stress terms are
+
+\begin{equation}
+  \label{gliss.eq.element_matrix_ssa}
+  \begin{split}
+    x: \int\limits_{\Omega }{2\bar{\eta} H \left( \frac{\partial {{\varphi }_{i}}}{\partial x}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\} + \left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\} \right) +
+      \frac{\partial {{\varphi }_{i}}}{\partial y}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\} \right) \right)},  \\
+    y: \int\limits_{\Omega }{2\bar{\eta} H \left( \frac{\partial {{\varphi }_{i}}}{\partial y}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\} + \left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\} \right) + 
+      \frac{\partial {{\varphi }_{i}}}{\partial x}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\} \right) \right)}.  \\
+  \end{split}
+\end{equation}
+
+\noindent
+The resulting element matrices are similar to \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv},
+except that the terms containing $\frac{\partial {{\varphi }_{i}}}{\partial z}$ and
+$\frac{\partial {{\varphi }_{j}}}{\partial z}$ are missing, and the viscosity term $\eta$
+is replaced by $\bar{\eta} H$.  The effective viscosity is given by \eqref{gliss.eq.effective_viscosity},
+but with \eqref{gliss.eq.effective_strain_rate} replaced by
+
+\begin{equation}
+  \label{gliss.eq.effective_strain_rate_ssa}
+        {{\dot{\varepsilon }}^{2}}_{e} = 
+        {{\dot{\varepsilon }}^{2}}_{xx} + {{\dot{\varepsilon }}^{2}}_{yy} + 
+        {{\dot{\varepsilon }}_{xx}}{{\dot{\varepsilon }}_{yy}} + {{\dot{\varepsilon }}^{2}}_{xy}.
+\end{equation}
+
+\noindent
+The integrals in \eqref{gliss.eq.element_matrix_ssa} are taken over 2D cells rather than 3D elements,
+with basis functions and Jacobians given by \eqref{gliss.eq.basis_functions_2d}
+and \eqref{gliss.eq.Jacobian_eval_2d}.
+
+The basal boundary terms are handled as in the 3D Blatter-Pattyn approximation. 
+The lateral boundary and gravitational forcing terms are computed initially in 3D
+(as for the Blatter-Pattyn case), but then are summed in the vertical before being
+inserted into the 2D right-hand vectors $b_u$ and $b_v$.  The solution procedure
+is the same as for the 3D case, except that the problem has no vertical dimension.
+When using the native PCG solver, the shallow-ice-based preconditioner is inappropriate
+and the diagonal preconditioner should be used instead.  
+
+In short, the SSA problem is analogous to the Blatter-Pattyn problem except for the
+missing vertical terms.  The solution is generally much faster, because the SSA matrices
+have roughly $3*nz$ times fewer nonzero entries than the Blatter-Pattyn matrices.
+The factor of 3 arises from the fact that the BP equations at each level include
+connections to the levels above and below, whereas the SSA equations
+are solved for a single level.
+
+\subsubsection{Shallow-ice approximation: Matrix form}
+
+The shallow-ice equations follow from the Blatter-Pattyn equations if the horizontal-stress
+terms are neglected.  The SIA analogs of \eqref{gliss.eq.stress_balance} are
+
+\begin{equation}
+  \label{gliss.eq.stress_balance_sia}
+  \begin{split}
+    x: \frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) = \rho g\frac{\partial s}{\partial x}, \\
+    y: \frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) = \rho g\frac{\partial s}{\partial y}, \\
+  \end{split}
+\end{equation}
+
+\noindent
+leading to the following internal stress terms in weak form:
+
+\begin{equation}
+  \label{gliss.eq.element_matrix_sia}
+  \begin{split}
+    x: \int\limits_{\Omega } {2 \eta \frac{\partial {{\varphi }_{i}}}{\partial z}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial z} \right]\left\{ {{u}_{j}} \right\} \right) },  \\
+    y: \int\limits_{\Omega } {2 \eta \frac{\partial {{\varphi }_{i}}}{\partial z}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial z} \right]\left\{ {{v}_{j}} \right\} \right) }.  \\
+  \end{split}
+\end{equation}
+
+\noindent
+These terms are integrated over elements using \eqref{gliss.eq.basis_functions}
+and \eqref{gliss.eq.Jacobian_eval} for the 3D basis functions and Jacobians.
+The resulting $8\text{x}8$ element matrices $K_{uu}$ and $K_{vv}$ link each node
+to the eight nodes of the element, including itself.  Since there are no
+horizontal stress terms, $K_{uv}$ = $K_{vu}$ = 0. In the expression for
+effective viscosity, the effective strain rate is given by
+
+\begin{equation}
+  \label{gliss.eq.effective_strain_rate_sia}
+        {\dot{\varepsilon }}^{2}_{e} = {\dot{\varepsilon }}^{2}_{xz} + {\dot{\varepsilon }}^{2}_{yz}.
+\end{equation}
+
+\noindent
+The basal and lateral boundary conditions and gravitational loading are handled
+just as for the Blatter-Pattyn case.
+
+The resulting SIA global matrices contain about half as many nonzero terms as the BP matrices,
+since $A_{uv}$ = $A_{vu}$ = 0.  But each ice column cannot be solved independently of the others;
+rather, each node is linked to its horizontal neighbors by terms that arise during
+element assembly.  As a result, the solution is not dramatically faster than solution
+of the BP problem.  Thus the matrix-based shallow-ice solver can be useful for code testing
+but is not practical for productions runs, since a practical SIA code solver should be many times
+faster than a BP solver.  For production runs Glissade has an alternative solver,
+described next.
+
+\subsubsection{Shallow-ice approximation: Local form}
+
+Glissade's local shallow-ice solver is distinct from the finite-element solvers described above.
+It is local in the sense that $u$ and $v$ in each ice column are found independently
+of $u$ and $v$ in all other columns.
+It resembles the Glide shallow-ice solver described in Section (\textit{insert ref here}).
+The Glide solver, however, solves a diffusion equation for thickness and a separate advection
+equation for temperature.  Glissade's local SIA solver computes $u$ and $v$ only.
+Thickness and temperature evolve as described below in Sections \ref{sc:glissade-transport}
+and \ref{sc:glissade-temperature}.
+
+For serial problems there are no particular advantages to using Glissade's local SIA solver 
+in place of Glide.  Glissade's local SIA solver, however, can run on multiple processors, 
+whereas Glide cannot.  For large SIA problems (e.g., for the Greenland
+ice sheet at $\sim 5-\text{km}$ resolution), Glissade will likely run faster.
 
 
