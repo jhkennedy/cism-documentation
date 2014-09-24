@@ -615,25 +615,29 @@ First, check Macports for available versions of OpenMPI using \texttt{port searc
 the version that is compatible with our GCC compiler suite, so we type: 
 
 \begin{verbatim}
-	sudo port install openmpi-gcc46
+(old)	sudo port install openmpi-gcc46
+(new)	sudo port install mpich-devel-gcc46 +fortran
 \end{verbatim}
 
 To make sure this is active, type 
 \begin{verbatim}
-	port installed openmpi*
+(old)	port installed openmpi*
+(new)	port installed mpi*
 \end{verbatim}
 
 , which should return, 
 
 \begin{verbatim}
-	openmpi-gcc46 @1.7.5_2+fortran (active)
+(old)	openmpi-gcc46 @1.7.5_2+fortran (active)
+(new)     mpich-devel-gcc46 @3.2a1_0+fortran (active)
 \end{verbatim}
 
 As when installing the GCC compilers, we want to make sure that generic calls to MPI point to OpenMP. This 
 can be done with the following command:
 
 \begin{verbatim}
-	sudo port select --set mpi openmpi-gcc46-fortran
+(old)	sudo port select --set mpi openmpi-gcc46-fortran
+(new)	sudo port select --set mpi mpich-devel-gcc46-fortran
 \end{verbatim}
 
 %Before using the OpenMPI compilers, we need to specify some critical shell environmental variables, so that OpenMPI "wraps" the right 
