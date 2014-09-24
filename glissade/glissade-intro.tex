@@ -17,21 +17,22 @@ approximations, as described in Section \ref{sc:glissade-velocity}.
 These include a 3D first-order Blatter-Pattyn solver (the most accurate and complex scheme)
 as well as simpler shallow-ice and shallow-shelf solvers.
 
-\item \textit{Mass and tracer transport:}
-Glide solves a diffusion equation for tranport of mass (i.e., thickness); this equation incorporates the local shallow-ice
-velocities. Since Glissade solves for higher-order flow that may have a large advective (as oppposed to diffusive)
-component, a different approach is needed.  Glissade has two mass- and energy-conserving transport options, 
-described in Section \ref{sc:glissade-transport}:
-incremental remapping (the more complex and accurate scheme) and first-order upwind. These schemes
-transfer both mass and internal energy in the horizontal direction, followed by a vertical remapping to
-the sigma coordinate system.
-
 \item \textit{Temperature:}
 To evolve the ice temperature, Glide solves a prognostic equation that incorporates horizontal advection as well
 as vertical heat diffusion and internal dissipation.  In Glissade, temperature advection is handled by the
 transport scheme, and a separate module solves for vertical diffusion and internal dissipation.
 The vertical solver, described in Section \ref{sc:glissade-temperature}, is local; 
 each ice column calculation is independent of other column calculations.
+
+\item \textit{Mass and tracer transport:}
+Glide solves a diffusion equation for tranport of mass (i.e., thickness); this equation incorporates the local shallow-ice
+velocities. Since Glissade solves for higher-order flow that may have a large advective (as oppposed to diffusive)
+component, a different approach is needed.  Glissade has two mass- and energy-conserving transport options, 
+described in Section \ref{sc:glissade-transport}:
+incremental remapping (the more complex and accurate scheme) and first-order upwind. These schemes
+transfer mass and internal energy in the horizontal direction, followed by a vertical remapping to
+the sigma coordinate system.
+
 \end{itemize}
 
 Glissade numerics are described in detail below.

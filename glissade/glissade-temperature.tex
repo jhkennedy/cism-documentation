@@ -2,4 +2,30 @@
 \section{Temperature solver}
 \label{sc:glissade-temperature}
 
-Some text here
+As noted in Section (insert ref here), the thermal evolution of the ice sheet is given by
+
+\begin{equation}
+  \label{gliss.eq.temperature_evol}
+  \frac{\partial T}{\partial t} = 
+  \frac{k}{\rho c} {{\nabla }^{2}}T - \bf{u}\cdot \nabla T - w\frac{\partial T}{\partial z} + \frac{\Phi }{\rho c}
+\end{equation}
+
+\noindent
+where $T$ is the temperature, $k$ is the thermal conductivity of ice, $c$ is the specific heat of ice,
+and $\Phi$ is the rate of heating due to internal deformation and dissipation.
+This equation describes the conservation of internal energy under horizontal and vertical 
+diffusion (the first term), advection (the second and third terms), and dissipation
+(the last term).
+Glide solves this equation in module {\tt glide\_temperature.F90}.
+Glissade takes a different approach, dividing the temperature evolution into an advective term
+and a diffusion/dissipation term.
+Module {\tt glissade\_temperature.F90} solves for diffusion and internal dissipation:
+
+\begin{equation}
+  \frac{\partial T}{\partial t} = \frac{k}{\rho c}{{\nabla }^{2}}T + \frac{\Phi }{\rho c},
+\end{equation}
+
+\noindent
+as described in this section.
+The advective part of \eqref{gliss.eq.temperature_evol} is described separately
+in Section \ref{sc:glissade-transport}.
