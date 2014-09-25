@@ -15,7 +15,9 @@ First we describe the derivation of the equations themselves, followed by a disc
 We then describe generic solution methods for the nonlinear system of equations, followed by a
 brief discussion of the solution of the thickness evolution equation.
 
-\subsection{Derivation of the Blatter-Pattyn Equations}
+% Commented out the subsection because there are no other subsections in this section
+%\subsection{Derivation of the Blatter-Pattyn Equations}
+%\label{sc:higher-order-blatter-pattyn}
 
 The higher-order dynamics scheme in CISM is based on the 3d first-order accurate Stokes approximation (also often referred to as the ``Blatter-Pattyn" model). The starting point is the nonlinear Stokes equations:
 
@@ -141,6 +143,7 @@ and expanding in terms of strain rates and effective viscosity, we have (for the
 Replacing strain-rate components with velocity gradients, we obtain
 
 \begin{equation}
+  \label{ho.eq.stress_balance_final_x}
   x: \quad \frac{\partial }{\partial x}\left( 4 \eta \frac{\partial u}{\partial x} +  2 \eta \frac{\partial v}{\partial y} \right) + \frac{\partial }{\partial y}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) = \rho g\frac{\partial s}{\partial x}.
 \end{equation}
 
@@ -148,6 +151,7 @@ Replacing strain-rate components with velocity gradients, we obtain
 An analogous expression gives the \textit{y}-direction momentum balance: 
 
 \begin{equation}
+  \label{ho.eq.stress_balance_final_y}
   y: \quad \frac{\partial }{\partial y}\left( 4 \eta \frac{\partial v}{\partial y} +  2 \eta \frac{\partial u}{\partial x} \right) + \frac{\partial }{\partial x}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right]+\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) = \rho g\frac{\partial s}{\partial y}.  
 \end{equation}
 

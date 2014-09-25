@@ -491,9 +491,16 @@ Dirichlet boundary conditions, if applicable. We consider these in turn.
 
 \paragraph{Basal boundary conditions.}
 
-At the basal boundary we assume
-a friction law of the form $\tau_x = -\beta u, \tau_y = -\beta v$.  The coefficient $\beta$ is defined
-at each vertex and can vary spatially.  If $\beta$ depends on the velocity, as in some friction laws,
+At the basal boundary we assume a friction law of the form 
+
+\begin{equation}
+  \label{gliss.eq.beta_tau}
+  \mathbf{\tau_b} = -\beta \mathbf{u_b}.  
+\end{equation}
+
+\noindent
+The coefficient $\beta$ is defined at each vertex and can vary spatially.  
+If $\beta$ depends on the velocity, as in some friction laws,
 then it is calculated using the velocity from the previous iteration.
 
 The basal boundary terms to be evaluated in \eqref{gliss.eq.weak_form} are
@@ -917,7 +924,7 @@ and residual vectors, which are copied back into Glissade data structures.
 
 \paragraph{Trilinos.}
 
-Trilinos \url{trilinos.org} is a set of solver packages and related software developed at 
+Trilinos (\url{trilinos.org}) is a set of solver packages and related software developed at 
 Sandia National Laboratories. Under the DOE ISICLES project \url{http://www.csm.ornl.gov/ISICLES/},
 the Glam higher-order dycore was parallelized and linked to Trilinos.  The Trilinos links
 developed for Glam were later adapted for Glissade.  Trilinos has been tested extensively on
@@ -1108,18 +1115,92 @@ described next.
 
 \subsubsection{Shallow-ice approximation: Local form}
 
-Glissade's local shallow-ice solver is distinct from the finite-element solvers described above.
+Glissade's local shallow-ice solver (in {\tt glissade\_velo\_sia.F90}),
+is distinct from the finite-element solvers described above.
 It is local in the sense that $u$ and $v$ in each ice column are found independently
 of $u$ and $v$ in all other columns.
-It resembles the Glide shallow-ice solver described in Section (\textit{insert ref here}).
-The Glide solver, however, solves a diffusion equation for thickness and a separate advection
-equation for temperature.  Glissade's local SIA solver computes $u$ and $v$ only.
-Thickness and temperature evolve as described below in Sections \ref{sc:glissade-transport}
-and \ref{sc:glissade-temperature}.
+It resembles the Glide shallow-ice solver described in Section \ref{sc:glide_thickness_evolution}.
+Glide, however, incorporates the velocity solution in a diffusion equation for ice thickness.
+Glissade's local SIA solver computes $u$ and $v$ only, with
+thickness evolving separately as described in Section \ref{sc:glissade-transport}.
 
-For serial problems there are no particular advantages to using Glissade's local SIA solver 
+The local SIA solver first computes the basal velocity given the basal traction coefficient $t_b$,
+which is defined as in Glide:
+
+\begin{equation}
+  \mathbf{u_b} = t_b \mathbf{\tau_b}.
+\end{equation}
+
+\noindent
+Note that $t_b = 1/\beta$, where the higher-order traction coefficient $\beta$ 
+is defined as in \eqref{gliss.eq.beta_tau}.
+There are several options for setting $t_b$: no sliding ($t_b = 0$);
+uniform traction ($t_b = \mathrm{constant}$); uniform traction where basal water is present
+(and no sliding elsewhere); and uniform traction where the bed is at the pressure melting point,
+$T_b = T_{pmp}$ (and no sliding elsewhere).
+As in Glide, the basal velocity is proportional to $t_b$ and the gravitational driving stress:
+
+\begin{equation}
+  \label{gliss.eq.velo_bed_sia}
+        \mathbf{u_b} = -{{t}_{b}}{{\rho }_{i}} g \bar{H} \vec{\nabla s},
+\end{equation}
+
+\noindent
+where $\bar{H}$ is the ice thickness interpolated to cell vertices,
+and $\vec{\nabla s}$ is the surface slope at vertices.
+
+To find the interior velocities, we
+first compute a vertically integrated factor $c(\sigma)$ for each level at each cell vertex:
+
+\begin{equation}
+  \label{gliss.eq.vert_factor_sia}
+  c(\sigma) = -2(\rho g)^n \bar{H}^{n+1} |\vec\nabla s|^{n-1} \int_1^{\sigma} \bar{A} \tilde{\sigma}^n d\tilde{\sigma},
+\end{equation}
+
+\noindent
+where $\bar{A}$ is the flow factor interpolated to vertices,
+and a tilde distinguishes $\sigma$ at a particular level from the integration variable $\tilde{\sigma}$.
+(The same term appears in the Glide SIA calculation; see \eqref{kin.eq.horiz_diffusivity}.)
+Discretized in the vertical, this becomes
+
+\begin{equation}
+  \label{gliss.eq.vert_factor_sia_discrete}
+  c(k) = -2(\rho g)^n \bar{H}^{n+1} |\vec\nabla s|^{n-1} 
+  \sum\limits_{l=nz-1}^{k} {{{{\bar{A}}}_{l}}}{{\left( \frac{{{\sigma }_{l}}+{{\sigma }_{l+1}}}{2} \right)}^{n}}\left( 
+               {{\sigma }_{l+1}}-{{\sigma }_{l}} \right).
+\end{equation}
+
+\noindent
+The factors $c(k)$ are then interpolated to cell edges, where the $u$ and $v$ 
+components of velocity are computed as a function of the surface slope 
+(also defined at cell edges):
+
+\begin{equation}
+  \label{gliss.eq.velo_interior_sia}
+  \begin{split}
+    {\Delta {u}_{E}}(k,i,j) = \sum\limits_{l=nz-1}^{k}{\left( \frac{c(k,i,j)+c(k,i,j-1)}{2} \right)\left( s(i+1,j)-s(i,j) \right)}, \\
+    {\Delta {v}_{N}}(k,i,j) = \sum\limits_{l=nz-1}^{k}{\left( \frac{c(k,i,j)+c(k,i-1,j)}{2} \right)\left( s(i,j+1)-s(i,j) \right)}.
+  \end{split}
+\end{equation}
+
+\noindent
+Here, $\Delta{u_E}$ is the $u$ velocity component on the east edge of a cell, relative to the basal velocity,
+and similarly for $\Delta{v_N}$ on the north edge of the cell.
+
+Finally, we average $\Delta u_E$ and $\Delta v_N$ to vertices and add the bed velocities 
+\eqref{gliss.eq.velo_bed_sia} to determine the velocity in the ice column at each vertex:
+
+\begin{equation}
+  \label{gliss.eq.velo_sia}
+  \begin{split}
+    u(k,i,j) = u_b(i,j) + \left( \frac{\Delta {{u}_{E}}(k,i,j) + \Delta {{u}_{E}}(k,i,j+1)}{2} \right), \\
+    v(k,i,j) = v_b(i,j) + \left( \frac{\Delta {{v}_{N}}(k,i,j) + \Delta {{v}_{N}}(k,i+1,j)}{2} \right).
+  \end{split}
+\end{equation}
+
+For serial problems there are no special advantages to using Glissade's local SIA solver 
 in place of Glide.  Glissade's local SIA solver, however, can run on multiple processors, 
-whereas Glide cannot.  For large SIA problems (e.g., for the Greenland
-ice sheet at $\sim 5-\text{km}$ resolution), Glissade will likely run faster.
+whereas Glide cannot.  For large SIA problems (e.g., the Greenland
+ice sheet at $\sim\text{5 km}$ resolution), parallel Glissade can run faster.
 
 

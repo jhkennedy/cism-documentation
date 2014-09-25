@@ -2,10 +2,11 @@
 \section{Numerical Solution of Higher-Order Equations}
 \label{sc:higher-order-numerics}
 
-In this section, we provide a general discussion on numerical solution methods for solving the higher-order equations discussed above. More specific details are given in Chapter \ref{ch:glissade}.
+In this section we discuss numerical methods for solving the higher-order equations discussed above. More specific details are given in Chapter \ref{ch:glissade}.
 
-\subsection{Governing Equations}
-The final form of the equations we'd like to solve is:
+\subsection{Governing Matrix Equations}
+We would like to solve the stress-balance equations \eqref{ho.eq.stress_balance_final_x} and \eqref{ho.eq.stress_balance_final_y} for the
+horizontal velocity components $u$ and $v$.
  
 %\begin{align*}
 % & x: \quad 4\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial y} \right)+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) + \\
@@ -14,10 +15,12 @@ The final form of the equations we'd like to solve is:
 % & 2\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial y} \right) = \rho g\frac{\partial s}{\partial y} \\ 
 %\end{align*}
 
-\begin{align*}
- & x: \quad 4\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial y} \right)+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) + 2\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial x} \right) = \rho g\frac{\partial s}{\partial x} \\ 
- & y: \quad 4\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial x} \right)+\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) + 2\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial y} \right) = \rho g\frac{\partial s}{\partial y} \\ 
-\end{align*}
+%\begin{equation}
+%  \begin{split}
+%    & x: \quad 4\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial y} \right)+\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) + 2\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial x} \right) = \rho g\frac{\partial s}{\partial x} \\ 
+%    & y: \quad 4\frac{\partial }{\partial y}\left( \eta \frac{\partial v}{\partial y} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial v}{\partial x} \right)+\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) + 2\frac{\partial }{\partial y}\left( \eta \frac{\partial u}{\partial x} \right)+\frac{\partial }{\partial x}\left( \eta \frac{\partial u}{\partial y} \right) = \rho g\frac{\partial s}{\partial y} \\ 
+%  \end{split}
+%\end{equation}
 
 %% SP: For Glissade, we don't do this (I don't think), so I'm commenting out this section for now.
 
@@ -129,41 +132,50 @@ The final form of the equations we'd like to solve is:
 %
 %where the \textbf{uu} subscript denotes block matrices containing coefficients for gradients on \textit{u} in the equation for the \textit{x} component of velocity (i.e. \textit{u}). The subscript \textbf{uv} denotes block matrices containing coefficients for gradients on \textit{v} in the equation for the \textit{x} component of velocity (and similarly for the \textbf{vv} and \textbf{vu} subscripts). On the right-hand side, the single subscripts \textbf{u} and \textbf{v} are attached to the geometric source terms for the \textit{x} and \textit{y} components of velocity, respectively.
 
-Any number of standard methods (e.g., Finite Differences, Finite Volumes, or Finite Elements) can be used to ``discretize" the above governing equations. That is, to re-formulate them from their continuous, PDE form, into a discontinuous, piecewise, algebraic approximation based on a specific computational mesh. In the limit, as the mesh spacing goes to zero, the difference between the solution to the actual PDE and its algebraic approximation also goes to zero. The GLISSADE dynamical core uses the Finite Element Method (FEM) to discretize the governing equations, as discussed in more detail in Chapter \ref{ch:glissade}. In general, the result of the discretization is a set of linear, algebraic equations that can be written in matrix form. An example is given below, where the coefficients on the $u$ and $v$ velocity components (i.e. viscosity, grid spacing, scalars) are contained in the block matrices \textbf{A}, given by 
+\noindent
+Any number of standard methods (e.g., finite differences, finite volumes, or finite elements) can be used to discretize these governing equations: i.e., to re-formulate them from their continuous, PDE form to a discontinuous, piecewise, algebraic approximation based on a specific computational mesh. 
+In the limit, as the mesh spacing goes to zero, the difference between the solution to the actual PDE and its algebraic approximation also goes to zero. 
+The Glissade dynamical core uses the Finite Element Method (FEM) to discretize the governing equations, as discussed in more detail in Chapter \ref{ch:glissade}. 
+In general, the result of the discretization is a set of linear algebraic equations that can be written in matrix form. 
+An example is given below, where the coefficients of $u$ and $v$ are contained in block matrices \textbf{A}, given by 
 
-\begin{align*}
-\begin{matrix}
-  \left[ \begin{matrix}
-   \mathbf{A}_{\mathbf{uu}} & \mathbf{A}_{\mathbf{uv}}  \\
-   \mathbf{A}_{\mathbf{vu}} & \mathbf{A}_{\mathbf{vv}}  \\
-\end{matrix} \right]\left[ \begin{matrix}
-   \mathbf{u}  \\
-   \mathbf{v}  \\
-\end{matrix} \right]=\left[ \begin{matrix}
-   \mathbf{b}_{\mathbf{u}}  \\
-   \mathbf{b}_{\mathbf{v}}  \\
-\end{matrix} \right], \\ 
-   \\ 
-  \mathbf{A}_{\mathbf{uu}}\mathbf{u} + \mathbf{A}_{\mathbf{uv}}\mathbf{v} =\mathbf{b}_{\mathbf{u}},
-  \quad \quad \mathbf{A}_{\mathbf{vu}}\mathbf{u} + \mathbf{A}_{\mathbf{vv}}\mathbf{v} =\mathbf{b}_{\mathbf{v}}, \\ 
-\end{matrix}
-\end{align*}
+\begin{equation}
+  \begin{matrix}
+    \left[ \begin{matrix}
+        \mathbf{A}_{\mathbf{uu}} & \mathbf{A}_{\mathbf{uv}}  \\
+        \mathbf{A}_{\mathbf{vu}} & \mathbf{A}_{\mathbf{vv}}  \\
+      \end{matrix} \right]\left[ \begin{matrix}
+        \mathbf{u}  \\
+        \mathbf{v}  \\
+      \end{matrix} \right]=\left[ \begin{matrix}
+        \mathbf{b}_{\mathbf{u}}  \\
+        \mathbf{b}_{\mathbf{v}}  \\
+      \end{matrix} \right], \\ 
+    \\ 
+    \mathbf{A}_{\mathbf{uu}}\mathbf{u} + \mathbf{A}_{\mathbf{uv}}\mathbf{v} =\mathbf{b}_{\mathbf{u}},
+    \quad \quad \mathbf{A}_{\mathbf{vu}}\mathbf{u} + \mathbf{A}_{\mathbf{vv}}\mathbf{v} =\mathbf{b}_{\mathbf{v}}. \\ 
+  \end{matrix}
+\end{equation}
 
-where the \textbf{uu} subscript denotes block matrices containing coefficients for gradients on \textit{u} in the equation for the \textit{x} component of velocity (i.e. \textit{u}). The subscript \textbf{uv} denotes block matrices containing coefficients for gradients on \textit{v} in the equation for the \textit{x} component of velocity (and similarly for the \textbf{vv} and \textbf{vu} subscripts). On the right-hand side, the single subscripts \textbf{u} and \textbf{v} are attached to the geometric source terms for the \textit{x} and \textit{y} components of velocity, respectively.
+\noindent
+Here the \textbf{uu} subscript denotes block matrices containing coefficients for gradients of \textit{u} in the equation for the \textit{x} component of velocity (i.e. \textit{u}). The subscript \textbf{uv} denotes block matrices containing coefficients for gradients of \textit{v} in the equation for the \textit{x} component of velocity (and similarly for the \textbf{vv} and \textbf{vu} subscripts). On the right-hand side, the single subscripts \textbf{u} and \textbf{v} are attached to the geometric source terms for the \textit{x} and \textit{y} components of velocity, respectively.
 
 \subsection{Treating Nonlinearity Through a Fixed Point Iteration}
-The non-linearity in the equations -- the fact that the coefficients on the velocity components (the viscosity) are dependent on the velocity (or more specifically, the velocity gradients) -- is handled through a fixed-point iteration. A general fixed point iteration for a vector of unknowns \textit{u} can be written as 
+The nonlinearity of the equations -- the fact that the matrix coefficients (in particular, the effective viscosity) depend
+on the velocity (or more specifically, the velocity gradients) -- is handled through a fixed-point iteration. 
+A general fixed point iteration for a vector of unknowns \textit{u} can be written as 
 
-\begin{align*}
-u^{k}=\mathbf{B}\left( u^{k-1} \right),
-\end{align*}
+\begin{equation}
+  u^{k} = \mathbf{B}\left( u^{k-1} \right),
+\end{equation}
 
-where $k$ is the index for the $u$ being solved for and \textbf{B} is a matrix operation performed on the components of $u$ obtained at the previous iteration, $k-1$. The fixed point occurs when the values of $u$ at $k$ and $k-1$ are equal to within some given tolerance (at which point the iteration process is halted). %CISM has options for implementing both Picard and Newton-based fixed-point iterations. 
-For a Picard iteration, which is currently standard when using GLISSADE, the matrix coefficients with a velocity dependence are simply based on the velocities obtained at the previous iteration. In most cases, this equates to using velocities obtained during iteration $k-1$ to calculate the strain rate components used in the calculation of the effective viscosity at iteration $k$.
+\noindent
+where $k$ is the current iteration index and \textbf{B} is a matrix operation performed on the components of $u$ obtained at the previous iteration, $k-1$. The fixed point occurs when the values of $u$ at $k$ and $k-1$ are equal to within some given tolerance, at which point the iteration process is halted. %CISM has options for implementing both Picard and Newton-based fixed-point iterations. 
+For a Picard iteration, which is currently standard in Glissade, the matrix coefficients with a velocity dependence are simply based on the velocities from the previous iteration. In other words, velocities obtained during iteration $k-1$ are used to calculate the strain rates appearing in the expression for effective viscosity at iteration $k$.
 
-\section{Final Matrix Form}
-When accounting for %both the operator splitting and 
-the Picard iteration on the effective viscosity, the final form of the matrix equations solved by GLISSADE becomes 
+%\subsection{Final Matrix Form}
+Accounting for %both the operator splitting and 
+the Picard iteration on the effective viscosity, the final form of the matrix equations solved by Glissade becomes 
 
 %% SP: This is the split form - below is the more general (non-split) version
 %\begin{align*}
@@ -201,7 +213,15 @@ the Picard iteration on the effective viscosity, the final form of the matrix eq
 \end{matrix}
 \end{align*}
 
-where the index $k$ denotes values associated with the current non-linear iteration (in the case of velocities, these are the values being solved for and in the case of the geometric forcing terms, these are the values associated with the current time step) and the index $k-1$ denotes a ``lagged" value, taken from solution at the end of the previous non-linear iteration. The final form of the matrix equations given above represents a linear system; for the solution at any particular nonlinear iteration $k$, all of the coefficients on the unknown velocity components $u$ and $v$ are held frozen during the solution of the linear system. This linear system can be solved using any practical method. For large, sparse systems, the preconditioned conjugate gradient (PCG) method, or some related variant (e.g., preconditioned BiCG or GMRES) is generally the most efficient. In this case the linear system is not solved exactly but is solved to within some small tolerance of the true solution.
+\noindent
+%where the index $k$ denotes values associated with the current non-linear iteration (in the case of velocities, these are the values being solved for and in the case of the geometric forcing terms, these are the values associated with the current time step) and the index $k-1$ denotes a ``lagged" value, taken from solution at the end of the previous non-linear iteration. 
+These equations form a linear system; for the solution at any particular iteration $k$, 
+the matrix coefficients that depend on the velocity components $u$ and $v$ are held frozen during the solution.
+This linear system can be solved using a variety of methods. For large, sparse systems, the preconditioned conjugate gradient (PCG) method 
+or some related method (e.g., preconditioned BiCG or GMRES) is generally the most efficient. 
+(Glissade forms a symmetric positive-definite matrix, as required for the PCG method.
+Both $\mathbf{A_{uu}}$ and $\mathbf{A_{vv}}$ are symmetric, and $\mathbf{A_{uv}} = \mathbf{A_{vu}^T}$.) 
+In this case the linear system is solved not exactly, but to within some small tolerance of the true solution.
 
 %% SP: commenting this out for now, since Newton is not currently an option (but leaving in as a possibility for use in later versions)
 
