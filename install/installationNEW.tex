@@ -558,7 +558,6 @@ Additionally there are standard cmake options that can be set (e.g., \texttt{CMA
 
 
 
-
 % =====================================
 % =====================================
 \section{Supporting software needed for parallel CISM}
@@ -575,82 +574,45 @@ performance and stability than the native solvers.  Note that Trilinos can also 
 used with a serial build, but this configuration is not supported or recommended.
 
 % =====================================
-\subsection{Install OpenMPI}
+\subsection{Install MPI}
 % =====================================
-MPI (message passing interface) libaries and compilers are necessary for compiling parallel CISM.  
-There are a few options available, but OpenMPI is the most common implementation and one that has been 
-tested extensively with CISM.
-
-The OpenMPI library is used for handling parallel communications when running the 
-code on multiple processors. A more complete description of possible parallel model configurations is give in Chapter \ref{ch:runcism}. 
+MPI (Message Passing Interface) libraries and compilers are necessary for compiling parallel CISM.  
+These libraries are used for handling parallel communications when running the 
+code on multiple processors. A more complete description of possible parallel 
+model configurations is give in Chapter \ref{ch:runcism}. 
 (for example, some test cases and configurations when running the shallow-ice 
 momentum balance model are not fully supported in parallel). 
-
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 It is likely that you already have versions of MPI installed on your system, 
 but they may be out of date or not compatible with the other libraries we have 
-and will be installing. The following Macports installed versions of MPI are known 
-to work when building  CISM.
+and will be installing. Using Macports, the Mpich version of MPI is known 
+to work when building CISM.
 
-%% STEVE: The variants are no longer available. It looks like now you just install the version
-%% of openmpi that corresponds to your gcc suite.
-%
-%First, check Macports for available OpenMPI variants using \texttt{port variants openmpi}. 
-%You should see something like:
-%
-%\begin{verbatim}
-%openmpi has the variants:
-%   g95: build mpif77 and mpif90 using g95
-%     * conflicts with gcc42 gcc43 gcc44 gcc45 gcc46
-% ...
-%     * conflicts with g95 gcc42 gcc43 gcc44 gcc46
-%   gcc46: build mpif77 and mpif90 using gcc46
-%     * conflicts with g95 gcc42 gcc43 gcc44 gcc45
-%\end{verbatim}
-%
-%Since we want the one for GCC 4.6, type:
-
-First, check Macports for available versions of OpenMPI using \texttt{port search openmpi*}. We want 
+First, check Macports for available versions of Mpich using \texttt{port search mpich*}. We want 
 the version that is compatible with our GCC compiler suite, so we type: 
 
 \begin{verbatim}
-(old)	sudo port install openmpi-gcc46
-(new)	sudo port install mpich-devel-gcc46 +fortran
+	sudo port install mpich-devel-gcc46 +fortran
 \end{verbatim}
 
 To make sure this is active, type 
 \begin{verbatim}
-(old)	port installed openmpi*
-(new)	port installed mpi*
+	port installed mpi*
 \end{verbatim}
 
 , which should return, 
 
 \begin{verbatim}
-(old)	openmpi-gcc46 @1.7.5_2+fortran (active)
-(new)     mpich-devel-gcc46 @3.2a1_0+fortran (active)
+     mpich-devel-gcc46 @3.2a1_0+fortran (active)
 \end{verbatim}
 
-As when installing the GCC compilers, we want to make sure that generic calls to MPI point to OpenMP. This 
+As when installing the GCC compilers, we want to make sure any generic call to MPI points to Mpich. This 
 can be done with the following command:
 
 \begin{verbatim}
-(old)	sudo port select --set mpi openmpi-gcc46-fortran
-(new)	sudo port select --set mpi mpich-devel-gcc46-fortran
+	sudo port select --set mpi mpich-devel-gcc46-fortran
 \end{verbatim}
-
-%Before using the OpenMPI compilers, we need to specify some critical shell environmental variables, so that OpenMPI "wraps" the right 
-%compilers during the build process. In the \texttt{bash} shell these would be specified as follows (or using ``setenv'' in \texttt{csh} or \texttt{tsch}): 
-%\textbf{SP: this info needs to be updated/confirmed}
-%
-%\begin{verbatim}
-%export OMPI_CC=/opt/local/bin/gcc-mp-4.6
-%export OMPI_CXX=/opt/local/bin/g++-mp-4.6
-%export OMPI_FORTRAN=/opt/local/bin/gfortran-mp-4.6
-%\end{verbatim}
-%
-%Note that the GCC compilers specified in these paths are the ones we installed using Macports. 
 
 \end{mdframed}              % ^==============MAC================^
 
@@ -672,8 +634,8 @@ Trilinos is a modern, open source, C++ based library of parallel nonlinear and l
 preconditioning and mesh-partitioning tools, and much more. It can be downloaded 
 \href{trilinos.sandia.gov/download/}{here}\footnote{trilinos.sandia.gov/download/}
  (the software is free, but you are required to enter your email address to download it). 
-The documentation below assumes that you are working with version 11.4.* and was specifically 
-tested using version 11.4.3. 
+The documentation below assumes that you are working with version 11.10.* and was specifically 
+tested using version 11.10.2. 
 
 Building Trilinos requires Cmake version 2.8 or later, which ideally you've already 
 installed as discussed above. Note that Trilinos is not needed to run the default 
@@ -693,9 +655,9 @@ The easiest way to satisfy this requirement is to have separate ``source'', ``bu
 for example, in \texttt{/usr/local/}, you could set up the following three directories:
 
 \begin{verbatim}
-trilinos-11.4.3-Source/
-trilinos-11.4.3-Build/
-trilinos-11.4.3-Install/
+	trilinos-11.10.2-Source/
+	trilinos-11.10.2-Build/
+	trilinos-11.10.2-Install/
 \end{verbatim}
 
 The ``source'' directory will be created on its own when you uncompress the tar.gz archive 
@@ -705,12 +667,15 @@ lives on your computer).
 
 To configure the Trilinos build, you will need to execute a Cmake configure script. 
 Sample configure scripts for a number of standard platforms are included in the ``sampleScripts''
- directory under the root level of the Trilinos source code. 
+directory under the root level of the Trilinos source code. 
 Additionally, the CISM code includes examples of Trilinos configure scripts (``do-configure'') 
 for use with CISM for both Linux and Mac platforms in the 
 \texttt{./utils/trilinos\_config\_scripts\_examples} directory. 
-We recommend starting with one of those example scripts and modifying it as
-necessary to work on your system.
+We recommend starting with one of those scripts and modifying it as
+necessary to work on your system \footnote{If you are following the above installation instructions for
+Mac exactly, then the configure script 
+\texttt{./utils/trilinos\_config\_scripts\_examples/do-configure-Trilinos-11.10.2-for-Mac-10.9.4} should 
+work with very few minor modifications.}.
 
 Note that the paths to both the ``source'' and ``install'' directories are specified within the ``do-configure'' scripts. In these instructions, those directories are both assumed to live within \texttt{/usr/local/},
 but other locations are fine to use too (e.g., in your home/User directory).
@@ -725,12 +690,12 @@ Also note the explicit path in the MPI lines, e.g.,
 Since some Macs may come with their own pre-installed OpenMPI libraries, it is important here to specify the path to the version we previously installed using Macports.
 \end{mdframed}              % ^==============MAC================^
 
-Find the example script most appropriate for your system, copy it to the \texttt{trilinos-11.4.3-Build} directory, and modify it if necessary (e.g., adjust paths, compiler locations, etc.).
+Find the example script most appropriate for your system, copy it to the \texttt{trilinos-11.10.2-Build} directory, and modify it if necessary (e.g., adjust paths, compiler locations, etc.).
 Execute it with: 
 
 \texttt{source ./do-cmake}\footnote{Note that here we've assumed that the name of the configure script is `do-cmake'. This script name may differ depending on what you have called it or if you've copied and modified one of the scripts from \texttt{./utils/trilinos\_config\_scripts\_examples}.}
 
-from within your \texttt{trilinos-11.4.3-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo source ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
+from within your \texttt{trilinos-11.10.2-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo source ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
 
 \begin{verbatim}
 ...
@@ -743,14 +708,14 @@ Finished configuring Trilinos!
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: /usr/local/trilinos-11.4.3-Build
+-- Build files have been written to: /usr/local/trilinos-11.10.2-Build
 \end{verbatim}
 
 It is a good idea to scan the output while the ``do-cmake'' script is executing, 
 for example to ensure the configure process is picking up the compilers you specified 
 (e.g., it is using the Macports versions as opposed to some Mac default versions that 
 might also be on your system). Once the code is configured successfully, build the libraries 
-from within the \texttt{trilinos-11.4.3-Build} directory by typing:
+from within the \texttt{trilinos-11.10.2-Build} directory by typing:
 
 \texttt{make} (or \texttt{sudo make} if necessary) 
 
@@ -780,7 +745,9 @@ Screen output will tell you if and how many tests failed. In general, we have se
 one or two tests fail while still having a perfectly good and working Trilinos library. 
 Query the \href{file:///Users/sprice/cism-website/documentation.html}{CISM users / developers lists}
 \footnote{file:///Users/sprice/cism-website/documentation.html} if you have questions 
-about specific Trilinos tests failing. 
+about specific Trilinos tests failing \footnote{We have seen a number of tests ``fail" while still giving a perfectly 
+functional Trilinos library. In general, if the number of tests passed is above 90\%, the library will likely work
+fine with CISM.}.
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 Note that on a Mac, MPI tests have been known to trigger a dialog box from the firewall. 
@@ -801,7 +768,7 @@ This will build the actual Trilinos libraries in the path specified in the
 \end{verbatim} 
 
 line of your ``do-cmake'' script (above). For this example, those libraries will be 
-installed in: \texttt{/usr/local/trilinos-11.4.3-Install}
+installed in: \texttt{/usr/local/trilinos-11.10.2-Install}
 
 After successfully building Trilinos, create an environment variable called \texttt{CISM\_TRILINOS\_DIR}
 so the CISM build process can find the Trilinos installation.  For example, if you 
@@ -845,9 +812,7 @@ or
 
 if you have 4 processors available (or as many processors as you would like to use).
 
-See Section \ref{serial-build} for details about customizing the build process, and 
-see Section \ref{sec:testcases} for details about running the model with standard
-test cases.
+See Section \ref{serial-build} for details about customizing the build process.
 
 
 % =====================================
