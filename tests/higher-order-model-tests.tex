@@ -121,12 +121,68 @@ An example output plot is shown in Figure \ref{fig:ismiphom-results}.
 	\includegraphics[width=10.0cm]{\dir/ISMIP-HOM-A-cis1.eps}
 	\caption{An example of the ISMIP-HOM test case output for test A at size L=160 km. 
 CISM output is shown with black line and the range of output from other models is shown by colored bars. 
-This figure was generated with \texttt{./plotISMIPHOM.py -e a -s 160} after running the test with \texttt{runISMIPHOM.py -e a -s 160}.
+This figure was generated with \texttt{./plotISMIPHOM.py -e a -s 160} after running the test with \texttt{./runISMIPHOM.py -e a -s 160}.
 Additional options (e.g., running and plotting for multiple tests simultaneously) are described in the \texttt{README} and by invoking the
 `- - help' option at the command line.}
 	\label{fig:ismiphom-results}
 \end{figure}
 \FloatBarrier
+
+% =====================================
+\subsection{Stream}
+% =====================================
+
+This test case simulates flow over an idealized ice stream underlain by a subglacial till with a known and specified
+yield stress distribution (also, see discussion in Section \ref{sc:higher-order-bcs}). For the two distributions available in this test case, 
+analytical solutions are available from \citet{Raymond2000} and \citet{Schoof2006}. 
+
+For the Raymond test case, the yield stress within the ice stream is given a uniform value below the driving stress, and outside of the
+ice stream it is given a uniform value much higher than the driving stress (i.e., the yield stress distribution is approximated by a
+``step" function). For the Schoof test case, the till yield stress across the ice stream is given by a continuously varying function.
+
+In both cases, the basal properties vary in the across-flow direction only and are symmetric about the ice stream centerline.
+As a result, the velocity solutions are also uniform along flow and symmetric about the centerline.
+
+\subsubsection{Provided Files}
+
+\begin{itemize}
+	\item README \\
+		Information about the test case, including technical details about running it.
+	\item runStream.py \\
+		The script to setup and run the test test.
+	\item stream.config.in \\
+  The default configuration settings for running CISM with the test case. Note that this
+  file is parsed by the runStream.py script. Most of the relevant options that might be changed
+  for this test case (e.g., grid spacing) can be done so from the command line, without having to
+  edit the .config files (use \texttt{./runStream.py --help} to obtain a description of available options.
+  The choice of test case - using the Raymond or Schoof yield stress distribution -  can be toggled 
+  by editing line 15 of the runStream.py script.
+\end{itemize}
+
+\subsubsection{Running the test}
+One script sets up the initial condition and runs the model:
+
+\texttt{./runStream.py}
+
+and another is used to analyze the results:
+
+\texttt{./plotStream.py}
+
+\subsubsection{Results}
+The \texttt{plotStream.py} script will plot model output relative to the analytical solutions
+given in \citet{Raymond2000} and \citet{Schoof2006}. The choice of analytical solution to compare
+to is decided on automatically, based on what value is currently active in the runStream.py script. 
+Example output for both test cases is shown in Figure \ref{fig:stream-results}.
+	
+\begin{figure}[H!]
+  \begin{center}
+	\includegraphics[width=10.0cm]{\dir/stream_raymond.eps}
+	\includegraphics[width=10.0cm]{\dir/stream_schoof.eps}
+  \end{center}
+  \caption{Comparison between CISM model output (black) and analytic solution (red) for the Raymond (top) and Schoof (bottom) stream test cases. This figure was generated with \texttt{./plotStream.py} after running the test with \texttt{./runStream.py}.
+Additional runtime options are described in the \texttt{README} and by invoking the `- - help' option at the command line.}
+  \label{fig:stream-results}
+\end{figure} 
 
 % =====================================
 \subsection{Confined Shelf}
