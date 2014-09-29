@@ -9,15 +9,15 @@ build directory in a subdirectory called \texttt{cism\_driver}
 
 The build system creates the executable at this path but does not automatically
 make it available to other locations on your system.  How you choose to do so depends 
-on your situation.  See the introduction to Chapter \ref{sec:testcases} for 
+on your situation.  See the introduction to Chapter \ref{chp:testcases} for 
 an overview of how to make the executable available to other locations on your system
 (e.g., symlinking, copying, modifying your PATH environment variable).
 
 Unlike previous versions of Glimmer, with CISM 2.0 this single \texttt{cism\_driver} 
-executable is used for running the model in all configurations.  \
-texttt{cism\_driver} can be invoked with a single argument specifying 
-a CISM .config file to run CISM  as a standalone ice sheet model without GLINT climate forcing,
- or with two arguments (a CISM config file and a GLINT config file) 
+executable is used for running the model in all configurations.
+\texttt{cism\_driver} can be invoked with a single argument specifying 
+a CISM .config file to run CISM as a standalone ice sheet model without GLINT climate forcing,
+or with two arguments (a CISM config file and a GLINT config file) 
 to run CISM with GLINT climate forcing:
 \begin{verbatim}
  Call cism_driver with either 1 or 2 arguments. Examples:
@@ -27,7 +27,18 @@ to run CISM with GLINT climate forcing:
 The available options for the CISM configuration file and 
 for the GLINT climate interface configuration file are described in detail below.
 
-Note that instructions for running CISM within the Community Earth System Model (CESM)
+To perform a parallel run with the parallel build of CISM. you must run CISM through the 
+MPI run command, which is typically \texttt{mpirun} or \texttt{mpiexec} but may 
+vary between MPI versions and installations.  A standard syntax that is likely to
+work on most installations is: \newline
+ \indent \texttt{mpirun -np N cism\_driver ice\_sheet.config \textit{climate.config}} \newline
+where \texttt{N} is the number of processors you want to use, \texttt{ice\_sheet.config} is the name of the CISM
+configuration file, and the optional argument \texttt{\textit{climate.config}} is the name 
+of the climate configuration file.  For example: \newline
+ \indent \texttt{mpirun -np 4 cism\_driver dome.config}\newline
+would run the dome test case on four processors.
+
+Finally, note that instructions for running CISM within the Community Earth System Model (CESM)
 or another climate model are not described here.
 
 
