@@ -820,6 +820,13 @@ See Section \ref{serial-build} for details about customizing the build process.
 \section{Next Steps}
 % =====================================
 % =====================================
+Note that if you make any changes to the source code, you only need to re-run
+\texttt{make} from your build directory to generate an updated executable.  
+One exception is if you edit the lists of input/output netCDF variables in 
+\texttt{*\_vars.def} files (see Appendices \ref{ug.sec.varlist} and \ref{ch:appendix_io}), 
+you need to first re-source the configuration script 
+(e.g., \texttt{source mac-gnu-cmake}) before re-running \texttt{make}.
+
 
 Now that you have successfully built the code, you can proceed to Chapters \ref{ch:modelingintro} and \ref{ch:higher-order} to learn more detailed 
 information about ice sheet modeling, to Chapters \ref{ch:glide} and \ref{ch:glissade} to learn more about the various model approximations 
