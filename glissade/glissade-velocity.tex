@@ -19,10 +19,10 @@ Section \ref{sc:higher-order-mom}, are
   \label{gliss.eq.stress_balance}
   \begin{split}
     x: \quad \frac{\partial }{\partial x}\left( 2 \eta \left(2\frac{\partial u}{\partial x} +  \eta \frac{\partial v}{\partial y} \right) \right) 
-    + \frac{\partial }{\partial y}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
+    + \frac{\partial }{\partial y}\left( \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right) 
     +\frac{\partial }{\partial z}\left( \eta \frac{\partial u}{\partial z} \right) = \rho g\frac{\partial s}{\partial x}, \\
     y: \quad \frac{\partial }{\partial y}\left( 2 \eta \left( 2\frac{\partial v}{\partial y} + \eta \frac{\partial u}{\partial x} \right) \right) 
-    + \frac{\partial }{\partial x}\left[ \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
+    + \frac{\partial }{\partial x}\left( \eta \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right) 
     +\frac{\partial }{\partial z}\left( \eta \frac{\partial v}{\partial z} \right) = \rho g\frac{\partial s}{\partial y},  \\
   \end{split}
 \end{equation}
@@ -728,6 +728,21 @@ Checkerboard noise can therefore persist and grow.  To damp this noise, Glissade
 Here, ``upstream'' means in the direction of increasing surface elevation. Both \eqref{gliss.eq.dsdx_centered}
 and \eqref{gliss.eq.dsdx_upstream} are second-order accurate.
 
+Equations \eqref{gliss.eq.dsdx_centered} and \eqref{gliss.eq.dsdx_upstream} are ambiguous at the ice margin,
+where one or more of the four cells neighboring a vertex are ice-free. (Cells with very thin ice,
+$H < \texttt{thklim}$, are considered ice-free by the velocity solver; $\texttt{thklim} = 1 \textrm{ m}$
+by default.)  One option is to include all cells, including ice-free cells, in the gradient.
+This generally works well for land-based ice but gives large gradients with excessive ice speeds
+at floating shelf margins.  A second option is to include only ice-covered cells in the gradient.
+For example, suppose cells $(i,j)$ and $(i,j+1)$ have ice, but cells $(1+1,j)$ and $(i+1,j+1)$ are
+ice-free.  Then, lacking the required information to compute a gradient in the $x$ direction, 
+we would set $\frac{\partial s}{\partial x} = 0$.  The $y$ gradient would be one-sided:
+$\frac{\partial s}{\partial y} = (s(i,j+1)-s(i,j)) \slash \Delta y$.  
+This option works well at shelf margins but tends to underestimate slopes at land margins.
+A hybrid option is to include in the gradient any neighbor cells that are either ice-covered
+or land cells.  (Land cells are cells with topography above sea level, whether ice-covered
+or ice-free.)  Since this option works well for both land and shelf margins, it is the default. 
+    
 The integrals in \eqref{gliss.eq.gravity_forcing} are over 3D elements.
 Hence we map each hexahedral element to a reference cube as described above. 
 Given $\frac{\partial s}{\partial x}$ at the nodes of a cell,
@@ -993,75 +1008,10 @@ have a JFNK option.
 \subsection{Other Stokes approximations}
 \label{sc:glissade-other-approx}
 
-In addition to the 3D Blatter-Pattyn approximation, Glissade can solve the simpler shallow-shelf
-and shallow-ice approximations.  Many of the steps are similar to those described in
+In addition to the 3D Blatter-Pattyn approximation, Glissade can solve the simpler shallow-ice
+and shallow-shelf approximations, as well as the vertically integrated, higher-order ``L1L2''
+approximation \citep{Schoof:2010dl}.  Many of the steps are similar to those described in
 Section \ref{sc:glissade-blatter-pattyn}.
-
-\subsubsection{Shallow-shelf approximation}
-
-The shallow-shelf equations can be obtained by vertically integrating the 3D Blatter-Pattyn equations.
-They are valid when the basal shear stress is small or zero and the velocity is 
-(to a good approximation) vertically uniform.  The shallow-shelf analog of \eqref{gliss.eq.stress_balance} is
-
-\begin{equation}
-  \label{gliss.eq.stress_balance_ssa}
-  \begin{split}
-    x: \quad \frac{\partial }{\partial x}\left( 2 \bar{\eta} H \left(2\frac{\partial u}{\partial x} +  \bar{\eta} H \frac{\partial v}{\partial y} \right) \right) 
-    + \frac{\partial }{\partial y}\left[ \bar{\eta} H \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
-    = \rho g\frac{\partial s}{\partial x}, \\
-    y: \quad \frac{\partial }{\partial y}\left( 2 \bar{\eta} H \left( 2\frac{\partial v}{\partial y} + \bar{\eta} H \frac{\partial u}{\partial x} \right) \right) 
-    + \frac{\partial }{\partial x}\left[ \bar{\eta} H \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right] 
-    = \rho g\frac{\partial s}{\partial y}.  \\
-  \end{split}
-\end{equation}
-
-\noindent
-The SSA equations in weak form resemble \eqref{gliss.eq.weak_form},
-except that the internal stress terms are
-
-\begin{equation}
-  \label{gliss.eq.element_matrix_ssa}
-  \begin{split}
-    x: \int\limits_{\Omega }{2\bar{\eta} H \left( \frac{\partial {{\varphi }_{i}}}{\partial x}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\} + \left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\} \right) +
-      \frac{\partial {{\varphi }_{i}}}{\partial y}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\} \right) \right)},  \\
-    y: \int\limits_{\Omega }{2\bar{\eta} H \left( \frac{\partial {{\varphi }_{i}}}{\partial y}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\} + \left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\} \right) + 
-      \frac{\partial {{\varphi }_{i}}}{\partial x}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\} \right) \right)}.  \\
-  \end{split}
-\end{equation}
-
-\noindent
-The resulting element matrices are similar to \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv},
-except that the terms containing $\frac{\partial {{\varphi }_{i}}}{\partial z}$ and
-$\frac{\partial {{\varphi }_{j}}}{\partial z}$ are missing, and the viscosity term $\eta$
-is replaced by $\bar{\eta} H$.  The effective viscosity is given by \eqref{gliss.eq.effective_viscosity},
-but with \eqref{gliss.eq.effective_strain_rate} replaced by
-
-\begin{equation}
-  \label{gliss.eq.effective_strain_rate_ssa}
-        {{\dot{\varepsilon }}^{2}}_{e} = 
-        {{\dot{\varepsilon }}^{2}}_{xx} + {{\dot{\varepsilon }}^{2}}_{yy} + 
-        {{\dot{\varepsilon }}_{xx}}{{\dot{\varepsilon }}_{yy}} + {{\dot{\varepsilon }}^{2}}_{xy}.
-\end{equation}
-
-\noindent
-The integrals in \eqref{gliss.eq.element_matrix_ssa} are taken over 2D cells rather than 3D elements,
-with basis functions and Jacobians given by \eqref{gliss.eq.basis_functions_2d}
-and \eqref{gliss.eq.Jacobian_eval_2d}.
-
-The basal boundary terms are handled as in the 3D Blatter-Pattyn approximation. 
-The lateral boundary and gravitational forcing terms are computed initially in 3D
-(as for the Blatter-Pattyn case), but then are summed in the vertical before being
-inserted into the 2D right-hand vectors $b_u$ and $b_v$.  The solution procedure
-is the same as for the 3D case, except that the problem has no vertical dimension.
-When using the native PCG solver, the shallow-ice-based preconditioner is inappropriate
-and the diagonal preconditioner should be used instead.  
-
-In short, the SSA problem is analogous to the Blatter-Pattyn problem except for the
-missing vertical terms.  The solution is generally much faster, because the SSA matrices
-have roughly $3*nz$ times fewer nonzero entries than the Blatter-Pattyn matrices.
-The factor of 3 arises from the fact that the BP equations at each level include
-connections to the levels above and below, whereas the SSA equations
-are solved for a single level.
 
 \subsubsection{Shallow-ice approximation: Matrix form}
 
@@ -1105,18 +1055,18 @@ The basal and lateral boundary conditions and gravitational loading are handled
 just as for the Blatter-Pattyn case.
 
 The resulting SIA global matrices contain about half as many nonzero terms as the BP matrices,
-since $A_{uv}$ = $A_{vu}$ = 0.  But each ice column cannot be solved independently of the others;
+since $A_{uv}$ = $A_{vu}$ = 0.  Each ice column, however, cannot be solved independently of the others;
 rather, each node is linked to its horizontal neighbors by terms that arise during
-element assembly.  As a result, the solution is not dramatically faster than solution
-of the BP problem.  Thus the matrix-based shallow-ice solver can be useful for code testing
-but is not practical for productions runs, since a practical SIA code solver should be many times
-faster than a BP solver.  For production runs Glissade has an alternative solver,
+element assembly.  As a result, the matrix-based SIA solver is not dramatically faster than the BP solver.
+This solver can be useful for code testing
+but is not practical for productions runs, since a practical SIA solver should be many times
+faster than a BP solver.  Glissade has a much faster alternative SIA solver,
 described next.
 
 \subsubsection{Shallow-ice approximation: Local form}
 
 Glissade's local shallow-ice solver (in {\tt glissade\_velo\_sia.F90}),
-is distinct from the finite-element solvers described above.
+is distinct from the finite-element solvers described in this section.
 It is local in the sense that $u$ and $v$ in each ice column are found independently
 of $u$ and $v$ in all other columns.
 It resembles the Glide shallow-ice solver described in Section \ref{sc:glide_thickness_evolution}.
@@ -1201,6 +1151,282 @@ Finally, we average $\Delta u_E$ and $\Delta v_N$ to vertices and add the bed ve
 For serial problems there are no special advantages to using Glissade's local SIA solver 
 in place of Glide.  Glissade's local SIA solver, however, can run on multiple processors, 
 whereas Glide cannot.  For large SIA problems (e.g., the Greenland
-ice sheet at $\sim\text{5 km}$ resolution), parallel Glissade can run faster.
+ice sheet at $\sim\text{5 km}$ resolution), parallel Glissade can hold more data
+in memory and may be faster.
 
+\subsubsection{Shallow-shelf approximation}
+
+The shallow-shelf equations can be derived by vertically integrating the 3D Blatter-Pattyn equations.
+They are valid when the basal shear stress is small or zero and the velocity is 
+(to a good approximation) vertically uniform.  The shallow-shelf analog of \eqref{gliss.eq.stress_balance} is
+
+\begin{equation}
+  \label{gliss.eq.stress_balance_ssa}
+  \begin{split}
+    x: \quad \frac{\partial }{\partial x}\left( 2 \bar{\eta} H \left(2\frac{\partial u}{\partial x} +  \bar{\eta} H \frac{\partial v}{\partial y} \right) \right) 
+    + \frac{\partial }{\partial y}\left( \bar{\eta} H \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right) 
+    = \rho g\frac{\partial s}{\partial x}, \\
+    y: \quad \frac{\partial }{\partial y}\left( 2 \bar{\eta} H \left( 2\frac{\partial v}{\partial y} + \bar{\eta} H \frac{\partial u}{\partial x} \right) \right) 
+    + \frac{\partial }{\partial x}\left( \bar{\eta} H \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right) \right) 
+    = \rho g\frac{\partial s}{\partial y},  \\
+  \end{split}
+\end{equation}
+
+\noindent
+where $\bar{\eta}$ is the vertical average effective viscosity.
+The SSA equations in weak form resemble \eqref{gliss.eq.weak_form},
+except that the internal stress terms are
+
+\begin{equation}
+  \label{gliss.eq.element_matrix_ssa}
+  \begin{split}
+    x: \int\limits_{\Omega }{2\bar{\eta} H \left( \frac{\partial {{\varphi }_{i}}}{\partial x}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\} + \left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\} \right) +
+      \frac{\partial {{\varphi }_{i}}}{\partial y}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\} \right) \right)},  \\
+    y: \int\limits_{\Omega }{2\bar{\eta} H \left( \frac{\partial {{\varphi }_{i}}}{\partial y}\left( 2\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{v}_{j}} \right\} + \left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{u}_{j}} \right\} \right) + 
+      \frac{\partial {{\varphi }_{i}}}{\partial x}\left( \frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial x} \right]\left\{ {{v}_{j}} \right\}+\frac{1}{2}\left[ \frac{\partial {{\varphi }_{j}}}{\partial y} \right]\left\{ {{u}_{j}} \right\} \right) \right)}.  \\
+  \end{split}
+\end{equation}
+
+\noindent
+The resulting element matrices are similar to \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv},
+except that the terms containing $\frac{\partial {{\varphi }_{i}}}{\partial z}$ and
+$\frac{\partial {{\varphi }_{j}}}{\partial z}$ are missing, and the viscosity term $\eta$
+is replaced by $\bar{\eta} H$.  The effective viscosity is analogous to \eqref{gliss.eq.effective_viscosity},
+but with a vertically averaged flow factor and with \eqref{gliss.eq.effective_strain_rate} replaced by
+
+\begin{equation}
+  \label{gliss.eq.effective_strain_rate_ssa}
+        {{\dot{\varepsilon }}^{2}}_{e} = 
+        {{\dot{\varepsilon }}^{2}}_{xx} + {{\dot{\varepsilon }}^{2}}_{yy} + 
+        {{\dot{\varepsilon }}_{xx}}{{\dot{\varepsilon }}_{yy}} + {{\dot{\varepsilon }}^{2}}_{xy}.
+\end{equation}
+
+\noindent
+The integrals in \eqref{gliss.eq.element_matrix_ssa} are taken over 2D cells rather than 3D elements,
+with basis functions and Jacobians given by \eqref{gliss.eq.basis_functions_2d}
+and \eqref{gliss.eq.Jacobian_eval_2d}.
+
+The basal boundary terms are handled as in the 3D Blatter-Pattyn approximation. 
+The lateral boundary and gravitational forcing terms are computed initially in 3D
+(as for the Blatter-Pattyn case), but then are summed in the vertical before being
+inserted into the 2D right-hand vectors $b_u$ and $b_v$.  The solution procedure
+is the same as for the 3D case, except that the problem has no vertical dimension.
+When using the native PCG solver, the shallow-ice-based preconditioner is inappropriate
+and the diagonal preconditioner should be used instead.  
+
+In short, the SSA problem is analogous to the Blatter-Pattyn problem except for the
+missing vertical terms.  The solution is much faster, because the SSA matrices
+have roughly $3*nz$ times fewer nonzero entries than the Blatter-Pattyn matrices.
+The factor of 3 arises from the fact that the BP equations at each level include
+connections to the levels above and below, whereas the SSA equations
+are solved at a single level.
+
+\subsubsection{L1L2 approximation}
+
+The L1L2 approximation \citep{Schoof:2010dl} can be derived by vertically integrating
+the Blatter-Pattyn equations with the assumption that the horizontal gradients of the membrane
+stresses are uniform with depth.
+(The term ``L1L2'' is based on the classification scheme of \citet{Hindmarsh2004}.)  
+This assumption leads to a 2D matrix system (like the SSA), which can be solved
+much more cheaply than the 3D BP system.
+The L1L2 approximation is as accurate as the BP equations in
+regions of fast sliding.  In regions of little or no sliding, it reduces to the
+shallow-ice approximation.  Thus it is accurate where the SIA is accurate,
+but not in regions of slow sliding and rough bed topography, where
+the horizontal gradients of the membrane stresses vary strongly with height.
+(For example, L1L2 performs poorly for ISMIP-HOM Test A.)
+
+Consider the Blatter-Pattyn equations \eqref{gliss.eq.stress_balance}, written in
+terms of deviatoric stresses instead of strain rates:
+
+\begin{equation}
+  \label{gliss.eq.stress_balance_tau}
+  \begin{split}
+    x: \quad \frac{\partial }{\partial x}\left( 2 \tau_{xx} + \tau_{yy} \right)
+           + \frac{\partial }{\partial y}\left( \tau_{xy} \right)
+           + \frac{\partial }{\partial z}\left( \tau_{xz} \right)
+           = \rho g\frac{\partial s}{\partial x}, \\
+    y: \quad \frac{\partial }{\partial y}\left( 2 \tau_{yy} + \tau_{xx} \right)
+           + \frac{\partial }{\partial x}\left( \tau_{xy} \right)
+           + \frac{\partial }{\partial z}\left( \tau_{yz} \right)
+           = \rho g\frac{\partial s}{\partial y}.
+  \end{split}
+\end{equation}
+
+\noindent
+Assuming that $\tau_{xx}$, $\tau_{yy}$ and $\tau_{xy}$ are depth-independent,
+\eqref{gliss.eq.stress_balance_tau} can be integrated from $b$ to $s$ to obtain
+
+\begin{equation}
+  \label{gliss.eq.stress_balance_tau_integrated}
+  \begin{split}
+    x: \quad \frac{\partial }{\partial x} \left( \int_b^s (2 \tau_{xx} + \tau_{yy}) dz \right)
+           + \frac{\partial }{\partial y} \left( \int_b^s {\tau_{xy} dz} \right)
+           - \beta u_b = \rho g H \frac{\partial s}{\partial x}, \\
+    y: \quad \frac{\partial }{\partial y} \left( \int_b^s (2 \tau_{yy} + \tau_{xx}) dz \right)
+           + \frac{\partial }{\partial x} \left( \int_b^s {\tau_{xy} dz} \right)
+           - \beta v_b = \rho g H \frac{\partial s}{\partial y},
+  \end{split}
+\end{equation}
+
+\noindent
+where $u_b$ and $v_b$ are the components of basal velocity, and we have used Leibniz's rule
+to move the partial derivatives outside the integrals and eliminate several boundary terms.
+Since the deviatoric stresses are depth-independent, they can be written in terms of the
+basal strain rates and taken outside the integral:
+
+\begin{equation}
+  \label{gliss.eq.stress_balance_tau_integrated}
+  \begin{split}
+    x: \quad 2 \frac{\partial }{\partial x} \left( \bar{\eta}H \left( 2 \frac{\partial u_b}{\partial x} + \frac{\partial v_b}{\partial y} \right) \right)
+             + \frac{\partial }{\partial y} \left( \bar{\eta}H \left(   \frac{\partial u_b}{\partial y} + \frac{\partial v_b}{\partial x} \right) \right)
+             - \beta u_b = \rho g H \frac{\partial s}{\partial x}, \\
+    y: \quad 2 \frac{\partial }{\partial y} \left( \bar{\eta}H \left( 2 \frac{\partial v_b}{\partial y} + \frac{\partial u_b}{\partial x} \right) \right)
+             + \frac{\partial }{\partial x} \left( \bar{\eta}H \left(   \frac{\partial u_b}{\partial y} + \frac{\partial v_b}{\partial x} \right) \right)
+             - \beta v_b = \rho g H \frac{\partial s}{\partial y}, \\
+  \end{split}
+\end{equation}
+
+\noindent
+where the vertical average effective viscosity is
+
+\begin{equation}
+  \bar{\eta} = \int_b^s {\eta dz}.
+\end{equation}
+
+\noindent
+Note the similarity between \eqref{gliss.eq.stress_balance_tau_integrated} and \eqref{gliss.eq.stress_balance_ssa}.
+When \eqref{gliss.eq.stress_balance_ssa} is vertically integrated and basal boundary terms are included,
+it is formally identical to \eqref{gliss.eq.stress_balance_tau_integrated}.  Thus the same methods used to
+assemble and solve the SSA equations can be applied to the L1L2 equations.
+
+The effective viscosity, however, is treated differently for L1L2.
+(Here we follow \citet{Perego2012}.)
+The parallel norm $\left| \cdot \right|_{||}$ is defined as
+
+\begin{equation}
+  \label{gliss.eq.L1L2_parallel_norm}
+  \left| {\dot{\varepsilon }} \right|_{\parallel}^{2} = 
+  \dot{\varepsilon }_{xx}^{2} + \dot{\varepsilon }_{yy}^{2} + {{\dot{\varepsilon }}_{xx}}{{\dot{\varepsilon }}_{yy}} + \dot{\varepsilon }_{xy}^{2}
+\end{equation}
+
+\noindent
+and the perpendicular norm $\left| \cdot \right|_{\perp}$ as
+
+\begin{equation}
+  \label{gliss.eq.L1L2_perp_norm}
+  \left| {\dot{\varepsilon }} \right|_{\perp}^{2} = 
+  \dot{\varepsilon }_{xz}^{2} + \dot{\varepsilon }_{yz}^{2}.
+\end{equation}
+
+\noindent
+The constitutive law can be written as 
+
+\begin{equation}
+  \label{gliss.eq.L1L2_constitutive}
+  {{\dot{\varepsilon }}_{ij}} = A \tau _{e}^{2} {{\tau }_{ij}},
+\end{equation}
+
+\noindent
+where we assume $n=3$.  For the L1L2 approximation the effective stress is given by
+
+\begin{equation}
+  \label{gliss.eq.L1L2_tau_effective}
+  \tau _{e}^{2} = \left| \tau  \right|_{\parallel }^{2} + \tilde{\tau}_{\perp}^2,
+\end{equation}
+
+\noindent
+with $\tilde{\tau}_{\perp}$ estimated based on the SIA:
+
+\begin{equation}
+  \label{gliss.eq.L1L2_tau_perp}
+  \tilde{\tau}_{\perp}^{2} = {\left[ \rho g(s-z)\nabla s \right]}^2.
+\end{equation}
+
+\noindent
+Inserting \eqref{gliss.eq.L1L2_tau_effective} in \eqref{gliss.eq.L1L2_constitutive} and taking 
+the parallel norm gives
+
+\begin{equation}
+  \label{gliss.eq.L1L2_tau_parallel}
+        {\left| {\dot{\varepsilon }} \right|}_{\parallel}
+        = A (\left| \tau \right|_{\parallel}^{2} + \left| \tau \right|_{\perp}^{2}) {{\left| \tau \right|}_{\parallel}}.
+\end{equation}
+
+\noindent
+Given ${\left| {\dot{\varepsilon }} \right|}_{\parallel}$ from \eqref{gliss.eq.L1L2_parallel_norm},
+equation \eqref{gliss.eq.L1L2_tau_parallel} can be written in the form $x^3 + a x + b = 0$,
+a cubic equation that can be solved for ${\left| \tau \right|}_{\parallel}$ using standard techniques.
+(Of the three roots, the one of interest is real and positive; the other two are complex conjugates.
+Glissade currently computes ${\left| \tau \right|}_{\parallel}$ only for $n = 3$,
+although an iterative scheme for general $n$ could be added later.)
+The effective viscosity at depth $z$ is then given by
+
+\begin{equation}
+  \label{gliss.eq.L1L2_eta}
+  \eta  = \frac{1}{2A \tau_{e}^{2}},
+\end{equation}
+
+\noindent
+where $\tau_{e}$ is obtained from \eqref{gliss.eq.L1L2_tau_effective},
+\eqref{gliss.eq.L1L2_tau_perp} and \eqref{gliss.eq.L1L2_tau_parallel}.
+Equation \eqref{gliss.eq.L1L2_eta} follows from \eqref{gliss.eq.L1L2_constitutive}
+and the relation ${\dot{\varepsilon }}_{ij} = 2\eta {\tau }_{ij}$, which defines
+the effective viscosity.
+
+After solving the 2D L1L2 system for the basal velocity, the velocity profile at each vertex
+can be found by vertical integration. First we estimate
+$\tau_{xz}$ and $\tau_{yz}$ at each level.  Since the depth-independent membrane stresses
+are determined by the basal velocity, $\tau_{xz}$ and $\tau_{yz}$ are now the
+only unknowns in \eqref{gliss.eq.stress_balance_tau}.  These equations can be integrated
+from the top surface (assumed to be stress-free) to depth $z$ to give
+
+\begin{equation}
+  \begin{split}
+    x: \quad {{\tau }_{xz}}(z) = -\rho g(s-z)\frac{\partial s}{\partial x} 
+    + 2\frac{\partial }{\partial x}\left[ \left( 2\frac{\partial {{u}_{b}}}{\partial x}+\frac{\partial {{v}_{b}}}{\partial y} \right)
+      \left( \int\limits_{z}^{h}{\eta d{z}'} \right) \right] 
+    + 2\frac{\partial }{\partial y}\left[ \left(  \frac{\partial {{u}_{b}}}{\partial y}+\frac{\partial {{v}_{b}}}{\partial x} \right)
+      \left( \int\limits_{z}^{h}{\eta d{z}'} \right) \right], \\
+    y: \quad {{\tau }_{yz}}(z) = -\rho g(s-z)\frac{\partial s}{\partial y} 
+    + 2\frac{\partial }{\partial y}\left[ \left( 2\frac{\partial {{v}_{b}}}{\partial y}+\frac{\partial {{u}_{b}}}{\partial x} \right)
+      \left( \int\limits_{z}^{h}{\eta d{z}'} \right) \right] 
+    + 2\frac{\partial }{\partial x}\left[ \left(  \frac{\partial {{u}_{b}}}{\partial y}+\frac{\partial {{v}_{b}}}{\partial x} \right)
+      \left( \int\limits_{z}^{h}{\eta d{z}'} \right) \right],
+  \end{split}
+\end{equation}
+
+\noindent
+where again we use Leibniz's rule to move the partial derivatives outside the integrals
+and remove boundary terms.
+The bracketed terms are evaluated at cell centers, and then the gradient terms are 
+computed at nodes using finite-difference formulas (e.g., \eqref{gliss.eq.dsdx_centered}).
+Given $\tau_{xz}$ and $\tau_{yz}$ at each level, along with
+$\left| \dot{\varepsilon } \right|_{\parallel }^{2}$ from \eqref{gliss.eq.L1L2_parallel_norm},
+the effective stress is given by
+
+\begin{equation}
+  \tau_{e}^{2} = 2 \eta \left| {\dot{\varepsilon }} \right|_{\parallel }^{2} + \tau_{xz}^{2} + \tau_{yz}^{2}.
+\end{equation}
+
+\noindent
+The velocity components can then be integrated upward from the bed using
+
+\begin{equation}
+  \begin{split}
+    x: \quad \frac{1}{2}\frac{\partial u}{\partial z} = {{\dot{\varepsilon }}_{xz}} = A\tau _{e}^{n-1}{{\tau }_{xz}}, \\
+    y: \quad \frac{1}{2}\frac{\partial v}{\partial z} = {{\dot{\varepsilon }}_{yz}} = A\tau _{e}^{n-1}{{\tau }_{yz}},
+  \end{split}
+\end{equation}
+
+\noindent
+which imply
+
+\begin{equation}
+  \begin{split}
+    \label{gliss.eq.L1L2_velo3d}
+    x: \quad u(z) = {{u}_{b}} + 2\int\limits_{b}^{z}{A\tau_{e}^{n-1}}{{\tau }_{xz}}dz, \\
+    y: \quad v(z) = {{v}_{b}} + 2\int\limits_{b}^{z}{A\tau_{e}^{n-1}}{{\tau }_{yz}}dz.
+  \end{split}
+\end{equation}
 
