@@ -90,7 +90,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \hline
     \multicolumn{2}{|l|}{\texttt{[time]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps, etc. {\bf TODO: Address/remove this note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps. \textbf{Steve: I don't actually know what the question is here or what this note is supposed to be about.}}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps, etc. {\bf TODO: address / remove this next note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps. \textbf{Steve: I don't actually know what the question is here or what this note is supposed to be about.}}\\
     \hline
     \texttt{tstart} & (real) Start time of the model in years\\
     \texttt{tend} & (real) End time of the model in years\\
@@ -100,7 +100,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \texttt{ntem} & (real) time step multiplier setting the ice temperature update interval\\
     \texttt{nvel} & (real) time step multiplier setting the velocity update interval\\
     \texttt{profile} & (integer) profile frequency (number of time steps) {\bf TODO: more useful description of what profiling is? Steve: I've never used this either. 
-    Maybe we need to look into this to figure out what it does and if it works? Matt, my guess would be that Pat's profiling code is superior to this.}\\
+    Matt, my guess would be that Pat's profiling code is superior to this and, if we document that anywhere (do we?), we should support using that instead.}\\
     \texttt{dt\_diag} & (real) writing diagnostic variables to log file every dt\_diag yrs\\
     \texttt{idiag} & (int) x direction grid index for diagnostic variables to be written to log file\\
     \texttt{jdiag} & (int) y direction grid index for diagnostic variables to be written to log file\\
@@ -115,7 +115,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \hline
     \multicolumn{2}{|l|}{\texttt{[options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.  Configuration number options with a * after them are specific to the higher-order dycores (e.g., Glissade). Options with a ? after them are working, but are currently not scientifically supported, and are therefore for use at your own risk. Options with a ! after them are in development and anticipated as being supported in future code releases.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.  Configuration number options with a * after them are specific to the higher-order dycores (e.g., Glissade). Options with a ? after them are working, but are currently not scientifically supported, and are therefore for use at your own risk. Options with a ! after them are in development and will be supported in future code releases. \textbf{Steve: At the moment, I don't think it is clear below which options work w/ the parallel code and which do not. We may need to introduce some clear way of denoting that.} }\\
     \hline
 %% dycore
     \texttt{dycore} & 
@@ -134,7 +134,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
       2 & diffusion (Glide only)\\
       3* & incremental remapping \\
       4* & first-order upwind  \\
-      5* & evolve without changing ice thickness. This can be useful when it is desired to run the model with a fixed geometry, e.g. during a temperature spinup. Note that on each time step this option evolves the geometry and tracers using incremental remapping and then resets geometry to its old value, so that tracer advection can still occur within a fixed geometry.  This evolution scheme is therefore still subject to the advective CFL condition.\\
+      5* & evolve without changing ice thickness (Useful for running with a fixed geometry, e.g. for a temperature spinup. On each time step, geometry and tracers are evolved using incremental remapping, after which geometry is reset to its initial value. This, this evolution scheme is still subject to the advective CFL condition.)\\
     \end{tabular}\\
 %% temperature
     \texttt{temperature} & 
@@ -142,26 +142,26 @@ is as scientifically validation as any other FO approximation dycore out there. 
       0 & Set each ice column to local surface air temperature \\
       {\bf 1} & prognostic temperature calculation \\
       2 & held steady at initial value \\
-      3! & prognostic temperature calculation using enthalpy formulation \\
+      3! & prognostic temperature calculation using enthalpy-based formulation \\
     \end{tabular}\\
 %% temperature init
     \texttt{temp\_init} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & initial temperatures isothermal at 0 deg. C\\
       {\bf 1} & initial column temperatures set to atmos. temperature \\
-      2 & initial column temperatures linearly interpolated from atmos. temperature \\
+      2 & initial column temperatures linearly interpolated from atmos. temperature \textbf{Steve: Bill, can you confirm if/that this is constrained to T\_pmp at bed?} \\
     \end{tabular}\\
 %% flow law
     \texttt{flow\_law} &  
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0}  & constant (using the value of \texttt{default\_flwa)}\\
-      1 & temp. dependent, \citet{PatersonBudd:1982} (temp.=-5degC)\\
-      2 & temp. dependent, \citet{PatersonBudd:1982} (function of variable temp.)\\
+      1 & temperature dependent, \citet{PatersonBudd:1982} (T=-5degC)\\
+      2 & temperature dependent, \citet{PatersonBudd:1982} (function of variable T)\\
     \end{tabular}\\
 %% basal water
     \texttt{basal\_water} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0} & none \\
+      {\bf 0} & none \textbf{Steve: do we need to clarify here that these are NOT necessarily supported in parallel?}\\
       1 & local water balance\\
       2 & Compute the steady-state, routing-based, basal water flux and water layer thickness \\
       3 &  Use a constant basal water layer thickness everywhere, to enforce T=T${_{pmp}}$ everywhere \\
@@ -174,14 +174,14 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \end{tabular}\\
 %% slip coefficient
     \texttt{slip\_coeff} & 
-        slip coefficient (for Glide \textit{only}) \\ &
+        slip coefficient (Glide \textit{only}) \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & zero (no sliding) \\
       1 & set to a non--zero constant everywhere\\
       2 & set to constant where basal water (bwat) is nonzero\\
       3 & set to constant where the ice base is melting\\
       4 & set proportional to basal melt rate\\
-      5 & Tanh function of basal water (bwat)\\
+      5 & \texttt{tanh} function of basal water (bwat)\\
     \end{tabular}\\
 %% marine margin
     \texttt{marine\_margin} & 
@@ -196,6 +196,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \end{tabular}\\
 %% vertical integration
     \texttt{vertical\_integration} & 
+       (Glide \textit{only}) \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & standard integration (to obtain vertical velocity profile)\\
       1 & constrained to obey kinematic velocity at upper surface boundary\\
@@ -211,12 +212,12 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \texttt{isostasy} &  
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & no isostatic adjustment \\
-      1 & compute isostatic adjustment using lithosphere / asthenosphere model \\
+      1 & compute isostatic adjustment using lithosphere / asthenosphere model (see additional discussion below for available options)  \\
     \end{tabular}\\
 %% topography
     \texttt{topo\_is\_relaxed} &  
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0} & relaxed topography is read from a separate variable\\
+      {\bf 0} & relaxed topography is read from a separate variable \textbf{Steve: should this be ``separate file"?} \\
       1 & first time slice of input topography is assumed to be relaxed\\
       2 & first time slice of input topography is assumed to be in isostatic
       equilibrium with ice thickness. \\
@@ -233,9 +234,9 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \textit{Note:} alternate keyword {\bf hotstart} is retained for backwards compatibility. \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & normal start (initial guesses taken from input file or, if absent, using default options)\\
-      1 & restart model using input from previous run (do not calc., e.g., temp., rate factor, or vel. fields)  
-           Specific fields required for restart or dependent on options chosen.  (Specify 'restart' as a variable 
-           in an output file to get the required fields automatically.)\\
+      1 & restart model using input from previous run (do not calc., e.g., temp., rate factor, or vel. fields);  
+           specific fields required for restart are dependent on chosen options (add ``restart" to the 
+           \texttt{variable} list in the \texttt{[CF output]} section of the \texttt{.config} file to automatically save the appropriate restart fields.)\\
     \end{tabular}\\
     \hline
     \texttt{ioparams} & (string) name of file containing netCDF I/O configuration. The main configuration file is searched for I/O related sections if no file name is given (default).\\
@@ -248,22 +249,21 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \hline
     \multicolumn{2}{|l|}{\texttt{[ho\_options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section determine how various components of the higher-order extensions to the ice sheet model (e.g., Glissade) are treated. Defaults are indicated in bold. These options have no effect on the Shallow-Ice (Glide) dycore. In this section, options marked with a * apply to a serial build of the model only and
-    options marked with a ! are under development and will be fully supported in future versions of the code (use now at your own risk!).}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options set in this section determine how various components of the higher-order extensions to the ice sheet model (e.g., Glissade) are treated. Defaults are indicated in bold. These options have no effect on the Shallow-Ice (Glide) dycore. In this section, options with a ? after them are working, but are currently not scientifically supported (and are therefore for use at your own risk). Options marked with a * apply to a serial build of the model only. Options marked with a ! are under development and will be fully supported in future versions of the code (hence, these are also use at your own risk).}\\
     \hline
 %% which_ho_nonlinear
     \texttt{which\_ho\_nonlinear} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & treat nonlinearity in momentum balance using Picard iteration \\
-      1 & treat nonlinearity in momentum balance using Jacobian-Free Newton-Krylov iteration (Glam \textit{only})  \\
+      1? & treat nonlinearity in momentum balance using Jacobian-Free Newton-Krylov iteration (Glam \textit{only})  \\
     \end{tabular}\\     
 %% which_ho_sparse
     \texttt{which\_ho\_sparse} & 
 %\\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      -1* & Solve sparse linear system using SLAP library with incomplete Cholesky method)\\
-      0* & Solve sparse linear system using SLAP library with incomplete LU-preconditioned biconjugate gradient method\\
-      1* & Solve sparse linear system using SLAP library with incomplete LU-preconditioned GMRES method\\
+      -1* & Solve sparse linear system using SLAP with incomplete Cholesky preconditioned conjugate gradient method\\
+      0* & Solve sparse linear system using SLAP with incomplete LU-preconditioned biconjugate gradient method\\
+      1* & Solve sparse linear system using SLAP with incomplete LU-preconditioned GMRES method\\
       2 & Solve sparse linear system using preconditioned conjugate gradient method: standard algorithm (Glissade \textit{only}) \\
       {\bf 3} & Solve sparse linear system with preconditioned conjugate gradient method: Chronopoulos-Gear algorithm (Glissade \textit{only})\\
       4 & Solve sparse linear system using \textit{Trilinos}, incomplete LU-preconditioned GMRES method (\textit{Trilinos}-compatible build only)\\
@@ -271,14 +271,17 @@ is as scientifically validation as any other FO approximation dycore out there. 
 %% which_ho_efvs
     \texttt{which\_ho\_efvs} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      0 & use a constant value for the effective viscosity. The default value is 2336041 Pa yr (as used by ISMIP-HOM Test F).\\
+      0 & use a constant value for the effective viscosity (i.e., linear viscosity). The default value is 2336041 Pa yr (as used by ISMIP-HOM Test F).\\
       1 & set the effective viscosity to a value based on the flow rate factor: efvs $= 0.5 * A^{-1/n}$\\
       {\bf 2} & use the effective strain rate for the calc. of the effective viscosity (i.e., full nonlinear treatment) \\
     \end{tabular}\\  
 %% which_disp
     \texttt{which\_disp} & 
 {\bf TODO: Should this be moved from ho\_options to options? Steve: I don't know ... what is written here is/was based on Glam.
-Bill, do you know if we are calculating the necessary info (strain-rates / stresses) from Glissade output for this option to be working as advertised?} \\ &
+Bill, do you know if we are calculating the necessary info (strain-rates / stresses) from Glissade output for this option to be working 
+as advertised in glide\_temp.F90? Presumably, for SSA and L1L2 we'd need additional options here, unless that gets taken into account
+automatically somehow. The 0-order question here is whether or not Glissade dynamics are currently hooked up to the viscous dissipation
+term that is included in the heat balance model.} \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & calculate dissipation in temperature equation assuming SIA ice dynamics \\
       1 & calculate dissipation in temperature equation assuming 1st-order ice dynamics \\
@@ -289,9 +292,9 @@ Bill, do you know if we are calculating the necessary info (strain-rates / stres
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & constant value \\
       1 & specify some simple pattern (hardcoded). Useful for debugging\\
-      2! & read map of yield stress (in Pa) from input field `mintauf' to simulate sliding 
+      2 & read map of yield stress (in Pa) from input field ``mintauf" to simulate sliding 
           over a plastic subglacial till (Picard-based solution) \\
-      3 & calculate `beta' as linear (inverse) function of basal water thickness\\
+      3 & calculate ``beta" as linear (inverse) function of basal water thickness\\
       {\bf 4} & no slip everywhere in domain (`beta' set to very
           large value)\\
       5 & read map of `beta' in from .nc input file using standard i/o \\
