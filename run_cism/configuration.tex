@@ -288,41 +288,43 @@ term that is included in the heat balance model.} \\ &
     \end{tabular}\\    
 %% which_ho_babc
     \texttt{which\_ho\_babc} & 
-        Implementation of basal boundary condition in higher-order dycore (Calculation of `beta' field.) \\ &
+        Implementation of basal boundary condition in higher-order dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      0 & constant value \\
-      1 & specify some simple pattern (hardcoded). Useful for debugging\\
+      0 & constant value of ``beta" \\
+      1 & specify a simple pattern for ``beta" (hardcoded, mainly useful for debugging)\\
       2 & read map of yield stress (in Pa) from input field ``mintauf" to simulate sliding 
           over a plastic subglacial till (Picard-based solution) \\
       3 & calculate ``beta" as linear (inverse) function of basal water thickness\\
-      {\bf 4} & no slip everywhere in domain (`beta' set to very
-          large value)\\
-      5 & read map of `beta' in from .nc input file using standard i/o \\
+      {\bf 4} & no slip everywhere in domain (``beta" set to very large value)\\
+      5 & read map of ``beta" from .nc input file using standard i/o \\
       6 & no slip everywhere in domain (using Dirichlet basal BC)\\
-      7! & read map of yield stress (in Pa) from input field `mintauf' to simulate sliding 
+      7! & read map of yield stress (in Pa) from input field ``mintauf" to simulate sliding 
           over a plastic subglacial till (Newton-based solution)\\
-      8 & Spatial field of `beta' required for ISMIP-HOM Test C \\
+      8* & Spatial field of ``beta" required for ISMIP-HOM Test C \textbf{Steve: did we decide to remove this option?} \\
     \end{tabular}\\  
 %% which_ho_resid
     \texttt{which\_ho\_resid} &
      Residual calculation method for higher-order velocity solvers (e.g., Glissade). 
-     Nonlinear iterations are halted once the residual falls below a specified value) \\ &
+     Nonlinear iterations are halted once the residual falls below a specified value) 
+     \textbf{Steve: Bill, I think that 0-2 only work w/ Glam, and thus I've marked them as working but unsupported (using ?).
+     Can you confirm that Glissade only supports option 3 right now?}\\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      0 & use the maximum value of the normalized velocity vector update, defined by 
+      0? & use the maximum value of the normalized velocity vector update, defined by 
       $r = \frac{|vel_{k-1} - vel_k|}{vel_k}$ \\
-      1 & as in option 0 but omitting the basal velocities from the comparison
+      1? & as in option 0 but omitting the basal velocities from the comparison
           (useful in cases where an approx. no slip basal BC is enforced) \\
-      2 & as in option 0 but using the mean rather than the max \\
+      2? & as in option 0 but using the mean rather than the max \\
       {\bf 3} & use the L2 norm of the system residual, defined by $r = Ax - b$ \\
     \end{tabular}\\  
 %% which_ho_approx
     \texttt{which\_ho\_approx} &
-     Which reduced-order, Stokes-flow approximation to use with Glissade dycore \\ &
+     Which Stokes-flow approximation to use with Glissade dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       -1 & Shallow-ice approximation, Glide-type calculation (uses glissade\_velo\_sia) \\
       0 & Shallow-ice approximation, vertical-shear stresses only (uses glissade\_velo\_higher) \\
-      1! & Shallow-shelf approximation, horizontal-plane stresses only (uses glissade\_velo\_higher) \\
-      {\bf 2} & Blatter-Pattyn with both vertical-shear and horizontal-plane stresses (uses glissade\_velo\_higher) \\
+      1 & Shallow-shelf approximation (SSA) with horizontal-plane stresses only (uses glissade\_velo\_higher; requires \texttt{which\_ho\_precond} $<=$1) \\
+      {\bf 2} & Blatter-Pattyn with both vertical-shear and horizontal-plane and shear stresses (uses glissade\_velo\_higher) \\
+       2 & Depth-integrated (L1L2) approximation, with both vertical shear and horizontal-plane stresses (uses glissade\_velo\_higher; requires \texttt{which\_ho\_precond} $<=$1) \\
     \end{tabular}\\  
 %% which_ho_precond
     \texttt{which\_ho\_precond} &
@@ -330,16 +332,37 @@ term that is included in the heat balance model.} \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & No preconditioner \\
       1 & Diagonal preconditioner \\
-      {\bf 2} & Physics-based shallow-ice preconditioner \\
+      {\bf 2} & Physics-based (shallow-ice) preconditioner \\
     \end{tabular}\\  
 %% which_ho_gradient
     \texttt{which\_ho\_gradient} &
      Which spatial gradient operator to use in the Glissade dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & Centered gradient \\
-      {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0). Steve: Can we clarify if / that this only
-      applies at margins? That is, in the ice sheet center, the scheme defaults to using of centered gradients?}\\
+      {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0). }\\
     \end{tabular}\\  
+%% which_ho_gradient_margin
+    \texttt{which\_ho\_gradient\_margin} &
+     Which spatial gradient operator to use in the Glissade dycore at ice sheet margins \\ &
+    \begin{tabular}[t]{lp{0.85\linewidth}}
+      0 & Use information from all neighboring cells, ice-covered or ice-free \\
+      1 & Use information from ice-covered and/or land cells, but not from ice-free ocean cells \\
+      {\bf 2} & Use information from ice-covered cells only \\
+    \end{tabular}\\  
+%% which_ho_assemble_beta
+    \texttt{which\_ho\_assemble\_beta} &
+     Which finite-elemant assembly to use for basal boundary conditions that use ``beta" field \\ &
+    \begin{tabular}[t]{lp{0.85\linewidth}}
+      0 & Standard finite-element calculation, which effectively applies a smoothing to ``beta" (and ``mintauf") \\
+      {\bf 1} &  Apply the local ``beta" (or ``mintauf") value at each vertex (no smoothing) \\ 
+    \end{tabular}\\  
+%% glissade_maxiter
+    \texttt{glissade\_maxiter} &
+    \begin{tabular}[t]{lp{0.85\linewidth}}
+	{\bf 100} & Maximum number of nonlinear (Picard) iterations in the Glissade dycore \\ 
+    \end{tabular}\\  
+
+
 
 % MJH: Commenting out external dycore options for 2.0 release.
 %% %%%% EXTERNAL DYCORE OPTIONS
