@@ -378,9 +378,9 @@ directions for obtaining and installing their distribution.
 To install version 2.7 using Macports, along with the necessary 
 additional modules, do the following 
 
-\texttt{
-sudo port install python27 py27-numpy py27-matplotlib py27-scientific py27-netcdf4
-}
+\texttt{sudo port install python27 py27-numpy py27-matplotlib py27-scientific}
+
+\texttt{          py27-netcdf4}
 
 Note that the existence of two versions of python on your system can lead to confusion.
 It is important that you leave the version of python that came supplied by Apple so that
@@ -412,7 +412,9 @@ when working with compiled code (tpyically called \texttt{python-dev} on Ubuntu)
 
 Install python modules with:
 
-\texttt{sudo apt-get install python-dev python-numpy python-matplotlib python-scientific}
+\texttt{sudo apt-get install python-dev python-numpy python-matplotlib} 
+
+\texttt{          python-scientific}
 
 \textbf{Optional:} Installing \texttt{netCDF4} python module.
 
@@ -803,18 +805,22 @@ From the appropriate directory, run:
 
 \texttt{ source mac-gnu-cmake} or \texttt{ source linux-gnu-cism-cmake}
 
-Once the configuration step completes successfully, you can compile the code as before with:
+\noindent{Once the configuration step completes successfully, you can compile the code as before with:}
 
 \texttt{make}
 
-or
+\noindent{or}
 
 \texttt{make -j 4}
 
-if you have 4 processors available (or as many processors as you would like to use).
-
+\noindent{if you have 4 processors available (or as many processors as you would like to use).
 See Section \ref{serial-build} for details about customizing the build process.
 
+Note that building a parallel version of CISM that includes Trilinos requires setting the  
+\begin{verbatim}
+-D CISM_USE_TRILINOS 
+\end{verbatim}
+\noindent{flag to \texttt{ON} in the \texttt{builds/mac-gnu/mac-gnu-cmake} script.}
 
 % =====================================
 % =====================================
