@@ -301,6 +301,8 @@ term that is included in the heat balance model.} \\ &
       7! & read map of yield stress (in Pa) from input field ``mintauf" to simulate sliding 
           over a plastic subglacial till (Newton-based solution)\\
       8* & Spatial field of ``beta" required for ISMIP-HOM Test C \textbf{Steve: did we decide to remove this option?} \\
+      9! & Weertman-style power-law accounting for effective pressure (Eq. \ref{weertmansliding2}) \\
+      10! & Coulomb friction law (Eq. \ref{CF-law}) \\
     \end{tabular}\\  
 %% which_ho_resid
     \texttt{which\_ho\_resid} &
@@ -424,6 +426,13 @@ term that is included in the heat balance model.} \\ &
        (5) & multiplier for marine sediments \\
      \end{tabular}\\
     \texttt{ho\_beta\_const} * & (real) spatially uniform beta used when \texttt{which\_ho\_babc} = 0. (default = 10.0 Pa yr m$^{-1}$) \\
+    \texttt{friction\_powerlaw\_roughness\_slope} * & (real) Friction coefficient $k$ used when \texttt{which\_ho\_babc} = 9 (Eq. \ref{weertmansliding2}) (default = 8.4e-9 m y$^{-1}$ Pa$^{-2}$, from \citet{Bindschadler1983} converted to CISM units) \\
+    \texttt{coulomb\_c} * & (real) Coulomb friction coefficient (unitless), $C$,
+used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.42, from \citet{Pimentel2010a}) \\
+    \texttt{coulomb\_bump\_wavelength} * & (real) Wavelength (m) of the dominant bedrock bumps, $\lambda_{max}$,
+used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 2.0 m, from \citet{Pimentel2010a}) \\
+    \texttt{coulomb\_bump\_slope} * & (real) Maximum slope (unitless) of the dominant bedrock bumps, $m_{max}$,
+used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.5 m, from \citet{Pimentel2010a}) \\
     \texttt{periodic\_offset\_ew} & (real) Vertical offset between east and west edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.) \\
     \texttt{periodic\_offset\_ns} & (real) Vertical offset between north and south edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.)\\
 
