@@ -21,7 +21,7 @@ These stresses, $\tau_{xz}$ and $\tau_{yz}$, are approximated by
     \tau_{yz}(z)&=-\rho g(s-z)\frac{\pd s}{\pd y},
   \end{split}
 \end{equation}
-where $\rho$ is the density of ice, $g$ the acceleration due to gravity and $s=H+h$ the ice surface. \textbf{Steve: I think the latter should be H + b? Unless they use h in this chapter to denote the bedrock elevation. If that is the case, we should probably update so that it is consistent w/ the rest of the documentation, which uses b for bedrock elev.}
+where $\rho$ is the density of ice, $g$ the acceleration due to gravity and $s=H+h$ the ice surface. \textbf{Steve: I think the latter should be H + b? Unless they use h in this chapter to denote the bedrock elevation. If that is the case, we should probably update so that it is consistent w/ the rest of the documentation, which uses b for bedrock elev.  Matt: I seem to remember that they do use h for the bedrock elevation in this chapter.  It looks like they use b for basal melt rate - see section on Vertical Velocity.}
 
 Strain rates $\dot{\epsilon}_{ij}$ of polycrystalline ice are related to the stress tensor by the non--linear flow law:
 \begin{equation}
@@ -121,7 +121,7 @@ Quantities $\vec u$ and $D$ are found on the velocity grid. Integrating from the
     \tilde{D}_{r,s}=H_{r,s}\sum_{k=0}^{N-1}\frac{\tilde{c}_{r,s,k}+\tilde{c}_{r,s,k+1}}2(\sigma_{k+1}-\sigma_k)
   \end{equation}
 \end{subequations}
-Expressions for $\vec{u}_{i,j,k}$ and $\vec{q}_{i,j}$ are straight forward.
+Expressions for $\vec{u}_{i,j,k}$ and $\vec{q}_{i,j}$ are straightforward.
 
 \subsection{Solving the Ice Thickness Evolution Equation}
 Equation \eqref{kin.eq.ice_thickness} can be rewritten as a diffusion equation, with non--linear diffusion coefficient $D$:

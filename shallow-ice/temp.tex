@@ -34,7 +34,7 @@ Discretisation of $\pd^2T/\pd\sigma^2$ is slightly complicated because the verti
     \intertext{and}
     \label{temp.eq.d2}
     \left.\frac{\pd T}{\pd\sigma}\right|_{\sigma_{k+1/2}}&=\frac{T_{k+1}-T_k}{\sigma_{k+1}-\sigma_k}\\
-    \intertext{The second partial derivative is then, also uning central differences:}
+    \intertext{The second partial derivative is then, also using central differences:}
     \label{temp.eq.d3}
     \left.\frac{\pd^2 T}{\pd\sigma^2}\right|_{\sigma_k} &= \frac{\left.{\pd T}/{\pd\sigma}\right|_{\sigma_{k+1/2}} - \left.{\pd T}/{\pd\sigma}\right|_{\sigma_{k-1/2}}}{1/2\left(\sigma_{k+1}-\sigma_{k-1}\right)}\\
     \intertext{Inserting \eqref{temp.eq.d1} and \eqref{temp.eq.d2} into \eqref{temp.eq.d3}, we get:}
@@ -180,7 +180,7 @@ Assuming that $\sigma_k-\sigma_{k-1}=\sigma_{k+1}-\sigma_k=\Delta\sigma$ and ins
 \begin{equation}
   \left.\frac{\pd^2 T}{\pd\sigma^2}\right|_{\sigma_N} = \left(-\frac{GH}k-\frac{T_N-T_{N-1}}{\Delta\sigma}\right)/\Delta\sigma=-\frac{GH}{k\Delta\sigma}-\frac{T_N-T_{N-1}}{\Delta\sigma^2}
 \end{equation}
-Inserting the new conduction term and replacing the derivative of the vertical advection term with the Neuman boundary condition, Equation \eqref{temp.eq.temp3a} becomes
+Inserting the new conduction term and replacing the derivative of the vertical advection term with the Neumann boundary condition, Equation \eqref{temp.eq.temp3a} becomes
 \begin{subequations}
   \begin{equation}
     \frac{T_{N,t+1}-T_{N,t}}{\Delta t} = -a\left(\frac{GH}{k\Delta\sigma}+\frac{T_{N,t}-T_{N-1,t}}{\Delta\sigma^2}\right)+{b_1}_{N,t}+{b_2}_NT_{N,t}+\Phi_N-c_N\frac{GH}k
