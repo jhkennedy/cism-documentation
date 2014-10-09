@@ -72,6 +72,7 @@ remapping as opposed to general remapping. This requirement leads to a
 CFL-like condition, 
 
 \begin{equation}
+\label{eq:CFL}
   \frac{\max|{\bf u}|\Delta t} {\Delta x} \leq 1 
 \end{equation}
 
@@ -440,6 +441,52 @@ the new-time temperature is a weighted averages over
 old-time values, with non-negative weight $H$. Thus the
 new-time values must lie between the maximum and minimum of the
 old-time values.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{CFL checks}
+\label{sc:glissade-IR-CFL}
+
+As mentioned above, the time step used for explicit advection is limited by an
+advective CFL (Courant--Friedrichs--Lewy) condition (Eq. \ref{eq:CFL}).  
+Furthermore, for ice flux parallel to $\nabla s$, ice thickness evolution is diffusive,
+rising to an additional diffusive CFL condition \citep{Bueler:2009ee}:
+\begin{equation}
+    \frac{\max D \Delta t} { {\Delta x}^\frac{1}{2}} \leq 2 
+\end{equation}
+Flow governed by the Shallow Ice Approximation is always subject to this diffusive CFL,
+but some component of higher-order flow may not be because some component of the ice
+velocity may not be parallel to $\nabla s$ \citep{Bueler:2009ee}.
+
+For these reasons, Glissade's transport scheme performs a check of both the
+advective and diffusive CFL conditions and writes a warning to the log file if
+either of them is violated.  These warnings indicate the $i,j$ indices (on the global domain)
+of where the worst violation occurred, as well as the maximum allowable time step
+given the CFL condition(s).
+
+The diffusivity is approximated using the component of velocity in the downslope
+direction:
+\begin{equation}
+  D = \frac{(\vec{u} \cdot \nabla h) H}{|\nabla h|}
+\end{equation}
+Future work may identify a less restrictive diffusivity, so the diffusive CFL 
+warnings currently written may be overly restrictive.  In other words, you may see
+stable model results that generate a diffusive CFL warning.  
+
+Advective CFL violations generally lead to stability problems with 
+thickness evolution.  However, since CFL violations may occur in portions of the
+domain that are not of interest to the user, these situations are not set to be
+a fatal error.  Note, however, that the Incremental Remapping scheme may encounter
+a `departure points out of bounds' error when advective CFL violations occur, and this is a
+failure in the method that does result in a fatal error.
+
+Eventually, CISM may include an adaptive time stepping scheme that adjusts the 
+model time step based on the advective and diffusive CFL conditions.  However, 
+at present, the time step must be set manually and remain constant over a simulation.
+To aid in determining an appropriate time step for a simulation, the \texttt{adv\_cfl\_dt}
+and \texttt{diff\_cfl\_dt} variables can be added to an output file.  These variables
+write the maximum allowable time step at each time in the model based on the 
+advective and diffusive CFL conditions, respectively.  Note that in some cases 
+stability may only be achieved by taking half of the reported values.
 
 
 
