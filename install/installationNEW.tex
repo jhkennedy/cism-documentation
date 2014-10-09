@@ -92,7 +92,16 @@ Go to \href{http://www.macports.org/install.php}{http://www.macports.org/install
 
 Note that installing MacPorts requires installing the Xcode developer toolset provided by Apple. Details of how to obtain Xcode vary by version of OS X. See MacPorts installation instructions and this \href{https://developer.apple.com/xcode/downloads/}{link} for details. Once Xcode is installed, you may need to additionally download the ``command line tool'' from the Preferences / Downloads menu of Xcode. 
 
-Depending on computer security settings at your institution (firewalls, etc.), you may need to add proxy information so that Macports can communicate and download software from the outside world. All Macports software will be installed under \texttt{/opt/local/} by default. To add proxy information, after installing Macports, edit the configuration file at \texttt{/opt/local/etc/macports/macports.conf}. By searching for the text string "proxy", you will find the lines like \texttt{proxy\_http hostname:12345} near the bottom of the file. Enter your proxy information here as appropriate (e.g., \texttt{hostname:your\_host\_info\_here}).
+Depending on computer security settings at your institution (firewalls, etc.), 
+you may need to add proxy information so that Macports can communicate and 
+download software from the outside world. All Macports software will be installed 
+under \texttt{/opt/local/} by default. To add proxy information, after installing 
+Macports, edit the configuration file at \texttt{/opt/local/etc/macports/macports.conf}.
+(Note this is probably a read-only file that requires superuser permission to edit,
+so you will need to edit the file with something like: \texttt{sudo vim /opt/local/etc/macports/macports.conf}) 
+By searching for the text string "proxy", you will find the lines like 
+\texttt{proxy\_http hostname:12345} near the bottom of the file. Enter your proxy 
+information here as appropriate (e.g., \texttt{hostname:your\_host\_info\_here}).
 
 If you have previously installed Macports but not updated it recently, it's generally a good idea to do so. Ideally, this should be done with admin or root privileges (you will be prompted to enter your password) using:
 
@@ -206,9 +215,11 @@ expanding them, building, installing, checking, etc.). When the install is compl
 
 \texttt{port installed} 
 
-to see what packages you currently have installed. You should see \texttt{gcc46 \@4.6.3\_3 (active)}, 
-in addition to any other packages you have installed (you may see software in addition to GCC 
-that was installed because Macports takes into account any software dependencies for GCC as well). 
+to see what packages you currently have installed. You should see 
+something like \texttt{gcc46 \@4.6.3\_3 (active)} 
+(the minor version numbers after the ``4.6'' may differ as MacPorts makes updates to the port). 
+You will likely also see other packages that have been installed (software dependencies for GCC 
+that were automatically installed by MacPorts and/or other ports you have manually installed). 
 
 The ``(active)" description identifies which version of a particular package Macports 
 currently thinks you want to use (e.g., you could also have another older GCC suite installed). 
