@@ -471,7 +471,7 @@ encounter may indicate that some of the supporting software (above) is missing.
 %\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to instead do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command. I've already changed the gcc documentation above to reflect this. It would be good for someone else to confirm this if / when they do a clean install on a new machine.} 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
-For building on a Mac, you should be able to build the by doing the following:
+For building on a Mac, you should be able to build the code by doing the following:
 
 \begin{enumerate}
 \item{change to the \texttt{./builds/mac-gnu-serial} directory from the root level of the code}
@@ -491,13 +491,13 @@ For building on a Linux platform, you should be able to build the by doing the f
 \end{enumerate}
 \end{mdframed}                 % ^==============UBUNTU==========^
 
-When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the build directory. The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
+When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the current build directory (here, from within the \texttt{./builds/*-gnu-cism/} directory). The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
 
 \begin{verbatim}
 ln -s ../../../builds/mac-gnu/cism_driver/cism_driver ./
 \end{verbatim}
 
-Discussion of running the executable for standard test cases is continued in section \ref{sec:testcases}). 
+Discussion of running the executable for standard test cases is continued in Chapter \ref{ch:tests}). 
 
 
 Advanced users may want more control over the build scripts.  There are a number of
@@ -592,7 +592,7 @@ used with a serial build, but this configuration is not supported or recommended
 MPI (Message Passing Interface) libraries and compilers are necessary for compiling parallel CISM.  
 These libraries are used for handling parallel communications when running the 
 code on multiple processors. A more complete description of possible parallel 
-model configurations is give in Chapter \ref{ch:runcism}. 
+model configurations is given in Chapter \ref{ch:runcism}. 
 (for example, some test cases and configurations when running the shallow-ice 
 momentum balance model are not fully supported in parallel). 
 
