@@ -6,3 +6,86 @@ In this chapter the numerical implementation of mass, momentum, and energy conse
 \input{\dir/temp.tex}
 \input{\dir/basal_bc.tex}
 \input{\dir/isos.tex}
+
+
+% ==========================
+% MJH: An additional section not worth adding a new file for
+
+\section{Time Step Ordering}
+
+Relative to Glimmer-CISM 1.x, the order of operations on each time step have been
+reorganized somewhat in CISM2.0.  This was done for consistency with the ordering
+of operations used in Glissade and to eliminate discrepancies between time levels
+applied in the model and the time levels written in output files.  
+
+\textbf{These changes have only a minor impact on model results, but do result 
+in output that will not be an exact match between the two model versions for the
+same configuration and initial conditions.}
+
+While unlikely to be of much interest to the average user, particularly if you are not
+migrating from Glimmer-CISM 1.x, the details of these changes follow.
+Specifically, in Glimmer-CISM 1.x, for a given time step, $H$ is advanced in time
+relative to $T$ and $\vec{v}$, and, because a complete solve occurs even at the 
+initial time, the output for the initial time is different than the input for 
+the prognostic variabels $H$ and $T$, even though no time step has occurred at 
+that point.
+
+In Glimmer-CISM 1.x, the time-stepping loop is organized as follows:
+\begin{verbatim}
+glide_initialise(): init T, H, v
+do while (t < tend)
+   glide_tstep_p1(): solve T
+   glide_tstep_p2(): solve v, H
+   glide_tstep_p3(): calculate some diagnostic variables, write output for time t
+   advance time
+end do
+\end{verbatim}
+
+\noindent This results in the following relation between the state of model variables and
+the time level at which they are output:
+
+%\begin{table}[h]
+%\caption{Relation between state of model variables and output time level in Glimmer-CISM 1.x}
+\begin{tabular}{lccc}
+\hline
+Output time:  & 0    & 1   & 2  \\
+\hline
+$T$  &  1                    &  2                    &  3  \\
+$H$  &  1                    &  2                    &  3  \\
+$v$  &  0                    &  1                    &  2  \\
+\hline
+\end{tabular}
+%\end{table}
+\\~\\  % hack to get a little more vertical separation here
+
+In CISM 2.0, the time-stepping loop is now organized as follows:
+\begin{verbatim}
+initialize modules
+initial diagnostic solve of v (and any other diagnostic variables like upper surface).
+write output for time 0
+do while (t <= tend)
+   advance time
+   solve column physics: T = f(H,T) 
+   solve prognostic variables: advection of H=f(H,v), T=f(H,v)
+   solve diagnostic variables: v=f(H,T)
+   write output for time t
+end do
+\end{verbatim}
+
+\noindent and this results in the following relation between the state of model variables and
+the time level at which they are output:
+
+%\begin{table}[h]
+%\caption{Relation between state of model variables and output time level in CISM 2.0}
+\begin{tabular}{lccc}
+\hline
+Output time:  & 0    & 1   & 2  \\
+\hline
+$T$  &  0                    &  1                    &  2  \\
+$H$  &  0                    &  1                    &  2  \\
+$v$  &  0                    &  1                    &  2  \\
+\hline
+\end{tabular}
+%\end{table}
+
+
