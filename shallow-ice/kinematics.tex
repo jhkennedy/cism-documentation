@@ -21,7 +21,7 @@ These stresses, $\tau_{xz}$ and $\tau_{yz}$, are approximated by
     \tau_{yz}(z)&=-\rho g(s-z)\frac{\pd s}{\pd y},
   \end{split}
 \end{equation}
-where $\rho$ is the density of ice, $g$ the acceleration due to gravity and $s=H+h$ the ice surface. \textbf{Steve: I think the latter should be H + b? Unless they use h in this chapter to denote the bedrock elevation. If that is the case, we should probably update so that it is consistent w/ the rest of the documentation, which uses b for bedrock elev.  Matt: I seem to remember that they do use h for the bedrock elevation in this chapter.  It looks like they use b for basal melt rate - see section on Vertical Velocity.}
+where $\rho$ is the density of ice, $g$ the acceleration due to gravity and $s=H+b$ the ice surface. 
 
 Strain rates $\dot{\epsilon}_{ij}$ of polycrystalline ice are related to the stress tensor by the non--linear flow law:
 \begin{equation}
@@ -43,12 +43,12 @@ $f$ is a tuning parameter that may be used to ``speed--up" ice flow, accounting 
 Integrating \eqref{kin.eq.arrhenius} with respect to $z$ gives the vertical profile of the horizontal velocity in each column:
 \begin{equation}
   \label{kin.eq.horiz_velo}
-  \vec u(z)-\vec u(h) = -2(\rho g)^n|\vec\nabla s|^{n-1}\vec\nabla s\int_h^zA(s-z)^ndz,
+  \vec u(z)-\vec u(b) = -2(\rho g)^n|\vec\nabla s|^{n-1}\vec\nabla s\int_b^zA(s-z)^ndz,
 \end{equation}
-where $\vec u(h)$ is the basal velocity (sliding velocity). Integrating \eqref{kin.eq.horiz_velo} again with respect to $z$ gives an expression for the vertically averaged ice velocity:
+where $\vec u(b)$ is the basal velocity (sliding velocity). Integrating \eqref{kin.eq.horiz_velo} again with respect to $z$ gives an expression for the vertically averaged ice velocity:
 \begin{equation}
   \label{kin.eq.avg_velo}
-  \overline{\vec u}H=-2(\rho g)^n|\vec\nabla s|^{n-1}\vec\nabla s\int_h^s\int_h^zA(s-z)^ndzdz'.
+  \overline{\vec u}H=-2(\rho g)^n|\vec\nabla s|^{n-1}\vec\nabla s\int_b^s\int_b^zA(s-z)^ndzdz'.
 \end{equation}
 
 The vertical ice velocity can be derived from the conservation of mass for an incompressible material:
@@ -59,20 +59,21 @@ The vertical ice velocity can be derived from the conservation of mass for an in
 Integrating \eqref{kin.eq.incompress} with respect to $z$ gives the vertical profile of the vertical velocity in each column:
 \begin{equation}
   \label{kin.eq.vert_velo}
-  w(z)=-\int_h^z\vec\nabla\cdot\vec u(z)dz+w(h),
+  w(z)=-\int_h^z\vec\nabla\cdot\vec u(z)dz+w(b),
 \end{equation}
 with lower, kinematic boundary condition
 \begin{equation}
-  w(h)=\frac{\pd h}{\pd t}+\vec u(h)\cdot\vec\nabla h+S,
+  w(b)=\frac{\pd b}{\pd t}+\vec u(b)\cdot\vec\nabla b+B_b,
 \end{equation}
-where $S$ is the melt rate at the ice base given by Equation \eqref{temp.eq.meltrate}. The upper kinematic boundary is given by the surface mass balance and must satisfy:
+where $B_b$ is the melt rate at the ice base given by Equation \eqref{temp.eq.meltrate}. The upper kinematic boundary is given by the surface mass balance and must satisfy:
 \begin{equation}
   \label{kin.eq.upper_bc}
-  w(s)=\frac{\pd s}{\pd t}+\vec u(s)\cdot\vec\nabla s+B.
+  w(s)=\frac{\pd s}{\pd t}+\vec u(s)\cdot\vec\nabla s+B_s.
 \end{equation}
-\textbf{Steve: need to replace the h with b in the above expressions and also make sure other notation is consistent w/ the rest of the documentation.}
 
+%===================
 \input{\dir/grid.tex}
+%===================
 
 \subsection{Ice Sheet Equations in $\sigma$--Coordinates}
 The horizontal velocity, Equation \eqref{kin.eq.horiz_velo}, becomes in the $\sigma$--coordinate system
@@ -92,7 +93,7 @@ The vertical velocity, Equation \eqref{kin.eq.vert_velo}, becomes
 \end{equation}
 and lower boundary condition
 \begin{equation}
-  w(1)=\frac{\pd h}{\pd t}+\vec u(1)\cdot\vec\nabla h+S.
+  w(1)=\frac{\pd b}{\pd t}+\vec u(1)\cdot\vec\nabla b+B_b.
 \end{equation}
 
 \subsection{Calculating the Horizontal Velocity and the Diffusivity}

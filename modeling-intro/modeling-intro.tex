@@ -67,13 +67,13 @@ Formally, the time rate of change in $\phi$ within $V$ is written:
 \begin{equation}
 {\frac{ \partial }{ \partial t}} { \int }_{ V} \phi dV~ = ~ -{ \int }_{ S} {\mathbf F}
     {\cdot} \hat n~ dS~ - ~{ \int }_{ S} \phi {\mathbf u} {\cdot} \hat n ~ dS~
-    + ~{ \int }_{ V} HdV
+    + ~{ \int }_{ V} R dV
     \label{eq:intcons}
 \end{equation}
 
 where ${\mathbf F}$ represents the flux due to diffusion
 ($\mathbf{F} \propto \nabla \phi$), $\phi {\mathbf u}$ represents a velocity field 
-\emph{advecting} $\phi$, and $H$ represents a source (or sink) of $\phi$. Vector quantities are
+\emph{advecting} $\phi$, and $R$ represents a source (or sink) of $\phi$. Vector quantities are
 represented in \textbf{boldface}. The negative signs in front of the first two terms on the right-hand 
 side indicate that an outward flux results in a decrease in $\phi$ within the volume enclosed by $S$.
 
@@ -129,7 +129,7 @@ The end result is that the integral form of the conservation equation can now be
 \begin{equation}
 { \int }_{ V} \left\{ {{\frac{ \partial \phi }{ \partial t}}
     ~ + ~ \nabla {\cdot} \left ( { {\mathbf F}~ + ~ \phi {\mathbf u}} \right ) ~
-    - ~ H} \right\} dV~ = ~ 0
+    - ~ R} \right\} dV~ = ~ 0
 \end{equation}
 
 Because $V$ is an arbitrary volume, this equation can only be true if the term in brackets is zero 
@@ -137,7 +137,7 @@ for the volume. Hence, for any volume having continuously differentiable $\phi$,
 
 \begin{equation}
 {\frac{ \partial \phi }{ \partial t}} ~ + ~ \nabla {\cdot} 
-    \left ( { {\mathbf F}~ + ~ \phi {\mathbf u}} \right ) ~ - ~H~ = ~ 0.
+    \left ( { {\mathbf F}~ + ~ \phi {\mathbf u}} \right ) ~ - ~R~ = ~ 0.
     \label{eq:derivcons}
 \end{equation}
 

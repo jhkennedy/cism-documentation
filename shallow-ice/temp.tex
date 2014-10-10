@@ -24,6 +24,7 @@ where
     c(\sigma)&=\frac1H\left(w-w_{\text{grid}}\right)
   \end{align}
 \end{subequations}
+(Note the different meaning for $b$ and $c$ used here relative to usage elsewhere in this document.)
 
 \subsection{Vertical Diffusion}
 Discretisation of $\pd^2T/\pd\sigma^2$ is slightly complicated because the vertical grid is irregular. Using Taylor series the central difference formulas are
@@ -124,10 +125,10 @@ where $\vec{\tau}_b=-\rho gH\vec\nabla s$ is the basal shear stress and $\vec{u}
 \begin{equation}
   T^\ast=T_{\text{pmp}} \quad\text{if $T\ge T_{\text{pmp}}$}.
 \end{equation}
-Excess heat is then used to formulate a melt rate, $S$:
+Excess heat is then used to formulate a melt rate, $B_b$:
 \begin{equation}
   \label{temp.eq.meltrate}
-  S=\frac{k}{\rho L}\left(\frac{\pd T^\ast}{\pd z}-\frac{\pd T}{\pd z}\right),
+  B_b=\frac{k}{\rho L}\left(\frac{\pd T^\ast}{\pd z}-\frac{\pd T}{\pd z}\right),
 \end{equation}
 where $L$ is the specific latent heat of fusion. Finally, basal temperatures are held constant, if the ice is floating:
 \begin{equation}

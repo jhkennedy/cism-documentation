@@ -2,7 +2,7 @@
 
 In this case, $\phi$ from our general conservation equation represents the mass $M$, or more conveniently
 $M = \int_V \rho dV$, the integral of the density over the volume. Assuming that there are no sources or 
-sinks of mass in the volume ($H$=0), the mass conservation equation is written
+sinks of mass in the volume ($R$=0), the mass conservation equation is written
 
 \begin{equation}
 \int_{V}\frac{\partial \rho} {\partial t} ~dV ~+~ \int_{V} \nabla \cdot \rho \mathbf{u} dV~=~0
@@ -51,42 +51,42 @@ u_{z} \left(s\right)-u_{z} \left(b\right) & = & -~\frac{\partial}{\partial x} \i
 \end{equation}
 
 The vertical velocity at the upper surface $u_{z}(s)$ is the result of motion parallel to the surface slope, 
-the rate of new ice accumulation $\dot{a}$, and any time-change in the surface height,
+the rate of new ice accumulation $B_s$, and any time-change in the surface height,
 
 \begin{equation}
-u_{z} \left(s\right)~=~\frac{\partial s}{\partial t}~+~u_{x}(s)\frac{\partial s}{\partial x}~+~u_{y}(s)\frac{\partial s}{\partial y}~-~\dot{a}, 
+u_{z} \left(s\right)~=~\frac{\partial s}{\partial t}~+~u_{x}(s)\frac{\partial s}{\partial x}~+~u_{y}(s)\frac{\partial s}{\partial y}~-~B_s, 
 \label{eq:mascon7}
 \end{equation}
 
 recognizing that a negative accumulation rate indicates ablation. Similarly, the vertical velocity at the lower surface is
 
 \begin{equation}
-u_{z} \left(b\right)~=~\frac{\partial b}{\partial t}~+~u_{x}(b)\frac{\partial b}{\partial x}~+~u_{y}(b)\frac{\partial b}{\partial y}~-~\dot{b} 
+u_{z} \left(b\right)~=~\frac{\partial b}{\partial t}~+~u_{x}(b)\frac{\partial b}{\partial x}~+~u_{y}(b)\frac{\partial b}{\partial y}~-~B_b
 \label{eq:mascon8}
 \end{equation}
 
-in which $\dot{b}$ represents the basal accumulation rate.
+in which $B_b$ represents the basal accumulation rate.
 
 Substituting equations \eqref{eq:mascon7} and \eqref{eq:mascon8} into \eqref{eq:mascon6} we find that many terms cancel,
 
 \begin{equation}
-\frac{\partial s}{\partial t}~-~\dot{a}~-~\frac{\partial b}{\partial t}~+~\dot{b}~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz.
+\frac{\partial s}{\partial t}~-~B_s~-~\frac{\partial b}{\partial t}~+~B_b~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz.
 \label{eq:mascon9}
 \end{equation}
 
-Finally, making the substitution that the ice thickness $h=s-b$ we obtain
+Finally, making the substitution that the ice thickness $H=s-b$ we obtain
 
 \begin{equation}
-\frac{\partial h}{\partial t}~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz ~+~\dot{a}~-~\dot{b}.
+\frac{\partial H}{\partial t}~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz ~+~B_s~-~B_b.
 \label{eq:mascon10}
 \end{equation}
 
 If we integrate in the vertical, we get 
 
 \begin{equation}
-\frac{\partial h}{\partial t}~=~-~\nabla \cdot \left( U_{i} h \right) +~\dot{a}~-~\dot{b}
+\frac{\partial H}{\partial t}~=~-~\nabla \cdot \left( U_{i} H \right) +~B_s~-~B_b
 \label{eq:mascon11}
 \end{equation}
 
-in which $U_{i}$ represents the vertically averaged velocity, i.e. $U_i = \frac{1}{h}\int_{b}^{s}u_{i}dz$ . Note that this equation is 
+in which $U_{i}$ represents the vertically averaged velocity, i.e. $U_i = \frac{1}{H}\int_{b}^{s}u_{i}dz$ . Note that this equation is 
 prognostic; we can use the current velocity and geometry of the ice to compute a rate of change in the geometry.

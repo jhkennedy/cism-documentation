@@ -5,11 +5,11 @@
 \subsection{Conservation of mass}
 As mentioned previously, conservation of mass for an ice sheet can be expressed by
 
-\begin{align*}
-\frac{\partial H}{\partial t}=-\nabla \cdot \left( \vec{U}H \right)+\dot{b},
-\end{align*}
+\begin{equation}
+\frac{\partial H}{\partial t}=-\nabla \cdot \left( \vec{U}H \right)+B,
+\end{equation}
 
-where $\vec{U}=(U,V)$ is the 2-dimensional, depth-integrated velocity vector, $H$ is the ice thickness, $\vec{U}H$ is the 2-dimensional ice flux vector, and $\dot{b}$ represents the sum of surface and basal mass balance terms. The change in thickness per unit time is given by the negative of the flux divergence plus a source term. 
+where $\vec{U}=(U,V)$ is the 2-dimensional, depth-integrated velocity vector, $H$ is the ice thickness, $\vec{U}H$ is the 2-dimensional ice flux vector, and $B$ represents the sum of surface and basal mass balance terms. The change in thickness per unit time is given by the negative of the flux divergence plus a source term. 
 %We can expand this a bit as,
 %
 %\begin{align*}\frac{\partial H}{\partial t}=-\left( \frac{\partial \left( UH \right)}{\partial x}+\frac{\partial \left( VH \right)}{\partial y} \right)+\dot{b}, \\ 
@@ -21,21 +21,21 @@ Note that the negative sign in front of the divergence (terms in parentheses on 
 \subsection{A diffusive approach}
 For the case of a shallow-ice model, the values of $U$ and $V$ are recast in terms of ice thickness and elevation gradients, in which case the whole problem can be recast as a diffusion equation in ice thickness. In 1-dimension, the equation becomes
 
-\begin{align*}
-\frac{\partial H}{\partial t}=\frac{\partial }{\partial x}\left( D\frac{\partial h}{\partial x} \right)+\dot{b},\quad D=\frac{2A}{n+2}\left( \rho g \right)^{n}H^{n+2}\left| \frac{\partial h}{\partial x} \right|^{n-1},
-\end{align*}
+\begin{equation}
+\frac{\partial H}{\partial t}=\frac{\partial }{\partial x}\left( D\frac{\partial s}{\partial x} \right)+B,\quad D=\frac{2A}{n+2}\left( \rho g \right)^{n}H^{n+2}\left| \frac{\partial s}{\partial x} \right|^{n-1},
+\end{equation}
 
-where $D$ is the non-linear diffusivity (because it depends on the solution to the equation, $H$), $A$ is the rate factor in Glen's flow law, $n$ is the power-law exponent, $h$ is the ice surface elevation, and $\rho$ and $g$ are the ice density and the acceleration due to gravity. Importantly, we need only local information in order to solve the above equation. If our velocity solution can not be solved locally, as in the case of higher-order models, we cannot easily use the above formulation to solve ice sheet evolution. In an attempt to use this form and retain a diffusion-solution approach to the problem (diffusion problems generally have nice numerical properties), we could try the following approach (again, in 1-dimensions only),
+where $D$ is the non-linear diffusivity (because it depends on the solution to the equation, $H$), $A$ is the rate factor in Glen's flow law, $n$ is the power-law exponent, $s$ is the ice surface elevation, and $\rho$ and $g$ are the ice density and the acceleration due to gravity. Importantly, we need only local information in order to solve the above equation. If our velocity solution can not be solved locally, as in the case of higher-order models, we cannot easily use the above formulation to solve ice sheet evolution. In an attempt to use this form and retain a diffusion-solution approach to the problem (diffusion problems generally have nice numerical properties), we could try the following approach (again, in 1-dimensions only),
 
-\begin{align*}
-\frac{\partial H}{\partial t}=\frac{\partial }{\partial x}\left( D\frac{\partial h}{\partial x} \right)+\dot{b},\quad D=UH\left( \frac{\partial h}{\partial x} \right)^{-1},
-\end{align*}
+\begin{equation}
+\frac{\partial H}{\partial t}=\frac{\partial }{\partial x}\left( D\frac{\partial s}{\partial x} \right)+B,\quad D=UH\left( \frac{\partial s}{\partial x} \right)^{-1},
+\end{equation}
 
 where the $U$ in the expression for $D$ is the depth-integrated velocity field from the higher-order model. This is the approach initially taken by \citet{Pattyn:2003tj} in one of the first higher-order modeling studies to deal with this particular problem. Notice that ice sheet surface slope is in the denominator of the diffusivity here and, as slopes get smaller and smaller (as they tend to do in regions of fast flow like ice streams and ice shelves) the diffusivity will get larger and larger (approaching infinity as the slope goes to zero). The faster velocities in these regions appear in the numerator of the diffusivity, also making it larger. This is a severe restriction on this approach because, for explicit schemes, the diffusive CFL condition requires that
 
-\begin{align*}
+\begin{equation}
 \Delta t<\frac{\left( \Delta x \right)^{2}}{2D},
-\end{align*}
+\end{equation}
 
 where $\Delta t$ is the time step required for numerical stability and $\Delta x$ is the grid spacing. As the diffusivity goes to infinity (i.e., for faster flows and shallower slopes), the stable time step goes to zero. Thus in practice, this approach has proven very difficult to use for calculating ice sheet evolution in most of the dynamically interesting areas of ice sheets that we are interested in. An alternate approach is needed.
 
@@ -54,15 +54,15 @@ Most ice sheet models (and fluid dynamics models in general) perform calculation
 
 A control volume (or finite volume) approach to solving the equation 
 
-\begin{align*}
-\frac{\partial H}{\partial t}=-\left( \frac{\partial \left( UH \right)}{\partial x}+\frac{\partial \left( VH \right)}{\partial y} \right)+\dot{b} \\ 
-\end{align*}
+\begin{equation}
+\frac{\partial H}{\partial t}=-\left( \frac{\partial \left( UH \right)}{\partial x}+\frac{\partial \left( VH \right)}{\partial y} \right)+B \\ 
+\end{equation}
 
-would be to integrate our equation over a control volume centered on the scalar values (Figures \ref{fig:stag_c_grid} and \ref{fig:stag_c_grid2}). Ignoring source terms for now (assume $\dot{b}=0$), and assuming flow along the \textit{x} direction only (assume $V=0$) we have
+would be to integrate our equation over a control volume centered on the scalar values (Figures \ref{fig:stag_c_grid} and \ref{fig:stag_c_grid2}). Ignoring source terms for now (assume $B=0$), and assuming flow along the \textit{x} direction only (assume $V=0$) we have
 
-\begin{align*}
+\begin{equation}
 \frac{\partial H}{\partial t}=-\frac{1}{\Delta y\Delta x}\int_{s}^{n}{\int_{w}^{e}{\frac{\partial \left( UH \right)}{\partial x}}}dxdy=-\frac{1}{\Delta y\Delta x}\left( HU_{e}-HU_{w} \right)\Delta y. \\
-\end{align*}
+\end{equation}
 
 The ``east" and ``west" (subscripts $e$ and $w$) faces of the control volume are shown in Figure \ref{fig:stag_c_grid2}.
 
@@ -82,22 +82,24 @@ The product of velocity, thickness, and the grid spacing at each interface gives
 
 Is this an explicit or implicit scheme? If we discretize the right-hand side of the primary equation in time we get
 
-\begin{align*}
-  & \frac{\partial H}{\partial t}=-\nabla \cdot \left( UH \right)+\dot{b}, \\
- & \frac{H_{t=1}-H_{t=0}}{\Delta t}\approx -\nabla \cdot \left( UH \right)+\dot{b}.\\
-\end{align*}
+\begin{equation}
+\begin{split}
+  & \frac{\partial H}{\partial t}=-\nabla \cdot \left( UH \right)+B, \\
+ & \frac{H_{t=1}-H_{t=0}}{\Delta t}\approx -\nabla \cdot \left( UH \right)+B\\
+\end{split}
+\end{equation}
 
 This can be rearranged to,
 
-\begin{align*}
-H_{t_{t=1}}\approx H_{t=0}+\left[ -\nabla \cdot \left( UH \right)+\dot{b} \right]_{t=0}\Delta t.
-\end{align*}
+\begin{equation}
+H_{t_{t=1}}\approx H_{t=0}+\left[ -\nabla \cdot \left( UH \right)+B \right]_{t=0}\Delta t.
+\end{equation}
 
 The thickness at the new time step $t=1$ is a function of \textit{only} variables evaluated at the previous time step $t=0$. Thus, the scheme is \textit{explicit} and, as such, is subject to the advective CFL condition for stability,
 
-\begin{align*}
+\begin{equation}
 \Delta t<\frac{\Delta x}{U}.\\
-\end{align*}
+\end{equation}
 
 Essentially, this means that we cannot take such a large time step that we advect mass through more than one volume (past more than one grid space) per time step.
 
