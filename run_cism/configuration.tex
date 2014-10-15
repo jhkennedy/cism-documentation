@@ -403,9 +403,7 @@ term that is included in the heat balance model.} \\ &
     \texttt{[options]} above). Note, water depth is negative.  (default = -200.0 m) \\
     \texttt{calving\_fraction} & (real) fraction of ice lost due to calving (applies to ``marine\_margin" option 2). (default = 0.8)\\
     \texttt{geothermal} & (real) constant geothermal heat flux. (default = -0.05 W m$^{-2}$)\\
-    \texttt{flow\_factor} & (real) the flow law is enhanced with this factor (default = 3.0) \textbf{Steve: Should this be 1? Is seems crazy to set the default for this to anything
-    other than unity. We currently specify flow\_factor = 1 in every standard higher-order test case. Is it 3 by default because the SIA code assumes that and setting it to 
-    something else will throw those results off? Looks like all of the EISMINT 1 and 2 tests are also explicitly setting this to 1 in the config files!} \\
+    \texttt{flow\_factor} & (real) the flow law rate factor is multiplied by this factor (default = 1.0; Note that in previous versions of Glimmer-CISM the default value was 3.0) \\
     \texttt{default\_flwa} & Flow law parameter A to use in isothermal experiments (flow\_law set to 0).  Default value is $10^{-16}$ Pa$^{-n}$ yr$^{-1}$. Note that this 
     over-rides any temperature dependence. \\
     \texttt{efvs\_constant} * & Constant value of effective viscosity when using \texttt{which\_ho\_efvs}=0. Default value is 2336041 Pa yr, as in ISMIP-HOM Test F. \\

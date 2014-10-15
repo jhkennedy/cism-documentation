@@ -9,7 +9,7 @@
 # ===================================
 
 # Location of source directory - needed for autogenerating variables only
-top_srcdir = /Users/mhoffman/documents/cism/trunk
+top_srcdir = /Users/sprice/work/modeling/cism/temp/
 
 # commands to make documentation
 LATEX = latex
