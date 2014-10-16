@@ -159,6 +159,7 @@ in the tables below.
       1 & local water balance\\
       2 & Compute the steady-state, routing-based, basal water flux and water layer thickness (NOTE: not currently supported for parallel builds) \\
       3 &  Use a constant basal water layer thickness everywhere, to enforce T=T${_{pmp}}$ everywhere \\
+      4 & Ocean penetration parameterization for effective pressure from \citet{Leguy2014} \\
     \end{tabular}\\
 %% basal mass balance
     \texttt{basal\_mass\_balance} & 
@@ -408,13 +409,14 @@ in the tables below.
        (5) & multiplier for marine sediments \\
      \end{tabular}\\
     \texttt{ho\_beta\_const} * & (real) spatially uniform beta used when \texttt{which\_ho\_babc} = 0. (default = 10.0 Pa yr m$^{-1}$) \\
-    \texttt{friction\_powerlaw\_roughness\_slope} * & (real) Friction coefficient $k$ used when \texttt{which\_ho\_babc} = 9 (Eq. \ref{weertmansliding2}) (default = 8.4e-9 m y$^{-1}$ Pa$^{-2}$, from \citet{Bindschadler1983} converted to CISM units) \\
+    \texttt{friction\_powerlaw\_k} * & (real) Friction coefficient $k$ used when \texttt{which\_ho\_babc} = 9 (Eq. \ref{weertmansliding2}) (default = 8.4e-9 m y$^{-1}$ Pa$^{-2}$, from \citet{Bindschadler1983} converted to CISM units) \\
     \texttt{coulomb\_c} * & (real) Coulomb friction coefficient (unitless), $C$,
 used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.42, from \citet{Pimentel2010a}) \\
     \texttt{coulomb\_bump\_wavelength} * & (real) Wavelength (m) of the dominant bedrock bumps, $\lambda_{max}$,
 used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 2.0 m, from \citet{Pimentel2010a}) \\
     \texttt{coulomb\_bump\_slope} * & (real) Maximum slope (unitless) of the dominant bedrock bumps, $m_{max}$,
 used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.5 m, from \citet{Pimentel2010a}) \\
+    \texttt{p\_ocean\_penetration} & (real) p-exponent parameter for ocean penetration parameterization (\texttt{basal\_water} = 4) \\
     \texttt{periodic\_offset\_ew} & (real) Vertical offset between east and west edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.) \\
     \texttt{periodic\_offset\_ns} & (real) Vertical offset between north and south edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.)\\
 
