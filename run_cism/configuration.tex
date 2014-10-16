@@ -13,12 +13,6 @@ are only needed if the associated features are desired.  Details of each of thes
 sections, what they control, and the available options for each section are described 
 in the tables below.
 
-TODO: DO WE STILL WANT THIS CAVEAT? (also stated below in ho-options section) Currently, only the shallow ice dycore is scientifically supported. 
-\textbf{Steve: I think we should remove this. With the current results we get from standard test cases, like ismip-hom, I think we can claim that Glissade 
-is as scientifically validation as any other FO approximation dycore out there. Not much point in releasing it if we can't say we stand behind it scientifically.}
-
-\textbf{TO DO: Make sure that defaults listed below are in agreement with current test case defaults! I (SP) checked some of them but could use a 2nd look.}
-
 \begin{center}
   \tablefirsthead{%
     \hline
@@ -90,23 +84,22 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \hline
     \multicolumn{2}{|l|}{\texttt{[time]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps, etc. {\bf TODO: address / remove this next note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps. \textbf{Steve: I don't actually know what the question is here or what this note is supposed to be about.}}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps diagnostic specifications} \\
+    %{\bf TODO: address / remove this next note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps. \textbf{Steve: I don't actually know what the question is here or what this note is supposed to be about.}}\\
     \hline
     \texttt{tstart} & (real) Start time of the model in years\\
     \texttt{tend} & (real) End time of the model in years\\
     \texttt{dt} & (real) size of time step in years\\
-    \texttt{subcyc} & (integer) number of time steps to subcycle within dt using a steady velocity field {\bf TODO: Support both subcyc and ntem/nvel?  Explain the difference?
-    Steve: I've never tried / tested ntem and nvel, so I don't know if/how they work. I have used subcyc though, and we did test that as part of this release.}\\
+    \texttt{subcyc} & (integer) number of time steps to subcycle within dt using a steady velocity field \\
     \texttt{ntem} & (real) time step multiplier setting the ice temperature update interval\\
-    \texttt{nvel} & (real) time step multiplier setting the velocity update interval\\
+%    \texttt{nvel} & (real) time step multiplier setting the velocity update interval\\
 %    \texttt{profile} & (integer) profile frequency (number of time steps) {\bf TODO: more useful description of what profiling is? Steve: I've never used this either.   
 %    Matt, my guess would be that Pat's profiling code is superior to this and, if we document that anywhere (do we?), we should support using that instead.}\\
 %   Matt: Disabling this for 2.0 release
     \texttt{dt\_diag} & (real) writing diagnostic variables to log file every dt\_diag yrs\\
     \texttt{idiag} & (int) x direction grid index for diagnostic variables to be written to log file\\
     \texttt{jdiag} & (int) y direction grid index for diagnostic variables to be written to log file\\
-    \texttt{ndiag} & (int) number of time steps between diagnostics. {\bf DEPRECATED}.  Use \texttt{dt\_diag}. \textbf{Steve: Should we then remove and replace this
-    with dt\_diag rather than using the old var name?}\\
+%    \texttt{ndiag} & (int) number of time steps between diagnostics. {\bf DEPRECATED}.  Use \texttt{dt\_diag}. \textbf{Steve: Should we then remove and replace this with dt\_diag rather than using the old var name?}\\
 
 
 
@@ -116,7 +109,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \hline
     \multicolumn{2}{|l|}{\texttt{[options]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.  Configuration number options with a * after them are specific to the higher-order dycores (e.g., Glissade). Options with a ? after them are working, but are currently not scientifically supported, and are therefore for use at your own risk. Options with a ! after them are in development and will be supported in future code releases. \textbf{Steve: At the moment, I don't think it is clear below which options work w/ the parallel code and which do not. We may need to introduce some clear way of denoting that.} }\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Parameters set in this section determine how various components of the ice sheet model are treated.  Configuration number options with a * after them are specific to the higher-order dycores (e.g., Glissade). Options with a ? after them are working, but are currently not scientifically supported, and are therefore for use at your own risk. Options with a ! after them are in development and will be supported in future code releases. }\\
     \hline
 %% dycore
     \texttt{dycore} & 
@@ -150,7 +143,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0 & initial temperatures isothermal at 0 deg. C\\
       {\bf 1} & initial column temperatures set to atmos. temperature \\
-      2 & initial column temperatures linearly interpolated from atmos. temperature \textbf{Steve: Bill, can you confirm if/that this is constrained to T\_pmp at bed?} \\
+      2 & initial column temperatures linearly interpolated from atmos. temperature \\
     \end{tabular}\\
 %% flow law
     \texttt{flow\_law} &  
@@ -162,9 +155,9 @@ is as scientifically validation as any other FO approximation dycore out there. 
 %% basal water
     \texttt{basal\_water} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0} & none \textbf{Steve: do we need to clarify here that these are NOT necessarily supported in parallel?}\\
+      {\bf 0} & none \\
       1 & local water balance\\
-      2 & Compute the steady-state, routing-based, basal water flux and water layer thickness \\
+      2 & Compute the steady-state, routing-based, basal water flux and water layer thickness (NOTE: not currently supported for parallel builds) \\
       3 &  Use a constant basal water layer thickness everywhere, to enforce T=T${_{pmp}}$ everywhere \\
     \end{tabular}\\
 %% basal mass balance
@@ -175,7 +168,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
     \end{tabular}\\
 %% slip coefficient
     \texttt{slip\_coeff} & 
-        slip coefficient (Glide \textit{only}) \\ &
+        slip coefficient (Glissade local SIA and Glide \textit{only}) \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & zero (no sliding) \\
       1 & set to a non--zero constant everywhere\\
@@ -192,8 +185,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
       2 & Lose fraction of ice when edge cell\\
       3 & Set thickness to zero if relaxed bedrock is below a given depth (variable ``mlimit" in glide\_types)\\
       4 & Set thickness to zero if present-day bedrock is below a given depth (variable ``mlimit" in glide\_types)\\
-      5 & Huybrechts grounding line scheme {\bf TODO: elaborate on this. Steve: I would argue that we remove it
-      if we don't know what it does or don't want to support it (or at least we mark it as unsupported using the ? symbol).} \\
+      5 & Huybrechts grounding line scheme ? \\
     \end{tabular}\\
 %% vertical integration
     \texttt{vertical\_integration} & 
@@ -218,7 +210,7 @@ is as scientifically validation as any other FO approximation dycore out there. 
 %% topography
     \texttt{topo\_is\_relaxed} &  
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      {\bf 0} & relaxed topography is read from a separate variable \textbf{Steve: should this be ``separate file"?} \\
+      {\bf 0} & relaxed topography is read from a separate input variable, \texttt{relx} \\
       1 & first time slice of input topography is assumed to be relaxed\\
       2 & first time slice of input topography is assumed to be in isostatic
       equilibrium with ice thickness. \\
@@ -276,13 +268,8 @@ is as scientifically validation as any other FO approximation dycore out there. 
       1 & set the effective viscosity to a value based on the flow rate factor: efvs $= 0.5 * A^{-1/n}$\\
       {\bf 2} & use the effective strain rate for the calc. of the effective viscosity (i.e., full nonlinear treatment) \\
     \end{tabular}\\  
-%% which_disp
-    \texttt{which\_disp} & 
-{\bf TODO: Should this be moved from ho\_options to options? Steve: I don't know ... what is written here is/was based on Glam.
-Bill, do you know if we are calculating the necessary info (strain-rates / stresses) from Glissade output for this option to be working 
-as advertised in glide\_temp.F90? Presumably, for SSA and L1L2 we'd need additional options here, unless that gets taken into account
-automatically somehow. The 0-order question here is whether or not Glissade dynamics are currently hooked up to the viscous dissipation
-term that is included in the heat balance model.} \\ &
+%% which_no_disp
+    \texttt{which\_ho\_disp} & 
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & calculate dissipation in temperature equation assuming SIA ice dynamics \\
       1 & calculate dissipation in temperature equation assuming 1st-order ice dynamics \\
@@ -301,16 +288,14 @@ term that is included in the heat balance model.} \\ &
       6 & no slip everywhere in domain (using Dirichlet basal BC)\\
       7! & read map of yield stress (in Pa) from input field ``mintauf" to simulate sliding 
           over a plastic subglacial till (Newton-based solution)\\
-      8* & Spatial field of ``beta" required for ISMIP-HOM Test C \textbf{Steve: did we decide to remove this option?} \\
+      8* & Spatial field of ``beta" required for ISMIP-HOM Test C (works for a single processor only) \\
       9! & Weertman-style power-law accounting for effective pressure (Eq. \ref{weertmansliding2}) \\
       10! & Coulomb friction law (Eq. \ref{CF-law}) \\
     \end{tabular}\\  
 %% which_ho_resid
     \texttt{which\_ho\_resid} &
      Residual calculation method for higher-order velocity solvers (e.g., Glissade). 
-     Nonlinear iterations are halted once the residual falls below a specified value) 
-     \textbf{Steve: Bill, I think that 0-2 only work w/ Glam, and thus I've marked them as working but unsupported (using ?).
-     Can you confirm that Glissade only supports option 3 right now?}\\ &
+     Nonlinear iterations are halted once the residual falls below a specified value) \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
       0? & use the maximum value of the normalized velocity vector update, defined by 
       $r = \frac{|vel_{k-1} - vel_k|}{vel_k}$ \\
@@ -323,9 +308,9 @@ term that is included in the heat balance model.} \\ &
     \texttt{which\_ho\_approx} &
      Which Stokes-flow approximation to use with Glissade dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      -1 & Shallow-ice approximation, Glide-type calculation (uses glissade\_velo\_sia) \\
-      0 & Shallow-ice approximation, vertical-shear stresses only (uses glissade\_velo\_higher) \\
-      1 & Shallow-shelf approximation (SSA) with horizontal-plane stresses only (uses glissade\_velo\_higher; requires \texttt{which\_ho\_precond} $<=$1) \\
+      -1 & local shallow-ice approximation, Glide-type calculation (uses glissade\_velo\_sia) \\
+      0 & 3d matrix shallow-ice approximation, vertical-shear stresses only (uses glissade\_velo\_higher) \\
+      1 & shallow-shelf approximation (SSA) with horizontal-plane stresses only (uses glissade\_velo\_higher; requires \texttt{which\_ho\_precond} $<=$1) \\
       {\bf 2} & Blatter-Pattyn with both vertical-shear and horizontal-plane and shear stresses (uses glissade\_velo\_higher) \\
        3 & Depth-integrated (L1L2) approximation, with both vertical shear and horizontal-plane stresses (uses glissade\_velo\_higher; requires \texttt{which\_ho\_precond} $<=$1) \\
     \end{tabular}\\  
@@ -341,8 +326,8 @@ term that is included in the heat balance model.} \\ &
     \texttt{which\_ho\_gradient} &
      Which spatial gradient operator to use in the Glissade dycore \\ &
     \begin{tabular}[t]{lp{0.85\linewidth}}
-      0 & Centered gradient \\
-      {\bf 1} & Upstream gradient {\bf TODO: Make sure this has been set as the default in the code (currently default is 0). }\\
+      {\bf 0} & Centered gradient \\
+      1 & Upstream gradient (damps checkerboard noise) \\
     \end{tabular}\\  
 %% which_ho_gradient_margin
     \texttt{which\_ho\_gradient\_margin} &
@@ -397,7 +382,7 @@ term that is included in the heat balance model.} \\ &
     \multicolumn{2}{|p{0.95\textwidth}|}{Set values for various parameters.  Parameters with a * after them are specific to the higher-order dycores (e.g., Glissade).}\\
     \hline
     \texttt{log\_level} & (integer) set to a value between 0, no messages, and 6, all messages are displayed to stdout. By default messages are only logged to a file.
-    The format for this filename is ``configuration-file-name.config.log" \textbf{Steve: Is this correct?} \\
+    The format for this filename is ``configuration-file-name.config.log" \\
     \texttt{ice\_limit} & (real) below this limit ice is only accumulated/ablated; ice dynamics are switched on once the ice thickness is above this value. (default = 100.0 m) \\
     \texttt{ice\_limit\_temp} & (real) minimum thickness for computing vertical temperature (m). (default = 1.0 m) \\
     \texttt{marine\_limit} & (real) all ice is assumed lost (calved) once water depths reach this value (for \texttt{marine\_margin}=3 or 4 in 
@@ -408,12 +393,10 @@ term that is included in the heat balance model.} \\ &
     \texttt{default\_flwa} & Flow law parameter A to use in isothermal experiments (flow\_law set to 0).  Default value is $10^{-16}$ Pa$^{-n}$ yr$^{-1}$. Note that this 
     over-rides any temperature dependence. \\
     \texttt{efvs\_constant} * & Constant value of effective viscosity when using \texttt{which\_ho\_efvs}=0. Default value is 2336041 Pa yr, as in ISMIP-HOM Test F. \\
-    \texttt{hydro\_time} & (real) basal hydrology time constant (default = 1000.0 yr) {\bf TODO: IS THIS STILL USED? Steve: I grepped for it in a few different dirs. The only place
-    I saw it was in glide setup, suggesting that it is not being used right now.}\\
-    \texttt{basal\_tract\_const} & constant basal traction parameter. You can load a nc file with a variable called \texttt{soft} if you want a spatially varying bed softness parameter.
-    \textbf{Steve: Is this only a glide thing? I don't think it is used at all in the HO solvers. I don't even know what sliding law it is used with. In general, I think this and the other
-    basal\_tract params (below) are somewhat poorly described here. Do we have any test cases that use this? If we don't really understand it, should we support it / 
-    describe it here?} \\
+%    \texttt{hydro\_time} & (real) basal hydrology time constant (default = 1000.0 yr) {\bf TODO: IS THIS STILL USED? Steve: I grepped for it in a few different dirs. The only place
+%    I saw it was in glide setup, suggesting that it is not being used right now.}\\
+    \texttt{basal\_tract\_const} & constant basal traction parameter. You can load a .nc file with a variable called \texttt{soft} if you want a spatially varying 
+    bed softness parameter (Glissade local SIA and Glide only) \\
     \texttt{basal\_tract\_max} & Max value for basal traction when using \texttt{slip\_coeff}=4. \\
     \texttt{basal\_tract\_slope} & Slope value for basal traction relation when using \texttt{slip\_coeff}=4. (Relation also uses \texttt{basal\_tract\_const}.)\\
     \texttt{basal\_tract\_tanh} & (real(5)) basal traction factors. Basal traction is set to $B=\tanh(W)$ where the parameters
@@ -462,9 +445,8 @@ used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.5 m, fro
     \hline
     \multicolumn{2}{|l|}{\texttt{[isostasy]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Options related to isostasy model.  Ignored unless \texttt{isostasy} = 1. Options marked with a * currently work in both serial and parallel.
-    \textbf{Steve: I tested these out and compared w/ older versions of the code (this was an old to-do item). As far as I know, all options ``work", but only the combinations using
-     the local lithosphere (no flexural rigidity) work in parallel.}} \\  
+    \multicolumn{2}{|p{0.95\textwidth}|}{Options related to isostasy model. Ignored unless \texttt{isostasy} = 1. Options marked with a * currently work in both serial and parallel.} \\
+%    Steve: I tested these out and compared w/ older versions of the code (this was an old to-do item). As far as I know, all options ``work", but only the combinations using the local lithosphere (no flexural rigidity) work in parallel.
     \hline
     \texttt{lithosphere} & \begin{tabular}[t]{lp{0.9\linewidth}} 
       {\bf 0*} & local lithosphere, equilibrium bedrock depression is found using Archimedes' principle \\
@@ -495,9 +477,9 @@ used when \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.5 m, fro
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Specify map projection. The reader is
     referred to Snyder J.P. (1987) \emph{Map Projections - a working manual.} USGS 
-        Professional Paper 1395.    {\bf TODO: I am assuming this works.  Code is not in glide\_setup.F90.  
-        Appears to be in glimmap\_printproj() in ../libglimmer/glimmer\_map\_init.F90. Steve: I don't know anything
-        about this ... Bill?}}\\
+        Professional Paper 1395.} \\
+% TODO: I am assuming this works.  Code is not in glide\_setup.F90.  
+% Appears to be in glimmap\_printproj() in ../libglimmer/glimmer\_map\_init.F90. 
     \hline
     \texttt{type} & This is a string that specifies the projection type
     (\texttt{LAEA}, \texttt{AEA}, \texttt{LCC} or \texttt{STERE}). \\
