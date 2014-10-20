@@ -233,7 +233,7 @@ in the tables below.
            \texttt{variable} list in the \texttt{[CF output]} section of the \texttt{.config} file to automatically save the appropriate restart fields.)\\
     \end{tabular}\\
     \hline
-    \texttt{ioparams} & (string) name of file containing netCDF I/O configuration. The main configuration file is searched for I/O related sections if no file name is given (default).\\
+    \texttt{ioparams} & (string) name of file containing netCDF I/O configuration. The main configuration file is searched for I/O related sections if no file name is given (default).  In other words, you can remove sections \texttt{CF input}, \texttt{CF output}, and \texttt{CF forcing} from the primary configuration file and place them in a separate file, the path to which is specified here.\\
 
 
 
