@@ -111,8 +111,8 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \texttt{start} & Start writing to file when this time is reached (default: first time slice).\\
     \texttt{stop} & Stop writin to file when this time is reached (default: last time slice). \\
     \texttt{frequency} & The time interval in years, determining how often selected variables are written to file.\\
-    \texttt{xtype} & Set the floating point representation used in NetCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). \\
-    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. Variable \texttt{restart} selects all variables necessary for a restart.\\
+    \texttt{xtype} & Set the floating point representation used in NetCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). (If the  name \texttt{restart} is included in the list of \texttt{variables}, \texttt{xtype} is automatically set to \texttt{double} to ensure bit-reproducible restarts, overriding the value set here.)\\
+    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. The name \texttt{restart} selects all variables necessary for a restart based on the specified model configuration.  (The name \texttt{hot} is also retained for this purpose for backwards compatability.)  If the  name \texttt{restart} is included, the \texttt{xtype} option is automatically set to \texttt{double} to ensure bit-reproducible restarts.\\
     \hline
   \end{supertabular*}
 \end{center}
