@@ -1,60 +1,59 @@
 
 \section{Introduction}
 %
-CISM, the Community Ice Sheet Model, originates from the Glimmer\footnote{{\it Glimmer} 
-was originally an acronym, reflecting the project's origin 
-within the GENIE climate model. The meaning of the Glimmer acronym is no longer important 
-but reflects the current codes origins within the original Glimmer project.} -- CISM project. 
-The evolution of the name towards its current form reflects 
+CISM, the Community Ice Sheet Model, originates from the Glimmer and Glimmer--CISM 
+projects\footnote{{\it Glimmer} was originally an acronym (GENIE Land Ice Model with Multiply Enabled Regions)
+reflecting the project's origin within the GENIE climate model.}.
+The current name reflects
 the project's evolution from a stand-alone ice sheet model to a fully supported, 
 coupled component of the \href{http://www2.cesm.ucar.edu/}{Community Earth System Model}, or CESM. 
-CISM is a numerical model -- a collection of software libraries, utilities and drivers  --
+CISM is a numerical model---a collection of software libraries, utilities and drivers---
  used to simulate ice sheet evolution. CISM is modular in design and coded almost 
 entirely in standards-compliant Fortran 95. It currently supports two different 
-``dynamical cores", which solve the equations for the conservation of mass, energy, and momentum. 
+dynamical cores (``dycores''), which solve the equations for the conservation of mass, energy, and momentum. 
 As with previous versions of Glimmer and Glimmer-CISM, the current version of CISM 
 supports a serial, shallow-ice representation of ice dynamics. 
-New with CISM is support for ``higher-order" ice dynamics, scalable parallelism, 
+New with CISM2 are support for ``higher-order" ice dynamics, scalable parallelism, 
 and software links for coupling to modern, robust, C++ based, third-party solver libraries. 
 
 %
 \section{Overview}
 %
-Glimmer-CISM consists of several components:
+CISM consists of several components:
 %
 \begin{itemize}
 
-\item {\bf CISM\_DRIVER:} The high level driver code (i.e., the executable) that 
-is used to run the ice sheet model. Unlike previous versions of Glimmer and Glimmer-CISM, 
-cism\_driver is used for running the code in all model configurations 
+\item {\bf cism\_driver:} the high-level driver (i.e., the executable) that 
+is used to run the ice sheet model. Unlike the drivers in previous versions of Glimmer and Glimmer-CISM, 
+cism\_driver is used to run the code in all model configurations 
 (e.g., for idealized test cases with simplified climate forcing and for model runs 
 based on realistic geometries and climate forcing data).  
 
 %\item {\bf GLIDE:} {\bf G}eneral {\bf L}and {\bf I}ce {\bf D}ynamic {\bf E}lements: the dynamical core for the model based on shallow-ice dynamics. 
-\item {\bf GLIDE:} The model dynamical core based on shallow-ice dynamics. 
+\item {\bf Glide:} the dynamical core based on shallow-ice dynamics. 
 This component is responsible for solving the governing conservation equations and 
-determining ice velocities, internal ice temperature distribution, 
+determining ice velocities, internal ice temperature, 
 and ice geometry evolution (see Chapter \ref{ch:glide}). 
-Aside from very minor changes, this is the same shallow-ice dynamical core 
+Apart from minor changes, this is the same shallow-ice dynamical core 
 used by previous versions of Glimmer and Glimmer-CISM.
 
-\item {\bf GLISSADE:} The model dynamical core based on the 1st-order accurate Stokes approximation. As with GLIDE, this component is responsible for solving the governing conservation equations. Unlike GLIDE, GLISSADE is fully parallel in order to take advantage of modern, multi-processor, high-performance architectures (see Chapter \ref{ch:glissade}).
+\item {\bf Glissade:} the dynamical core based on the first-order-accurate Stokes approximation. As with Glide, this component solves the governing conservation equations. Unlike Glide, Glissade is fully parallel in order to take advantage of modern, multi-processor, high-performance architectures (see Chapter \ref{ch:glissade}).
 
 %\item {\bf GLINT:} {\bf GL}IMMER {\bf Int}erface. Originally developed for the GENIE %\footnote{Grid-ENabled Integrated Earth-system model} 
 %Earth Systems Model, GLINT allows the core ice model to be coupled to a variety of global climate models, or indeed any source of time-varying climate data on a lat-long grid. 
-\item {\bf GLINT:} GLINT allows the core ice model to be coupled to a variety of 
+\item {\bf Glint:} the climate model interface. Glint allows the core ice sheet model to be coupled to a variety of 
 global climate models, or indeed any source of time-varying climate data on a lat-long grid. 
 
-\item {\bf Test Cases:} Idealized test cases, for both the GLIDE and GLISSADE dynamical cores 
-and for the GLINT climate interface. These are used to (1) confirm that the model 
+\item {\bf Test cases:} idealized test cases for the Glide and Glissade dynamical cores 
+and for the Glint climate interface. These are used to (1) confirm that the model 
 is working as expected and (2) provide a range of simple model configurations 
 from which new users can learn about model configuration options and 
-start to construct their own configurations (see Chapter \ref{ch:tests}). 
+create their own configurations (see Chapter \ref{ch:tests}). 
 
-\item {\bf Shared Code:} This includes a number of modules used regularly 
-by all parts of the code. Examples include modules for defining derived types, 
+\item {\bf Shared code:} a number of modules shared by different parts of the code. 
+Examples include modules for defining derived types, 
 physical constants, and model parameters, and modules that handle parsing of 
-the configuration file and data input / output (``i/o"), as discussed below.
+the configuration file and data input/output (I/O), as discussed below.
 
 % MJH I commented this out per Steve's suggestion.  \item {\bf Simple climate drivers:} Drivers that implement the experiments of the first phase of the EISMINT project, with idealised geometry. \textbf{SP: I don't know if we need this anymore. Probably falls under tests and / or GLINT or the section below? Since all of these tests now use CISM\_DRIVER, I think this is no longer needed / accurate.}
 
@@ -77,15 +76,16 @@ the configuration file and data input / output (``i/o"), as discussed below.
 
 
 %\subsection{Model Configuration, I/O and Visualisation}
-In general terms, each component is configured using a configuration file (*.config) 
+Each component is configured using a configuration file (*.config) 
 similar to Windows \texttt{.ini} files. At run-time, model configuration is printed
- to a log file. 
+to a log file. 
 
-1D, 2D, and 3D data is read/written from/to NetCDF files using the CF (Climate-Forecast) 
-metadata convention\footnote{\texttt{http://www.cgd.ucar.edu/cms/eaton/cf-metadata/}}. 
+1D, 2D, and 3D data are written and read to and from netCDF files using the 
+%CF (Climate-Forecast) metadata convention\footnote{\texttt{http://www.cgd.ucar.edu/cms/eaton/cf-metadata/}}. 
+\href{http://cfconventions.org/}{CF (Climate-Forecast) metadata convention}. 
 NetCDF is a scientific data format for storing multidimensional data in a platform- 
 and language-independent binary format. The CF conventions specify the metadata 
 used to describe the file contents.
-Many programs can process and visualize NetCDF data, e.g., Python, Matlab, OpenDX, IDL, etc. 
+Many programs (e.g., Python, Matlab, OpenDX, Ferret, and IDL) can process and visualize netCDF data.
 %In section \ref{sec:install-netcdf} we provide installation instructions for a simple set of tools for manipulating and visualizing NetCDF data files. The following chapter discusses these and other software environment requirements in more detail.  
 %Additionally, the Glimmer code bundle contains GMT scripts written in Python to visualise the output.
