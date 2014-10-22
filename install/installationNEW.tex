@@ -2,35 +2,33 @@
 \section{Getting and Installing CISM}
 \label{sec:getcode}
 
-\href{http://oceans11.lanl.gov/cism/}{CISM}\footnote{\texttt{http://oceans11.lanl.gov/cism/}} is 
-a relatively complex system of libraries and programs which build on other libraries. 
-This section documents how to get CISM and its prerequisites, compile and install it. 
+\href{http://oceans11.lanl.gov/cism/}{CISM}\footnote{\texttt{http://oceans11.lanl.gov/cism/}} 
+is a relatively complex system of libraries and programs which build on other libraries. 
+This section documents how to download and install CISM and its prerequisites.
 Many common problems and questions can be addressed using the 
-\href{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}{user discussion boards
-\footnote{\texttt{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}}}. 
+\href{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}{user discussion boards}\footnote{\texttt{http://forum.cgd.ucar.edu/forums/ice-sheet-modeling-cism}}
+. 
 A CISM users mailing list is also available and can be subscribed to by sending an email
-to \texttt{cism-users@googlegroups.com}\footnote{Note that in order to subscribe from a non-Google email
+to \texttt{cism-users@googlegroups.com}\footnote{In order to subscribe from a non-Google email
 address, you should first make sure to completely log out from any Google sites (e.g., Gmail) before sending 
-your request. If you do not, it will automatically try to associate your request with your Gmail account instead.}
+your request. If you do not, it will automatically try to associate your request with your Gmail account instead.}.
 Please report unresolved problems using the bug reporting facility at the 
-\href{https://github.com/CISM/CISM-release/issues}{CISM Github website}
-\footnote{\texttt{https://github.com/CISM/CISM-release/issues}}. 
+\href{https://github.com/CISM/CISM-release/issues}{CISM Github website}\footnote{\texttt{https://github.com/CISM/CISM-release/issues}}. 
 
-CISM is distributed as source code and a reasonably complete build environment is therefore required to compile the model. 
-For UNIX and LINUX based systems (including Mac), the \href{http://www.cmake.org/}{Cmake} build system is used for building the model. 
+CISM is distributed as source code, and a reasonably complete build environment is therefore required to compile the model. 
+For UNIX and LINUX based systems (including Mac), the \href{http://www.cmake.org/}{Cmake} build system is used to build the model. 
 Sample build scripts for a number of standard architectures are included, as are working build scripts 
 for a number of large-scale, high-performance-computing architectures 
 (e.g., \textit{Yellowstone} (CISL), \textit{Titan} (OLCF), and \textit{Hopper} (NERSC) ). 
 
-There are two ways of getting the source code:
+There are two ways to get the source code:
 
 \begin{enumerate}
 
-\item \href{https://github.com/CISM/CISM-release/archive/master.zip}{Download} a {\it released} version of the code as an archive (zip file) 
-
+\item \href{https://github.com/CISM/CISM-release/archive/master.zip}{Download} a {\it released} version of the code as an archive (zip file). 
 \item Clone the code from the \href{https://github.com/CISM/CISM-release}{CISM Github repository} using the following command: 
 \texttt{git clone https://github.com/CISM/CISM-release/archive/master.zip}  
-(Note that it is also possible to clone the repository using the SSH protocol 
+(It is also possible to clone the repository using the SSH protocol 
 if you have an SSH keypair generated on your computer and attached to your GitHub account.  
 See the \href{https://github.com/CISM/CISM-release}{CISM Github repository wepage} and 
 \href{https://help.github.com/articles/which-remote-url-should-i-use}{Github's help pages} for more information.)
@@ -42,10 +40,10 @@ More experienced users may want to download directly from the repository,
 as it will make updating the code easier in the future.
 
 In either case, a Fortran90 compiler is required.  
-Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library, 
-which CISM uses for data I/O, and a \href{http://www.python.org}{Python} distribution 
-(used for analyzing dependencies and for automatically generating parts of the code) 
-with a number of specific Python modules. Users who want to run the code in parallel will also need to install MPI, 
+Other software dependencies include the \href{http://www.unidata.ucar.edu/packages/netcdf/index.html}{netCDF} library 
+(used for data I/O) and a \href{http://www.python.org}{Python} distribution 
+(used to analyze dependencies and to automatically generate parts of the code) 
+with a number of specific Python modules. Users who want to run the code in parallel will need to install MPI, 
 and users who want access to the \textit{Trilinos} solver library will need to 
 download and build \textit{Trilinos}, and link to it when building CISM. 
 Finally, you will need Cmake and Gnu Make to compile the code and link to the various third-party libraries. 
@@ -61,7 +59,7 @@ If you have not done so already, clone a tagged version of CISM or download an a
 Because the build process can be fairly complicated, we describe it in detail below, 
 relying on the use of a package manager to handle many of the standard software dependencies. 
 For each step we give specific instructions for both Mac OS X using MacPorts (in red boxes) and
-Linux, specifically Ubuntu 12.10 (in blue boxes).  For users of different but similar systems,
+Linux, specifically Ubuntu 12.10 (in blue boxes).  For different but related systems,
 hopefully these instructions can be used as a guide.
 
 CISM can be installed in either a serial or parallel configuration. The parallel mode
@@ -69,7 +67,7 @@ allows the model to be run on multiple processors which can greatly speed up exe
 This is a common configuration to use on supercomputing clusters, but can also be 
 convenient on modern desktops and laptops which often have four or more cores available.
 However, the parallel build requires additional supporting software, so we first 
-detail how to build serial CISM.  For newer users, it is recommended to first build
+detail how to build serial CISM.  For new users, it is recommended to first build
 and successfully run serial CISM before moving on to the parallel build.  \textbf{Note
 that currently, the Shallow Ice Approximation dycore (Glide) can only run on a single processor, 
 even when the code is built with full parallel support.}
@@ -78,19 +76,19 @@ The instructions below assume the user has administrative privileges for
 installing new software (note the extensive use of \texttt{sudo}).  
 If you are working on a shared machine without
 administrative privileges, you might proceed by assuming all needed packages are present and 
-continue to the CISM installation section.  You can then refer back to this
-section if you encounter problems to determine which packages might be missing or
+continue to the CISM installation section.  If you encounter problems, you can refer back to this
+section to determine which packages might be missing or
 problematic before contacting your system administrator.
 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 As mentioned above, we will take advantage of \href{http://www.macports.org/}{MacPorts}, 
-a software package manager for Macs. This will allow us to install a significant amount 
-of the base level software libraries needed by CISM with few complications. 
+a software package manager for Macs. This will allow us to install most of 
+the base level software libraries needed by CISM with few complications. 
 
 Go to \href{http://www.macports.org/install.php}{http://www.macports.org/install.php}, where you will find a range of ".pkg" installs available, including those for Mountain Lion, Lion, and Mavericks versions of Mac OS X. 
 
-Note that installing MacPorts requires installing the Xcode developer toolset provided by Apple. Details of how to obtain Xcode vary by version of OS X. See MacPorts installation instructions and this \href{https://developer.apple.com/xcode/downloads/}{link} for details. Once Xcode is installed, you may need to additionally download the ``command line tool'' from the Preferences / Downloads menu of Xcode. 
+Installing MacPorts requires installing the Xcode developer toolset provided by Apple. Details of how to obtain Xcode vary by version of OS X. See MacPorts installation instructions and this \href{https://developer.apple.com/xcode/downloads/}{link} for details. Once Xcode is installed, you may need to additionally download the ``command line tool'' from the Preferences / Downloads menu of Xcode. 
 
 Depending on computer security settings at your institution (firewalls, etc.), 
 you may need to add proxy information so that Macports can communicate and 
@@ -98,8 +96,8 @@ download software from the outside world. All Macports software will be installe
 under \texttt{/opt/local/} by default. To add proxy information, after installing 
 Macports, edit the configuration file at \texttt{/opt/local/etc/macports/macports.conf}.
 (Note this is probably a read-only file that requires superuser permission to edit,
-so you will need to edit the file with something like: \texttt{sudo vim /opt/local/etc/macports/macports.conf}) 
-By searching for the text string "proxy", you will find the lines like 
+so you will need to edit the file with something like: \texttt{sudo vim /opt/local/etc/macports/macports.conf}). 
+By searching for the text string ``proxy'', you will find the lines like 
 \texttt{proxy\_http hostname:12345} near the bottom of the file. Enter your proxy 
 information here as appropriate (e.g., \texttt{hostname:your\_host\_info\_here}).
 
@@ -129,10 +127,10 @@ This Ubuntu instructions describe setting up supporting software and CISM in a L
 These instructions were written using a fresh installation of Ubuntu 12.10 but 
 steps should be very similar in other versions of Ubuntu or other distributions of Linux.
 Instructions make use of the command line tool for installing packages that comes with Ubuntu, 
-\texttt{apt-get}.  Note that other package management tools (e.g., Software Center)
+\texttt{apt-get}.  Other package management tools (e.g., Software Center)
 could also be used.
 
-It's generally a good idea to do synchronize your local package index files before
+It's generally a good idea to synchronize your local package index files before
 installing new software using \texttt{apt-get}:
 
 \texttt{sudo apt-get update}
@@ -189,7 +187,7 @@ have been extensively tested with CISM and are freely available.  Advanced users
 are welcome to use other compilers of their choosing.
 
 CISM has been tested extensively with \texttt{gfortran} versions 4.5 and 4.6.
-Newer (or older) versions may also work, although version 4.8 introduces a lot of 
+Newer (or older) versions may also work, although version 4.8 introduces 
 new features that may uncover issues.
 
 \begin{mdframed}[style=mac] % V==============MAC================V
@@ -205,7 +203,7 @@ in addition to a lot of other information on available Macports installs related
 
 Where possible, we want to make sure that all other software we build and install 
 with Macports uses the version of GCC we choose to install. To date, we've had success 
-with GCC 4.6.3 (others make work as well but have not been tested). 
+with GCC 4.6.3 (others may work as well but have not been tested). 
 To install GCC 4.6.3 type:
 
 \texttt{sudo port install gcc46}
@@ -216,8 +214,8 @@ expanding them, building, installing, checking, etc.). When the install is compl
 \texttt{port installed} 
 
 to see what packages you currently have installed. You should see 
-something like \texttt{gcc46 \@4.6.3\_3 (active)} 
-(the minor version numbers after the ``4.6'' may differ as MacPorts makes updates to the port). 
+something like \texttt{gcc46 \@4.6.3\_3 (active)}. 
+(The minor version numbers after the ``4.6'' may differ as MacPorts makes updates to the port.) 
 You will likely also see other packages that have been installed (software dependencies for GCC 
 that were automatically installed by MacPorts and/or other ports you have manually installed). 
 
@@ -238,7 +236,7 @@ Available versions for gcc:
 \end{verbatim}
 
 This confirms that GCC 4.6 is active (the \texttt{mp} indicates a Macports version). 
-It is possible that gcc46 will be listed as active when you type texttt{port installed}, 
+It is possible that gcc46 will be listed as active when you type \texttt{port installed}, 
 but that mp-gcc46 will not be listed as active when you type \texttt{port select gcc}. 
 If mp-gcc46 is not active as shown above, then you will need to select it using:
 
@@ -278,12 +276,12 @@ Install these tools with:
 
 Additional tools are needed for managing the build process.  \texttt{make} (specifically, GNU's gmake)
 usually comes with Mac and Linux distributions, but if not it should be installed.  
-Additionally, CISM uses the \texttt{cmake} build utility 
-(\href{http://www.cmake.org/}{a cross-platform, open-source build system}).
+Additionally, CISM uses the \href{http://www.cmake.org/}{\texttt{CMake} build utility}
+(a cross-platform, open-source build system).
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 
-While you probably already have a version of \texttt{make} on your system, they may be out of date or conflict with other Macports installed software. These can be installed through Macports with the following commands: 
+While you probably already have a version of \texttt{make} on your system, it may be out of date or conflict with other Macports installed software. The required versions for CISM can be installed through Macports with this command: 
 
 \begin{verbatim}
 sudo port install gmake cmake
@@ -302,7 +300,7 @@ In addition to the software installed above, you should now see something like t
 \begin{mdframed}[style=ubuntu] % V==============UBUNTU==========V
 On Ubuntu (and other Debian systems) there is usually a package called \texttt{build-essential} 
 that includes a large collection of tools and libraries that are typically necessary
-for compiling code. Install these tools and \texttt{cmake} with:
+for compiling code. Install these tools and \texttt{CMake} with:
 
 \texttt{sudo apt-get install build-essential cmake}
 \end{mdframed}                 % ^==============UBUNTU==========^
@@ -314,16 +312,18 @@ for compiling code. Install these tools and \texttt{cmake} with:
 \label{sec:install-netcdf}
 NetCDF stands for ``network Common Data Form'' libraries, which are a
  machine-independent format for representing scientific data.
-This is required by CISM for performing input/output.  The NetCDF package you 
+This is required by CISM for performing input/output.  The netCDF package you 
 install must include Fortran libraries for CISM to compile (in some package managers,
 the Fortran libraries are in a separate package).  There are substantial differences 
-between versions 3.x and 4.x of NetCDF, but both version series should work with CISM. 
-Note that it is also possible to download and compile NetCDF libraries manually, 
-which may be preferred by some advanced users wanting to use a specific version.
+between versions 3.x and 4.x of netCDF, but both version series should work with CISM. 
+It is also possible to download and compile netCDF libraries manually, 
+which may be preferred by advanced users wanting to use a specific version.
 
-It is also recommended that you install optional tools for working with NetCDF datafiles.
-\href{http://meteora.ucsd.edu/~pierce/ncview_home_page.html}{\texttt{ncview}} is a very convenient tool for viewing NetCDF files.  (Some alternatives are to write Python or Matlab scripts or to use another
-tool like Paraview.)  
+It is also recommended that you install optional tools for working with netCDF datafiles.
+\href{http://meteora.ucsd.edu/~pierce/ncview_home_page.html}{\texttt{ncview}} is a
+convenient tools for viewing netCDF files.  
+(Some alternatives are to write Python or Matlab scripts or to use another tool like Paraview or
+\href{http://ferret.pmel.noaa.gov/Ferret/home}{\texttt{Ferret}}.)  
 \href{http://nco.sourceforge.net/}{\texttt{NCO}} (``netCDF Operators'') is a toolkit of command line tools
 for manipulating and analyzing data stored in netCDF-accessible formats.
 
@@ -340,13 +340,13 @@ netcdf @4.3.2_0+dap+gcc46+netcdf4 (active)
 netcdf-fortran @4.2_12+gcc46 (active)
 \end{verbatim}
 
-Note that the ``dap+netcdf4" comes along automatically. 
+The ``dap+gcc46+netcdf4" comes along automatically. 
 
-\textbf{Optional but recommended:} Tools for working with NetCDF data files.
+\textbf{Optional but recommended:} Tools for working with netCDF data files.
 
 \texttt{sudo port install ncview nco}
 
-Note that if you encounter an `unable to open display' error when running \texttt{ncview},
+If you encounter an `unable to open display' error when running \texttt{ncview},
 you may need to install a newer version of the X Window System than the one provided by Apple.
 We have had success using the latest version of XQuartz:
 \href{http://xquartz.macosforge.org}{http://xquartz.macosforge.org}
@@ -355,11 +355,11 @@ We have had success using the latest version of XQuartz:
 
 
 \begin{mdframed}[style=ubuntu] % V==============UBUNTU==========V
-Install NetCDF libraries with:
+Install netCDF libraries with:
 
 \texttt{sudo apt-get install libnetcdf-dev}
 
-\textbf{Optional but recommended:} Tools for working with NetCDF data files.
+\textbf{Optional but recommended:} Tools for working with netCDF data files.
 
 \texttt{sudo apt-get install netcdf-bin ncview nco}
 \end{mdframed}                 % ^==============UBUNTU==========^
@@ -369,16 +369,16 @@ Install NetCDF libraries with:
 % =====================================
 \subsection{Install Python and needed modules}
 % =====================================
-Python is used by CISM for autogenerating I/O code during compilation, and is also
-used by most test case scripts to set up initial conditions and/or analyze and plot
+Python is used by CISM to autogenerate I/O code during compilation, and is also
+used by most test case scripts to set up initial conditions and analyze and plot
 results.  Only Python 2.7 has been tested.  Python 3 may work for some uses but is
-likely to generate some errors due to extensive changes between versions 2 and 3.
-Additionally, CISM makes use of a number of python modules:
+likely to generate errors due to extensive changes between versions 2 and 3.
+Also, CISM uses a number of python modules:
 \begin{itemize}
   \item \texttt{numpy} - required for generating many test case initial conditions
   \item \texttt{matplotlib} - used by some plotting scripts.  Not strictly necessary but required for those scripts to work properly.
   \item  a python netCDF I/O module.  Options are \texttt{netCDF4},  \texttt{Scientific.IO.NetCDF}, or \texttt{PyCDF}.  
-\texttt{netCDF4} is the ideal choice, but it is often not available through Linux package managers and must be installed through a python package manager like pip or manually.
+\texttt{netCDF4} is the ideal choice, but it is often not available through Linux package managers and must be installed through a python package manager like pip, or manually.
 \texttt{PyCDF} is the least recommended option here because it is not entirely compatible with the others.  \texttt{Scientific.IO.NetCDF} is usually available through Linux package managers.
 \end{itemize}
 
@@ -387,30 +387,31 @@ Additionally, CISM makes use of a number of python modules:
 While Mac OS X already comes with a working Python distribution, we will need 
 additional modules that can sometimes be tricky to get working together correctly. 
 We have successfully used both the 
-\href{https://www.enthought.com/products/epd/}{Enthought} Python distribution 
+\href{https://www.enthought.com/products/epd/}{Enthought Python distribution} 
 (which is free for people associated with a university) and a version installed 
-using Macports.  To install Enthought, follow the above link and follow their 
-directions for obtaining and installing their distribution.
+using Macports.  To obtain and install Enthought, click on the link above and follow their directions.
 To install version 2.7 using Macports, along with the necessary 
-additional modules, do the following 
+additional modules, do the following:
 
 \texttt{sudo port install python27 py27-numpy py27-matplotlib py27-scientific}
 
 \texttt{          py27-netcdf4}
 
-Note that the existence of two versions of python on your system can lead to confusion.
+The existence of two versions of python on your system can lead to confusion.
 It is important that you leave the version of python that came supplied by Apple so that
 your system has access to it.  However, you will want to be sure that CISM has access to
 the new, more modern version of python you have installed.  In our experience,
-this can be one of the most problematic part of the installation process.  There are two
-approaches.  You can use \texttt{port select}:
+this can be one of the most problematic parts of the installation process.  
+You can use \texttt{port select}:
 
 \texttt{ sudo port select python python27}
 
-You can check that Macports python is being by default by typing:
+\noindent
+You can check that Macports python is used by default by typing:
 
 \texttt{which python}
 
+\noindent
 and you should see: \texttt{/opt/local/bin/python}.  
 If you instead see \texttt{/usr/bin/python} then the default Apple python is still 
 the version that is being used on the command line.  If this happens, or if you 
@@ -434,11 +435,13 @@ Install python modules with:
 
 \textbf{Optional:} Installing \texttt{netCDF4} python module.
 
+\noindent
 Install pip (a tool for installing and managing Python packages):
 
 \texttt{sudo apt-get install pip}
 
-Install \texttt{netCDF4} using pip
+\noindent
+Install \texttt{netCDF4} using pip:
 
 \texttt{sudo -E pip install netcdf4}
 \end{mdframed}                 % ^==============UBUNTU==========^
@@ -453,18 +456,18 @@ Install \texttt{netCDF4} using pip
 % =====================================
 At this point we are ready to build a \textit{serial} version of CISM and its linked libraries. While we ultimately want to build a 
 version of the code that also runs in parallel, it is often useful to stop at this step to make sure everything is working. Then, if 
-problems occur during the parallel build process (as they sometimes do), we know those problems have only occurred during 
-the final step of the process.
+problems occur during the parallel build process (as they sometimes do), we know those problems have occurred only during 
+the last step of the process.
 
-If you have not already done so, obtain a copy of the source code following the instructions above in section \ref{sec:getcode}. Below, all 
+If you have not already done so, obtain the source code following the instructions above in section \ref{sec:getcode}. Below, all 
 paths starting with \texttt{./} indicate the root level of the source code directory. E.g., if you expanded your tar.gz archive into a main source code 
 directory with the path \texttt{/usr/JohnDoe/CISM}, the \texttt{./} refers to the path \texttt{/usr/JohnDoe/CISM/}.  
 
-Unlike in previous version of the code, the build system is now entirely based on Cmake 
+Unlike previous versions of the code, the build system is now entirely based on CMake 
 (Autotools is no longer used). 
 
 Build scripts are provided that should work for most standard Mac and Linux setups, 
-as well as some supercomputing platforms on which CISM is commonly used.
+as well as some supercomputing platforms on which CISM is commonly run.
 All build scripts are located in the \texttt{./builds} directory from the root level of the code.
 In general, change to the subdirectory that most closely matches your system and intended
 build.
@@ -476,40 +479,39 @@ encounter may indicate that some of the supporting software (above) is missing.
 %\textbf{SP: For the cake build to ''just work" (i.e., w/o setting an env vars, etc.), the only thing I had to do was to sym link the generic compiler names (e.g. gcc, g++, gfortran) and python in /opt/local/bin/ to the respective binary files there w/ a specific name (e.g., gcc-mp-6.4). Assuming one is in /opt/local/bin/, an example of that would be 'sudo ln -s ./gfortran-mp-4.6 ./gfortran'. This also assumes, that ones path has been pre-prended to look in /opt/local/ first, rather then /usr/local. This should have happened automatically when installing macports (it adds a line to your .profile script to cover this), but it might be worth mentioning explicitly (at the start?) as well. Note that after the fact, I found out that a more general / easier way of doing this might be to instead do, e.g., 'sudo port select --set gcc gcc46'. I have not tested this, but it is recommended (and seemed to work) for using of openmpi, e.g. by way of slaving the generic "mpi" to "openmpi-devel-gcc46-fortran". This is a faster way to do it, as it sets all the necessary sym links with a single command. I've already changed the gcc documentation above to reflect this. It would be good for someone else to confirm this if / when they do a clean install on a new machine.} 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
-For building on a Mac, you should be able to build the code by doing the following:
+On a Mac, you should be able to build the code by doing the following:
 
 \begin{enumerate}
-\item{change to the \texttt{./builds/mac-gnu-serial} directory from the root level of the code}
-\item{configure the build using: \texttt{source mac-gnu-cmake-serial}}
-\item{build the code using: \texttt{make -j X}, where the "X" refers to the number of processors available for use in the build (or just \texttt{make} if you only have one processor)}
+\item{Change to the \texttt{./builds/mac-gnu-serial} directory from the root level of the code.}
+\item{Configure the build using \texttt{source mac-gnu-cmake-serial}}
+\item{Build the code using \texttt{make -j X}, where the ``X'' refers to the number of processors available for use in the build (or just \texttt{make} if you have only one processor).}
 \end{enumerate}
 \end{mdframed}              % ^==============MAC================^
 
 
 \begin{mdframed}[style=ubuntu] % V==============UBUNTU==========V
-For building on a Linux platform, you should be able to build the by doing the following:
+On a Linux platform, you should be able to build the code by doing the following:
 
 \begin{enumerate}
-\item{change to the \texttt{./builds/linux-gnu-cism} directory from the root level of the code}
-\item{configure the build using: \texttt{source linux-gnu-cism-cmake-serial}}
-\item{build the code using: \texttt{make -j X}, where the "X" refers to the number of processors available for use in the build (or just \texttt{make} if you only have one processor)}
+\item{Change to the \texttt{./builds/linux-gnu-cism} directory from the root level of the code.}
+\item{Configure the build using \texttt{source linux-gnu-cism-cmake-serial}}
+\item{Build the code using \texttt{make -j X}, where the ``X'' refers to the number of processors available for use in the build (or just \texttt{make} if you have only one processor).}
 \end{enumerate}
 \end{mdframed}                 % ^==============UBUNTU==========^
 
-When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the current build directory (here, from within the \texttt{./builds/*-gnu-cism/} directory). The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
+When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the current build directory (here, from within the \texttt{./builds/mac-gnu-serial} or \texttt{./builds/linux-gnu-cism/} directory). The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
 
 \begin{verbatim}
 ln -s ../../../builds/mac-gnu/cism_driver/cism_driver ./
 \end{verbatim}
 
-Discussion of running the executable for standard test cases is continued in Chapter \ref{ch:tests}). 
-
+Chapter \ref{ch:tests} discusses running the executable for standard test cases.
 
 Advanced users may want more control over the build scripts.  There are a number of
-build options used by cmake to customize the build.  You can manually modify the 
+build options used by CMake to customize the build.  You can manually modify the 
 build scripts included with the code, or use the tool \texttt{ccmake} to 
 interactively adjust build options (type \texttt{ccmake ../../} from any build directory
-after having run the configure script once.  The available options are listed in Table \ref{cmake-options}.
+after having run the configure script once).  The available options are listed in Table \ref{cmake-options}.
 Many of these options pertain to the parallel build which is discussed in more detail below.
 
 
@@ -520,25 +522,25 @@ Many of these options pertain to the parallel build which is discussed in more d
 
 \texttt{CISM\_BUILD\_EXTRA\_EXECUTABLES} & Toggle to build other executables, off by default \\
 
-\texttt{CISM\_BUILD\_SIMPLE\_GLIDE} &  Toggle to build simple\_glide, on by default \\
+%\texttt{CISM\_BUILD\_SIMPLE\_GLIDE} &  Toggle to build simple\_glide, on by default \\
 
 \texttt{CISM\_COUPLED} & Toggle to build CISM for use with CESM, off by default \\
 
 \texttt{CISM\_ENABLE\_BISICLES} & Toggle to build a BISICLES-capable cism\_driver, off by default  \\
 
-\texttt{CISM\_FORCE\_FORTRAN\_LINKER} & Toggle to force using a fortran linker for building executables, off by default \\
+\texttt{CISM\_FORCE\_FORTRAN\_LINKER} & Toggle to force using a Fortran linker for building executables, off by default \\
 
 \texttt{CISM\_GNU} & Toggle to set compilation flags needed for the gnu compiler, off by default \\
 
 \texttt{CISM\_INCLUDE\_IMPLICIT\_LINK\_LIB} & Toggle to explicitly include the CMAKE\_Fortran\_IMPLICIT\_LINK\_LIBRARIES on the link line, on by default \\
 
-\texttt{CISM\_MPI\_MODE} & Toggle to Configure with MPI: defaults to ON \\
+\texttt{CISM\_MPI\_MODE} & Toggle to configure with MPI, on by default \\
 
-\texttt{CISM\_NETCDF\_LIBS} &  Netcdf Library Names(s) \\
+\texttt{CISM\_NETCDF\_LIBS} &  netCDF library name(s) \\
 
-\texttt{GLIMMER\_NO\_EXECUTABLE} & Set to  ON  to just build libraries (default:OFF) \\
+\texttt{CISM\_NO\_EXECUTABLE} & Set to  ON  to just build libraries, off by default \\
 
-\texttt{CISM\_SERIAL\_MODE} & Toggle to Configure in Serial mode: defaults to OFF \\
+\texttt{CISM\_SERIAL\_MODE} & Toggle to configure in serial mode: off by default \\
 
 \texttt{CISM\_SOURCEMOD\_DIR} &  Path to SourceMod directory of F90 files to replace CISM files \\
 
@@ -548,11 +550,11 @@ Many of these options pertain to the parallel build which is discussed in more d
 
 \texttt{CISM\_USE\_GPTL\_INSTRUMENTATION} & Toggle to use GPTL instrumentation, on by default \\
 
-\texttt{CISM\_USE\_MPI\_WITH\_SLAP} & Toggle to use mpi when using SLAP solver, only relevant if CISM\_SERIAL\_MODE=ON: defaults to OFF \\
+\texttt{CISM\_USE\_MPI\_WITH\_SLAP} & Toggle to use mpi when using SLAP solver, only relevant if CISM\_SERIAL\_MODE=ON, off by default \\
 
 \texttt{CISM\_USE\_TRILINOS} & Toggle to use Trilinos external solver libraries, on by default \\
 
-\texttt{CMAKE\_VERBOSE\_CONFIGURE} & Verbose cmake configuration, on by default \\
+\texttt{CMAKE\_VERBOSE\_CONFIGURE} & Verbose CMake configuration, on by default \\
 
 %% older options below here %%
 
@@ -568,11 +570,11 @@ Many of these options pertain to the parallel build which is discussed in more d
 
 \hline
 \end{tabular}
-  \caption{Available \texttt{cmake} settings for configuring the CISM build process}
+  \caption{Available \texttt{CMake} settings for configuring the CISM build process}
   \label{cmake-options}
 \end{table}
 
-Additionally there are standard cmake options that can be set (e.g., \texttt{CMAKE\_C\_COMPILER}, \texttt{CMAKE\_Fortran\_COMPILER}, etc.).  Many of these are \href{http://www.cmake.org/Wiki/CMake_Useful_Variables}{documented in the cmake docmentation}.
+Also, there are standard CMake options that can be set (e.g., \texttt{CMAKE\_C\_COMPILER}, \texttt{CMAKE\_Fortran\_COMPILER}, etc.).  Many of these are explained in the \href{http://www.cmake.org/Wiki/CMake_Useful_Variables}{CMake documentation}.
 
 
 
@@ -582,13 +584,13 @@ Additionally there are standard cmake options that can be set (e.g., \texttt{CMA
 % =====================================
 % =====================================
 To build parallel CISM, MPI compilers and libraries are required.  
-Only the higher-order dycore (Glissade) can run in parallel.  (There also is an
-additional higher-order dycore called Glam that can be run in parallel, but it is used
+Only the higher-order dycore (Glissade) can run in parallel.  (There is also a
+higher-order dycore called Glam that can be run in parallel, but it is used
 for development and testing and is not supported for scientific applications.)
 
-Additionally, you may choose to include the Trilinos package of external solver libraries.  
-These are not required, but for some problems use of Trilinos may provide better
-performance and stability than the native solvers.  Note that Trilinos can also technically be 
+In addition, you may choose to include the Trilinos package of external solver libraries.  
+These are not required, but for some problems Trilinos may provide better
+performance and stability than the native solvers.  Trilinos can also technically be 
 used with a serial build, but this configuration is not supported or recommended.
 
 % =====================================
@@ -596,36 +598,39 @@ used with a serial build, but this configuration is not supported or recommended
 % =====================================
 MPI (Message Passing Interface) libraries and compilers are necessary for compiling parallel CISM.  
 These libraries are used for handling parallel communications when running the 
-code on multiple processors. A more complete description of possible parallel 
+code on multiple processors. A more complete description of parallel 
 model configurations is given in Chapter \ref{ch:runcism}. 
-(for example, some test cases and configurations when running the shallow-ice 
-momentum balance model are not fully supported in parallel). 
+(For example, some test cases and configurations when running the shallow-ice 
+dycore are not fully supported in parallel). 
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 It is likely that you already have versions of MPI installed on your system, 
 but they may be out of date or not compatible with the other libraries we have 
-and will be installing. Using Macports, the Mpich version of MPI is known 
+and will be installing. Using Macports, the MPICH version of MPI is known 
 to work when building CISM.
 
-First, check Macports for available versions of Mpich using \texttt{port search mpich*}. We want 
+First, check Macports for available versions of MPICH using \texttt{port search mpich*}. We want 
 the version that is compatible with our GCC compiler suite, so we type: 
 
 \begin{verbatim}
 	sudo port install mpich-devel-gcc46 +fortran
 \end{verbatim}
 
+\noindent
 To make sure this is active, type 
 \begin{verbatim}
 	port installed mpi*
 \end{verbatim}
 
-, which should return, 
+\noindent
+which should return
 
 \begin{verbatim}
      mpich-devel-gcc46 @3.2a1_0+fortran (active)
 \end{verbatim}
 
-As when installing the GCC compilers, we want to make sure any generic call to MPI points to Mpich. This 
+\noindent
+As when installing the GCC compilers, we want to make sure any generic call to MPI points to MPICH. This 
 can be done with the following command:
 
 \begin{verbatim}
@@ -650,27 +655,27 @@ Install OpenMPI with:
 
 Trilinos is a modern, open source, C++ based library of parallel nonlinear and linear solvers, 
 preconditioning and mesh-partitioning tools, and much more. It can be downloaded 
-\href{trilinos.sandia.gov/download/}{here}\footnote{trilinos.sandia.gov/download/}
- (the software is free, but you are required to enter your email address to download it). 
+\href{trilinos.sandia.gov/download/}{here}.
+(The software is free, but you are required to enter your email address to download it.) 
 The documentation below assumes that you are working with version 11.10.* and was specifically 
 tested using version 11.10.2. 
 
-Building Trilinos requires Cmake version 2.8 or later, which ideally you've already 
-installed as discussed above. Note that Trilinos is not needed to run the default 
-parallel, higher-order momentum balance model, but it may be useful for tackling 
+Building Trilinos requires CMake version 2.8 or later, which ideally you have already 
+installed as discussed above. Trilinos is not needed to run the default 
+parallel, higher-order dycore (Glissade), but it may be useful for  
 more difficult problems or for debugging in cases where the native Fortran solvers 
 fail to converge.
 
-Note that build instructions for Trilinos on Mac and Linux are very similar, so users
+The build instructions for Trilinos on Mac and Linux are very similar, so users
 of both systems can follow the primary instructions below, except where noted.
 
 Trilinos requires both (1) an ``out-of-source build'' and (2) an ``out-of-build installation''. 
 This means that you cannot build the code in the same directory where the source code lives, 
-and you cannot install the libraries in the same directory where you build the code 
-(older versions of Trilinos required an out-of-source build but not and out-of-build installation). 
+and you cannot install the libraries in the same directory where you build the code.
+(Older versions of Trilinos required an out-of-source build but not an out-of-build installation.) 
 The easiest way to satisfy this requirement is to have separate ``source'', ``build'' and 
-``install'' directories in the location where you want to install the code, 
-for example, in \texttt{/usr/local/}, you could set up the following three directories:
+``install'' directories in the location where you want to install the code. 
+For example, in \texttt{/usr/local/}, you could set up the following three directories:
 
 \begin{verbatim}
 	trilinos-11.10.2-Source/
@@ -679,23 +684,23 @@ for example, in \texttt{/usr/local/}, you could set up the following three direc
 \end{verbatim}
 
 The ``source'' directory will be created on its own when you uncompress the tar.gz archive 
-that you download (you do not have to keep the source code where you build and install 
-the Trilinos libraries but you will need to remember the path to where that source code 
-lives on your computer). 
+that you download. You do not have to keep the source code where you build and install 
+the Trilinos libraries, but you will need to remember the path to where that source code 
+lives on your computer. 
 
-To configure the Trilinos build, you will need to execute a Cmake configure script. 
+To configure the Trilinos build, you will need to execute a CMake configure script. 
 Sample configure scripts for a number of standard platforms are included in the ``sampleScripts''
 directory under the root level of the Trilinos source code. 
-Additionally, the CISM code includes examples of Trilinos configure scripts (``do-configure'') 
+Also, the CISM code includes examples of Trilinos configure scripts (``do-configure'') 
 for use with CISM for both Linux and Mac platforms in the 
 \texttt{./utils/trilinos\_config\_scripts\_examples} directory. 
 We recommend starting with one of those scripts and modifying it as
-necessary to work on your system \footnote{If you are following the above installation instructions for
+necessary to work on your system\footnote{If you are following the above installation instructions for
 Mac exactly, then the configure script 
 \texttt{./utils/trilinos\_config\_scripts\_examples/do-configure-Trilinos-11.10.2-for-Mac-10.9.4} should 
-work with very few minor modifications.}.
+work with few modifications.}.
 
-Note that the paths to both the ``source'' and ``install'' directories are specified within the ``do-configure'' scripts. In these instructions, those directories are both assumed to live within \texttt{/usr/local/},
+The paths to both the ``source'' and ``install'' directories are specified within the ``do-configure'' scripts. In these instructions, those directories are both assumed to live within \texttt{/usr/local/},
 but other locations are fine to use too (e.g., in your home/User directory).
 
 \begin{mdframed}[style=mac] % V==============MAC================V
@@ -711,9 +716,10 @@ Since some Macs may come with their own pre-installed OpenMPI libraries, it is i
 Find the example script most appropriate for your system, copy it to the \texttt{trilinos-11.10.2-Build} directory, and modify it if necessary (e.g., adjust paths, compiler locations, etc.).
 Execute it with: 
 
-\texttt{source ./do-cmake}\footnote{Note that here we've assumed that the name of the configure script is `do-cmake'. This script name may differ depending on what you have called it or if you've copied and modified one of the scripts from \texttt{./utils/trilinos\_config\_scripts\_examples}.}
+\texttt{source ./do-cmake}\footnote{Here we have assumed that the name of the configure script is ``do-cmake''. The script name may differ depending on what you have called it or if you copied and modified one of the scripts from \texttt{./utils/trilinos\_config\_scripts\_examples}.}
 
-from within your \texttt{trilinos-11.10.2-Build} directory. Note that depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo source ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
+\noindent
+from within your \texttt{trilinos-11.10.2-Build} directory. Depending on where you are building and installing the code, you may need to have administrative privileges (in which case you would type \texttt{sudo source ./do-cmake}). If the configure step was successful, you should see the following displayed on your screen:
 
 \begin{verbatim}
 ...
@@ -737,13 +743,15 @@ from within the \texttt{trilinos-11.10.2-Build} directory by typing:
 
 \texttt{make} (or \texttt{sudo make} if necessary) 
 
+\noindent
 For multiprocessor machines, the build process can be sped up significantly using 
 the ``-j''command as described above for building serial CISM:
 
 \texttt{make -j X}
 
-where ``X'' is the number of cores available on your machine (e.g. \texttt{make -j 4} 
-for a 2 processor, dual-core machine).
+\noindent
+where ``X'' is the number of cores available on your machine (e.g., \texttt{make -j 4} 
+for a 2-processor, dual-core machine).
 
 Building Trilinos can take a long time (e.g., an hour or more), depending on your machine, 
 the number of processors used for the build, and the number and type of libraries 
@@ -752,24 +760,18 @@ using:
 
  \texttt{make test} 
 
-(note that the
-
-\begin{verbatim}
-Trilinos_ENABLE_TESTS:BOOL
-\end{verbatim}
-
-variable in the do-cmake script can be set to ``OFF''to disable building of the tests). 
-Screen output will tell you if and how many tests failed. In general, we have seen 
-one or two tests fail while still having a perfectly good and working Trilinos library. 
+\noindent
+(The \texttt{Trilinos\_ENABLE\_TESTS:BOOL}
+variable in the do-cmake script can be set to ``OFF''to disable building of the tests.)
+Screen output will tell you if and how many tests failed. We have seen 
+a few tests fail while still having a perfectly good and working Trilinos library. 
+In general, if the number of tests passed is above 90\%, the library will likely work fine with CISM.
 Query the CISM \href{mailto:cism-users+subscribe@googlegroups.com}{users} or
-\href{mailto:cism-devel+subscribe@googlegroups.com}{developers} lists
-\footnote{cism-users+subscribe@googlegroups.com -or- cism-devel+subscribe@googlegroups.com} if you have questions 
-about specific Trilinos tests failing \footnote{We have seen a number of tests ``fail" while still giving a perfectly 
-functional Trilinos library. In general, if the number of tests passed is above 90\%, the library will likely work
-fine with CISM.}.
+\href{mailto:cism-devel+subscribe@googlegroups.com}{developers} lists\footnote{cism-users+subscribe@googlegroups.com -or- cism-devel+subscribe@googlegroups.com} 
+if you have questions about specific Trilinos tests failing.
 
 \begin{mdframed}[style=mac] % V==============MAC================V
-Note that on a Mac, MPI tests have been known to trigger a dialog box from the firewall. 
+On a Mac, MPI tests have been known to trigger a dialog box from the firewall. 
 With more than 300 tests, these messages popping up continually can make it impossible 
 to use you computer until the tests complete. To keep them from appearing, you can temporarily 
 turn off your firewall under ``System Preferences'' (Security $>$ Firewall $>$ Stop). 
@@ -780,12 +782,14 @@ After running the tests, you will need to install Trilinos using:
 
  \texttt{make install}
 
+\noindent
 This will build the actual Trilinos libraries in the path specified in the
 
 \begin{verbatim}
 -D CMAKE_INSTALL_PREFIX:PATH=/path
 \end{verbatim} 
 
+\noindent
 line of your ``do-cmake'' script (above). For this example, those libraries will be 
 installed in: \texttt{/usr/local/trilinos-11.10.2-Install}
 
@@ -795,8 +799,8 @@ are using the bash shell and your current directory is the Trilinos install dire
 \begin{verbatim}
 export CISM_TRILINOS_DIR=$PWD
 \end{verbatim}
-(Note that you may prefer to modify your .bashrc or .bash\_profile (or similar)
-to set this environment variable on every login.)
+You may prefer to modify your .bashrc or .bash\_profile (or similar)
+to set this environment variable on every login.
 
 Alternatively, you can modify the CISM parallel build script (below) so that the line:
 \begin{verbatim}
@@ -832,7 +836,7 @@ From the appropriate directory, run:
 \noindent{if you have 4 processors available (or as many processors as you would like to use).
 See Section \ref{serial-build} for details about customizing the build process.
 
-Note that building a parallel version of CISM that includes Trilinos requires setting the  
+Building a parallel version of CISM that includes Trilinos requires setting the  
 \begin{verbatim}
 -D CISM_USE_TRILINOS 
 \end{verbatim}
@@ -843,9 +847,9 @@ Note that building a parallel version of CISM that includes Trilinos requires se
 \section{Next Steps}
 % =====================================
 % =====================================
-Note that if you make any changes to the source code, you only need to re-run
+If you make any changes to the source code, you only need to re-run
 \texttt{make} from your build directory to generate an updated executable.  
-One exception is if you edit the lists of input/output netCDF variables in 
+One exception is that if you edit the lists of input/output netCDF variables in 
 \texttt{*\_vars.def} files (see Appendices \ref{ug.sec.varlist} and \ref{ch:appendix_io}), 
 you need to first re-source the configuration script 
 (e.g., \texttt{source mac-gnu-cmake}) before re-running \texttt{make}.
