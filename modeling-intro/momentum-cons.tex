@@ -7,24 +7,26 @@ Starting from Newton's second law of motion, conservation of momentum is express
 \label{eq:mobal1}
 \end{equation}
 
-where $t$ represents time, $\rho$ represents density, $u$ represents
-velocity, $\sigma_{ij}$ represents the stress tensor, $g$ represents the
-acceleration due to gravity, $V$ represents the volume of an arbitrary
-fluid element, and $(i,j)= \{x, y, z\}$ in a cartesian coordinate
+\noindent
+where $t$ is time, $\rho$ is density, $u$ is
+velocity, $\sigma_{ij}$ is the stress tensor, $g$ is the
+acceleration due to gravity, $V$ is the volume of an arbitrary
+fluid element, and $(i,j)= \{x, y, z\}$ in a Cartesian coordinate
 system. Equation \eqref{eq:mobal1} tells us that a fluid element of arbitrary size 
 experiences a ``body force'' $\rho g_{i}\delta V$ due to gravity, which is balanced by 
 stress divergence $\frac{\partial \sigma_{ij}} {\partial x_{j}} \delta V$ and acceleration
 of the fluid in the volume $\delta V$. 
 
-Making the assumptions that we have continuous fields and that ice is incompressible (that is, 
-its density $\rho$ does not change under conditions of interest to us), we can write
+Making the assumptions that we have continuous fields and that ice is incompressible (i.e., 
+its density $\rho$ does not change under conditions of interest), we can write
 
 \begin{equation}
 \rho \frac{D u_{i}}{D t}~=~\frac{\partial \sigma_{ij}}{\partial x_{j}} + \rho g_{i}
 \label{eq:mobal2}
 \end{equation}
 
-in which $D$ is a material derivative. Due to the fact that the \href{http://en.wikipedia.org/wiki/Froude_number}
+\noindent
+in which $D$ is a material derivative. Because the \href{http://en.wikipedia.org/wiki/Froude_number}
 {Froude number} for ice flow is extremely small, the acceleration term (the first term on the left-hand side) can be 
 neglected, leaving the steady-state form, 
 
@@ -34,12 +36,12 @@ neglected, leaving the steady-state form,
 \end{equation}
 
 Equation \eqref{eq:mobal3} states that the body force (the gravitational driving force) is balanced by forces resulting from 
-gradients in the stress tensor $\sigma_{ij}$. All models of ice-flow dynamics are based on ``solving" this equation in some form.
-Chapters \ref{ch:glide} and \ref{ch:glissade} provide additional details on the approximations to this equation that are currently 
-solved by Glimmer-CISM.
+gradients in the stress tensor $\sigma_{ij}$. All models of ice-flow dynamics are based on solving this equation in some form.
+Chapters \ref{ch:glide} and \ref{ch:glissade} provide additional details on the approximations to this equation that are
+solved by CISM.
 
-The \href{http://en.wikipedia.org/wiki/Stress_tensor}{stress tensor} $\sigma_{ij}$ has nine components in our three-dimensional,
-cartesian coordinate system,
+The \href{http://en.wikipedia.org/wiki/Stress_tensor}{stress tensor} $\sigma_{ij}$ has nine components in a three-dimensional,
+Cartesian coordinate system,
 
 \begin{equation}
 \mathbf{\sigma} =
@@ -51,38 +53,43 @@ cartesian coordinate system,
 \label{eq:mobal4}
 \end{equation}
 
-The components along the diagonal are called normal stresses and the off-diagonal components are called shear stresses. Deformation results
-not from the full stress but from the deviatoric stress,
+\noindent
+Since $\sigma_{ij}$ is symmetric, only six of these components are independent.
+The components along the diagonal are called normal stresses, and the off-diagonal components are called shear stresses. 
+Deformation results not from the full stress but from the deviatoric stress,
 
 \begin{equation}
 \tau_{ ij} ~ = ~ \sigma _{ ij} ~ - ~{\frac{ 1}{ 3}} \sigma _{ kk} \delta _{ ij},
 \label{eq:mobal5}
 \end{equation}
 
-in which $\delta_{ ij}$ is the Kroneker delta (or the identify tensor). Note that \eqref{eq:mobal5} indicates that for shear stresses, the full
-and deviatoric stresses are identical.
+\noindent
+in which $\delta_{ ij}$ is the Kroneker delta (or the identify tensor). For shear stresses, \eqref{eq:mobal5} indicates that
+the full and deviatoric stresses are identical.
 
 \subsubsection{Constitutive relationship}
 
-To relate the stress tensor to fluid motion, we need to introduce the strain rate tensor,
+To relate the stress tensor to fluid motion, we introduce the strain rate tensor,
 
 \begin{equation}
 \dot{\epsilon}_{ij}~= \frac{1}{2}\left( \frac{ \partial u_{i}}{\partial x_{j}} + \frac{ \partial u_{j}}{\partial x_{i}}\right), ~~i,j = x,y,z,
 \label{eq:mobal6}
 \end{equation}
 
+\noindent
 where $u_i$ are the velocity vector components. The strain rate tensor $\dot{\epsilon}_{ij}$, and hence gradients in the 
-velocity field, is related to the stress tensor $\tau_{ij}$ by a \href{http://en.wikipedia.org/wiki/Constitutive_equation}
-{constitutive relation}. For a Newtonian fluid, this can be expressed as,
+velocity field, are related to the stress tensor $\tau_{ij}$ by a \href{http://en.wikipedia.org/wiki/Constitutive_equation}
+{constitutive relation}. For a Newtonian fluid, this can be expressed as
 
 \begin{equation}
 \tau_{ij}~=\eta \dot{\epsilon}_{ij},
 \label{eq:mobal7}
 \end{equation}
 
-which states that the strain rate is proportional to the stress, with the ice viscosity, $\eta$ serving as the constant of proportionality.
+\noindent
+which states that the strain rate is proportional to the stress, with the ice viscosity $\eta$ serving as the constant of proportionality.
 Ice does not behave as a Newtonian fluid, and instead exhibits a \href{http://en.wikipedia.org/wiki/Power-law_fluid}{power-law rheology}, 
-so that it becomes more fluid (less viscous) the more it deforms. This relationship can be expressed through Nye's generalization of Glen's 
+so that it becomes more fluid (less viscous) the faster it deforms. This relationship can be expressed through Nye's generalization of Glen's 
 flow law, 
 
 \begin{equation}
@@ -90,9 +97,10 @@ flow law,
 \label{eq:mobal8}
 \end{equation}
 
+\noindent
 in which $T^{*}$ is the absolute temperature corrected for the pressure dependence of the melt temperature, $\dot{\epsilon}_{e}$ is the 
-second invariant (a norm) of the stress tensor, and the power-law exponent, $n$, is commonly take as 3. A comparison of Equations 
-\eqref{eq:mobal7} and \eqref{eq:mobal8} indicates that one can define an ``effective" ice viscosity for Equation \eqref{eq:mobal7} as
+second invariant (a norm) of the stress tensor, and the power-law exponent $n$ is commonly taken as 3. A comparison of 
+\eqref{eq:mobal7} and \eqref{eq:mobal8} indicates that one can define an ``effective" ice viscosity for \eqref{eq:mobal7} as
 
 \begin{equation}
 \eta_{e}~=~A(T^{*})^{\frac{-1}{n}} \dot{\epsilon}_{e}^{\frac{1-n}{n}}.
@@ -106,7 +114,8 @@ A\left( T^{*}\right)~=~E A_{o}e^{-Q/RT^{*}},
 \label{eq:mobal10}
 \end{equation}
 
-in which $A_{o}$ is a constant, $Q$ represents the activation energy for crystal creep, $R$ is the gas constant, and $E$ is a tuning 
+\noindent
+in which $A_{o}$ is a constant, $Q$ is the activation energy for crystal creep, $R$ is the gas constant, and $E$ is a tuning 
 parameter, which can be used to account for the effects of impurities and anisotropic ice fabrics. The homologous temperature is
 
 \begin{equation}
@@ -114,5 +123,6 @@ T^{*}=T+\rho g H \Phi,
 \label{eq:mobal11}
 \end{equation}
 
+\noindent
 in which $\Phi$ is 9.8 $\times$10$^{-8}$ K Pa$^{-1}$, or about 8.7 $\times$10$^{-4}$ K m$^{-1}$ in ice. The pressure-dependent melt 
-temperature is simply the triple point temperature less the product $\rho g H \Phi$.
+temperature is simply the triple point temperature minus the product $\rho g H \Phi$.

@@ -1,23 +1,25 @@
 \subsection{Conservation of Energy}
 
-The first law of thermodynamics is used to make a basic statement of conservation of energy in a volume of ice $V$ enclosed within a surface $S$ is
+The first law of thermodynamics is used to make a basic statement of conservation of energy in a volume of ice $V$ enclosed within a surface $S$:
 
 \begin{equation}
 \frac{d}{d t} \int_{V}E ~dV~=~- \int_{S}\mathbf{F}\cdot \hat{n}~dS~-~\int_{S}E \mathbf{u}\cdot \hat{n}~dS~+~\int_{V}W dV
 \label{eq:enbal1}
 \end{equation}
 
-in which $E$ represents the energy of the volume, $F_{i}$ is the flux due
+\noindent
+in which $E$ is the total energy within the volume, $F_{i}$ is the energy flux due
 to diffusion, and $W$ represents any sources or sinks of energy within
 the volume. The term $Eu_{i}$ is an energy flux through $S$ due to advection.
 Following the steps laid out earlier, we use the divergence theorem and
-the assumptions of continuous fields and incompressibility, such that
+the assumptions of continuous fields and incompressibility to obtain
 
 \begin{equation}
 \frac{dE}{dt}~+~\nabla \cdot \left(F_{i} +E u_{i}  \right)~-~W~=~0
 \label{eq:enbal2}
 \end{equation}
 
+\noindent
 Our goal is to use the first law of thermodynamics to compute the temperature of the ice and any changes in that temperature over time.
 
 The energy $E$ is the product of density and the specific internal
@@ -34,6 +36,7 @@ between internal energy and pressure for an incompressible fluid). Thus,
 \label{eq:enbal3}
 \end{equation}
 
+\noindent
 The heat flux due to diffusion follows Fourier's ``law'' for heat conduction,
 
 \begin{equation}
@@ -44,10 +47,11 @@ The heat flux due to diffusion follows Fourier's ``law'' for heat conduction,
 \label{eq:enbal4}
 \end{equation}
 
-in which $k$ represents the thermal conductivity of ice and we assume
+\noindent
+in which $k$ is the thermal conductivity of ice and we assume
 gradients in its magnitude to be negligible. 
 
-Using progress made above we can write the advection term
+Using progress made above, we can write the advection term
 
 \begin{equation}
 \begin{matrix}
@@ -56,24 +60,26 @@ Using progress made above we can write the advection term
 \label{eq:enbal5}
 \end{equation}
 
-In the expansion of the terms on the left-hand side of Equation \eqref{eq:enbal5} (using the product rule) we 
+\noindent
+In the expansion of the terms on the left-hand side of \eqref{eq:enbal5} (using the product rule), we 
 have implicitly ignored the term involving $\nabla \cdot u_{i}$ because it is small with respect to the other terms
 retained on the right-hand side.
 
-Two quantities must be considered as energy sources, the work done on
+Two energy sources must be considered: the work done on
 the system by internal deformation and the latent heat associated with
-phase changes. The former is the product of strain rate and the
-deviatoric stress $\dot{\epsilon}_{ij} \tau_{ij}$. The latter is the
+phase changes. The former is the product of the strain rate and
+deviatoric stress, $\dot{\epsilon}_{ij} \tau_{ij}$. The latter is the
 product of the latent heat of fusion and the amount of material (ice) subject
 to melting (or freezing) per unit volume, per unit time, $L_{f}M_{f}$.
 
-At last, we are able to write equation \eqref{eq:enbal2} in terms of temperature,
+At last, we can write equation \eqref{eq:enbal2} in terms of temperature:
 
 \begin{equation}
 \frac{\partial T}{\partial t}~=~\frac{k}{\rho c_{p}} \nabla^{2}T~-~u_{i}\cdot \nabla T~+~\frac{1}{\rho c_{p}} \dot{\epsilon}_{ij} \tau_{ij} ~+~\frac{1}{\rho c_{p}} L_{f} M_{f}.
 \label{eq:enbal6}
 \end{equation}
 
+\noindent
 It is often the case that horizontal terms
 $\frac{\partial^{2} T}{\partial x^{2}}$ and
 $\frac{\partial^{2} T}{\partial y^{2}}$ are small enough to be ignored.

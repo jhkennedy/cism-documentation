@@ -4,11 +4,11 @@ In this chapter we give an introduction to ice dynamics and the other conservati
 that must be accounted for when simulating glacier and ice sheet evolution.
 
 Ice sheets are key components of Earth's climate system. They contain
-nearly all of the planet's fresh water, changes in their volume have an
-immediate effect on sea level, changes in their area and surface
-characteristics affect global albedo, and they play a role in the
+nearly all of the planet's fresh water; changes in their volume have an
+immediate effect on sea level; changes in their area and surface
+characteristics affect global albedo; and they play a role in the
 circulation of both the atmosphere and the ocean. Through the latter
-half of the Quaternary, ice sheets have modulated the planetary response
+half of the Quaternary Period, ice sheets have modulated the planetary response
 to orbitally-driven insolation cycles. Looking forward, the Greenland
 and Antarctic ice sheets have the potential to play important roles in
 climate change.
@@ -18,21 +18,21 @@ The approximation is discrete, due to both the finite nature of a computer's
 precision and the finite problem size that can be tackled using a computer. 
 The underlying process is continuous because it is commonly
 formulated in terms of ordinary or partial differential equations (ODEs and PDEs,
-respecitively). Numerical models can not be ``solved" until the boundary and
+respectively). Numerical models cannot be ``solved" until the boundary and
 initial conditions are specified. Such models may be very simple, such as
 a \href{http://en.wikipedia.org/wiki/Harmonic_oscillator}{harmonic oscillator},
 or very complex, as in a complete \href{http://en.wikipedia.org/wiki/General_Circulation_Model}
 {Earth System Model} (ESM). In general, ESMs are composed of a number of component
 models, of which land ice (encompassing glaciers, ice caps, and large ice sheets) is but one
 component (with atmosphere, ocean, sea ice, and land surface models being the other
-primary ones).   
+primary components).   
 
 
 % ========================================
 \section{Conservation equations}
 
 For the majority of the physical systems encountered in Earth science problems, the first step in modeling is a
-mathematical description about the conservation of energy, momentum, and mass. Only after that description is
+mathematical description of the conservation of energy, momentum, and mass. Only after that description is
 laid out do we turn to the question of approximating those equations in a form that can be solved on a computer. 
 
 % ========================================
@@ -71,6 +71,7 @@ Formally, the time rate of change in $\phi$ within $V$ is written:
     \label{eq:intcons}
 \end{equation}
 
+\noindent
 where ${\mathbf F}$ represents the flux due to diffusion
 ($\mathbf{F} \propto \nabla \phi$), $\phi {\mathbf u}$ represents a velocity field 
 \emph{advecting} $\phi$, and $R$ represents a source (or sink) of $\phi$. Vector quantities are
@@ -99,8 +100,9 @@ Begin with the terms describing diffusive and advective fluxes into or out of th
     \label{eq:intcons2}
 \end{equation}
 
-Here and below, we will often alternate between standard vector notation (as above) \href{http://en.wikipedia.org/wiki/Index_notation}{and 
-indicial (or index) notation}, where a single subscript indicates a component of a vector, two different subscripts indicate a tensor quantity, 
+\noindent
+Here and below, we will alternate between standard vector notation (as above) \href{http://en.wikipedia.org/wiki/Index_notation}{and 
+index notation}, where a single subscript indicates a component of a vector, two different subscripts indicate a tensor quantity, 
 and two repeated subscripts indicate summation. Thus, an identical way of writing equation \eqref{eq:intcons2} is 
 
 \begin{equation}
@@ -108,7 +110,7 @@ and two repeated subscripts indicate summation. Thus, an identical way of writin
     \partial {\mathbf F}_{ j} }{ \partial x_{ j} }} ~dV.
 \end{equation}
 
-Using the divergence theorem, the surface integrals over fluxes in \eqref{eq:intcons} may be replaced by,
+Using the divergence theorem, the surface integrals over fluxes in \eqref{eq:intcons} may be replaced by
 
 \begin{equation}
 -{ \int }_{ S} {\mathbf F} {\cdot} \hat{n}dS~ - ~{ \int }_{ S} \phi {\mathbf u}
@@ -116,15 +118,17 @@ Using the divergence theorem, the surface integrals over fluxes in \eqref{eq:int
     {\mathbf F}~ + ~ \phi ~ {\mathbf u}} \right )dV.
 \end{equation}
 
+\noindent
 Assuming that the coordinate system is stationary with respect to the velocity field $\mathbf{u}$ 
-(i.e, assuming an Eularian reference frame), it is then possible to write
+(i.e, assuming an Eularian reference frame), it is possible to write
 
 \begin{equation}
 {\frac{ \partial}{ \partial t}} { \int }_{ V} \phi ~dV~ = ~{ \int }_{ V}
     {\frac{ \partial \phi }{ \partial t}} ~dV~
 \end{equation}
 
-The end result is that the integral form of the conservation equation can now be written as
+\noindent
+The integral form of the conservation equation can now be written as
 
 \begin{equation}
 { \int }_{ V} \left\{ {{\frac{ \partial \phi }{ \partial t}}
@@ -132,7 +136,8 @@ The end result is that the integral form of the conservation equation can now be
     - ~ R} \right\} dV~ = ~ 0
 \end{equation}
 
-Because $V$ is an arbitrary volume, this equation can only be true if the term in brackets is zero 
+\noindent
+Because $V$ is an arbitrary volume, this equation can be true only if the term in brackets is zero 
 for the volume. Hence, for any volume having continuously differentiable $\phi$,
 
 \begin{equation}
@@ -141,8 +146,9 @@ for the volume. Hence, for any volume having continuously differentiable $\phi$,
     \label{eq:derivcons}
 \end{equation}
 
-This is the general form for all conservation laws in continuum mechanics. Below, we apply this to the three quantities conserved in an 
-ice sheet (and ideally, in an ice sheet model); mass, energy, and momentum.
+This is the general form for all conservation laws in continuum mechanics. Below, we apply this equation
+to the three quantities conserved in an 
+ice sheet (and ideally, in an ice sheet model): mass, energy, and momentum.
 
 % ========================================
 \section{Applications of the General Conservation Equation}
@@ -338,10 +344,5 @@ ice sheet (and ideally, in an ice sheet model); mass, energy, and momentum.
 %If you would like to read more about the inner workings of GLIMMER, its
 %documentation is available at the class website. This is not necessary
 %for the present lab exercise.
-
-
-
-
-
 
 % ========================================
