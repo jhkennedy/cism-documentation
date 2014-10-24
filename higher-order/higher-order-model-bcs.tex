@@ -339,5 +339,5 @@ All the boundary conditions above have a similar form. In fact, all that differs
 In the first equation (free surface), the normals are related to the ice sheet surface slope and the source term is zero (which allows us to divide through by the effective viscosity and remove it from the equations). In the second equation (specified basal traction), the normals are related to the bedrock slopes and the source term is related to the assumed relationship between the basal shear stress and the basal sliding rate. In the last equation, the normals are defined by the shape of the ice-shelf front in map view, the vertical velocity gradient terms are absent, and the source term is related to the pressure from the adjacent column of ocean water.
 
 In CISM's earlier developmental dycore, Glam, these boundary conditions were implemented using finite differences, leading to significant complexity.
-The current dycore, Glissade, solves for ice velocity using a finite-volume approach, in which boundary conditions are handled more simply.
+The current dycore, Glissade, solves for ice velocity using a finite-element approach, in which boundary conditions are handled more simply.
 For example, the surface boundary condition is a  ``natural'' BC that is satisfied automatically.  See, e.g., \citet{DUKOWICZ:2010wb} for details.
