@@ -3,7 +3,7 @@
 \section{Overview of Running CISM}
 
 Assuming you successfully completed the Installation instructions in Chapter \ref{chp:install},
-the executable for running the model, \texttt{cism\_driver} can be found in your 
+the executable for running the model, \texttt{cism\_driver}, can be found in your 
 build directory in a subdirectory called \texttt{cism\_driver} 
 (e.g., \texttt{./builds/mac-gnu/cism\_driver/cism\_driver}).
 
@@ -11,26 +11,26 @@ The build system creates the executable at this path but does not automatically
 make it available to other locations on your system.  How you choose to do so depends 
 on your situation.  See the introduction to Chapter \ref{chp:testcases} for 
 an overview of how to make the executable available to other locations on your system
-(e.g., symlinking, copying, modifying your PATH environment variable).
+(e.g., symlinking, copying, or modifying your PATH environment variable).
 
 Unlike previous versions of Glimmer, with CISM 2.0 this single \texttt{cism\_driver} 
 executable is used for running the model in all configurations.
 \texttt{cism\_driver} can be invoked with a single argument specifying 
-a CISM .config file to run CISM as a standalone ice sheet model without GLINT climate forcing,
-or with two arguments (a CISM config file and a GLINT config file) 
-to run CISM with GLINT climate forcing:
+a CISM .config file to run CISM as a standalone ice sheet model without Glint climate forcing,
+or with two arguments (a CISM config file and a Glint config file) 
+to run CISM with Glint climate forcing:
 \begin{verbatim}
  Call cism_driver with either 1 or 2 arguments. Examples:
  cism_driver ice_sheet.config
  cism_driver ice_sheet.config climate.config
 \end{verbatim}
 The available options for the CISM configuration file and 
-for the GLINT climate interface configuration file are described in detail below.
+for the Glint climate interface configuration file are described in detail below.
 
-To perform a parallel run with the parallel build of CISM. you must run CISM through the 
+To perform a parallel run with the parallel build of CISM, you must use the
 MPI run command, which is typically \texttt{mpirun} or \texttt{mpiexec} but may 
-vary between MPI versions and installations.  A standard syntax that is likely to
-work on most installations is: \newline
+vary among MPI versions and installations.  A standard syntax that is likely to
+work on most installations is \newline
  \indent \texttt{mpirun -np N cism\_driver ice\_sheet.config \textit{climate.config}} \newline
 where \texttt{N} is the number of processors you want to use, \texttt{ice\_sheet.config} is the name of the CISM
 configuration file, and the optional argument \texttt{\textit{climate.config}} is the name 
@@ -45,48 +45,55 @@ When CISM runs, some basic information about its operation will be output to
 the screen (standard out).  More verbose information about the run will be written 
 to a log file which is named \texttt{\textit{ice\_sheet.config}.log} where 
 \texttt{\textit{ice\_sheet.config}} is the name of the .config file use to perform
-the run.  (E.g., if running the model with  \texttt{./cism\_driver dome.config},
+the run.  (For example, if running the model with  \texttt{./cism\_driver dome.config},
 the log file will be called  \texttt{dome.config.log}.)  The log file is an
-important reference, particularly for debugging runs that do not behave as expected.
-For example, the log file includes a list of all configuration options and parameter
-values used which can be useful in diagnosing problems like typos in your .config file.
+important reference, especially for debugging runs that do not behave as expected.
+For example, the log file includes a list of configuration options and parameter
+values, which can be useful in diagnosing problems like typos in your .config file.
 The log file also indicates what files were used for input and output and at which
-times i/o occurred.  Finally, the log file will contain warnings about potentially
-problematic configuration combinations or model behavior, for example, the use of
-configurations settings that are not scientifically validated or a CFL violation
+times I/O occurred.  The log file may contain warnings about potentially
+problematic configuration combinations or model behavior, such as the use of
+configurations settings that are not scientifically validated, or a CFL violation
 during advection.  In contrast, fatal errors will kill the model and the error
 message will be written to both the screen and the log file.
+
+Optionally, the log file also contains diagnostic information about the global
+state of the ice sheet (e.g., the total ice area and volume, the maximum surface and basal
+speeds, and the max and min temperatures), along with vertical profiles of speed
+and temperature at a user-specified grid point.  This information is written at intervals
+specified by the config file variable \texttt{dt\_diag}, for the diagnostic
+point \texttt{(idiag,jdiag)}.
 
 In addition to the log file, the model will create any netCDF output files requested
 in the config file (see Section \ref{io-config} below for details).  
 If the model dies for some reason midway through a simulation,
 the netCDF files will still include output for the portion of the simulation that 
-was executed.
+was completed.
 
 \section{Overview of Configuration Files}
 
 Running CISM is managed through configuration files (*.config) that enable 
-desired model features and control input of initial conditions and/or forcing 
+desired model features and control input of initial conditions and forcing 
 and output of model results.  This chapter summarizes the configuration options 
 available for running CISM and is divided into sections on general Model Configuration, 
 Input/Ouput Configuration, and optional Climate Forcing Configuration.
 
 The format of CISM configuration files is taken from that used by the 
 ConfigParser module in Python 2.x, which is similar to Windows \texttt{.ini} files 
-and contains sections. Each section contains key, value(s) pairs.
+and contains sections. Each section contains key/value pairs.
 
 \begin{itemize}
 \item[Comments:] Empty lines, or lines starting with a \texttt{\#}, \texttt{;} or \texttt{!} are ignored.  Comments can also be added on the same line as a key/value pair using these delimiters.
-\item[Sections:] A new section starts with the the section name enclosed with square brackets, \texttt{[]} and can be 20 characters long, e.g. \texttt{[grid]}.
-\item[Key/Value Pairs:] Keys are separated from their associated values by a \texttt{=} or \texttt{:}. The names can be 20 characters long. Values can be 200 characters long.
+\item[Sections:] A new section starts with the section name enclosed by square brackets, \texttt{[ ]} and can be up to 50 characters long, e.g., \texttt{[grid]}.
+\item[Key/Value Pairs:] Keys are separated from their associated values by \texttt{=} or \texttt{:}. The names can be up to 50 characters long. Values can be up to 400 characters long.
 \end{itemize}
 
-Sections and keys are case sensitive and may contain white space. 
+Sections and keys are case-sensitive and may contain white space. 
 However, the configuration parser is very simple and thus the number of spaces 
 within a key or section name also matters. Sensible defaults are used when 
-a specific key is not found.  Defaults are indicated in bold in the tables below.
+a specific key is not found; defaults are shown in bold in the tables below.
 
-An example configuration file:
+Here is an example configuration file:
 \begin{verbatim}
 ;a comment
 [a section]

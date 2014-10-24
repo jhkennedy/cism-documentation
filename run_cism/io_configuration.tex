@@ -5,39 +5,40 @@ NetCDF I/O can be configured in the main configuration file or in a separate fil
 (see \texttt{ioparams} in the \texttt{[options]} section). 
 Any number of input, forcing, and output files can be specified. 
 
-Input files are processed in the same order they occur in the configuration file, 
+Input files are processed in the same order they appear in the configuration file, 
 thus potentially overwriting previously loaded fields.  The configuration section 
 for an input file specifies which time slice from the input file should be used as
-the initial condition.  (Note this is an integer specifying the time level, not
+the initial condition.  (This is an integer specifying the time level, not
 the actual time.)
 
 Input files can contain any of a large number of model fields that are specified as being
-``loadable". These fields are marked with asterisks in the NetCDF model variable
-table listed in Appendix \ref{ch:appendix_vars}. The option for a given variable to be ``loadable" 
+``loadable". These fields are marked with asterisks in the netCDF model variable
+table in Appendix \ref{ch:appendix_vars}. The option for a given variable to be ``loadable" 
 or not can be changed within the \texttt{glide\_vars.def} file, as described in Appendix \ref{app:netcdfio}. 
-The standard test cases discussed in Chapter \ref{chp:testcases} provide good examples for the types 
+The standard test cases discussed in Chapter \ref{chp:testcases} give examples
 of variables that might be specified for standard model setups.    
 
-Forcing files are new in CISM 2.0 and are input files that are read on every 
+Forcing files are new in CISM 2.0.  These are input files that are read on every 
 time step to allow time-dependent
-forcing to be applied during a simulation.  Any inputtable fields can be included
+forcing to be applied during a simulation.  Any input fields specified in
+\texttt{glide\_vars\_def} can be included
 in forcing files.  Forcing files should have a ``time'' field which is used to 
 assign values to each field in the file during the simulation.  Forcing is applied 
-in a piecewise constant fashion -- the most recent time slice in the forcing file prior
-to the current model time is used on each time step.  (Linearly interpolatation of
-forcing may be available in the future but is not currently implemented.)
-Note that if a field is present in both an input file and in a
+in a piecewise constant fashion; the most recent time slice in the forcing file prior
+to the current model time is used on each time step.  (Linear interpolatation of
+forcing may be available in the future but is not yet implemented.)
+If a field is present in both an input file and a
 forcing file at the start time, the value in the forcing file will overwrite the value
-from the input file because forcing files get read after input files.
-Forcing files are processed in the same order they occur in the configuration file, 
-on each time step thus potentially overwriting previously loaded fields from other
+from the input file because forcing files are read after input files.
+Forcing files are processed in the same order they appear in the configuration file, 
+thus on each time step potentially overwriting previously loaded fields from other
 forcing files.  The ``dome'' test case (\texttt{tests/higher-order/dome}) includes 
-an example of how to use time-dependent forcing.
+an example of time-dependent forcing.
 
-One special input field is the \texttt{kinbcmask} field, which is used to specify locations (that is,
+One special input field is the \texttt{kinbcmask} field, which is used to specify locations (i.e.,
 indices in the horizontal grid plane) on the staggered (velocity) grid where Dirichlet boundary 
 conditions are to be applied. This input field is used in conjunction with the \texttt{uvel} and 
-\texttt{vvel} fields; at any location where the value of \texttt{kinbcmask} is set to 1, the input field
+\texttt{vvel} fields. At any location where \texttt{kinbcmask} $= 1$, the input field
 values of \texttt{uvel} and \texttt{vvel} for that same column will be applied as Dirichlet boundary
 conditions on the velocity solution. If \texttt{uvel} and \texttt{vvel} are not included in the input file, 
 zero velocity will be specified throughout the column for any location where \texttt{kinbcmask} is 
@@ -48,6 +49,8 @@ is done by the python script that constructs the other input fields for this tes
 Chapter \ref{sc:ho-tests} includes a script and a config file demonstrating how 
 \texttt{kinbcmask}, \texttt{uvel}, and \texttt{vvel} 
 can be used in a forcing file to provide time-varying Dirichlet boundary conditions. 
+
+The following tables describe netCDF sections and parameters in the .config file.
 
 \begin{center}
   \tablefirsthead{%
@@ -68,12 +71,13 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF default]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be modified in the \texttt{[output]} section. The model automatically attaches a time stamp and the model version to the NetCDF output file.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be modified
+      in the \texttt{[CF output]} section.}\\
     \hline
     \texttt{title}& Title of the experiment\\
     \texttt{institution} & Institution at which the experiment was run\\
     \texttt{references} & References that might be useful\\
-    \texttt{comment} & A comment, further describing the experiment\\
+    \texttt{comment} & Comments further describing the experiment\\
     \hline
 
 %%%% CF Input
@@ -82,10 +86,10 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF input]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they appear in the configuration file, potentially overriding previously loaded variables.}\\
     \hline
-    \texttt{name}& The name of the NetCDF file to be read. Typically NetCDF files end with \texttt{.nc}.\\
-    \texttt{time}& The time slice (not actual time) to be read from the NetCDF file. The first time slice is read by default.\\
+    \texttt{name}& Name of the netCDF file to be read. Typically, netCDF files end with \texttt{.nc}.\\
+    \texttt{time}& Time slice (not actual time) to be read from the netCDF file. The first time slice is read by default.\\
     \hline
 
 %%%% CF Forcing
@@ -94,9 +98,9 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF forcing]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they occur in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they appear in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
     \hline
-    \texttt{name}& The name of the NetCDF file to be read. Typically NetCDF files end with \texttt{.nc}.\\
+    \texttt{name}& Name of the netCDF file to be read. Typically, netCDF files end with \texttt{.nc}.\\
     \hline
 
 %%%% CF output
@@ -105,14 +109,14 @@ can be used in a forcing file to provide time-varying Dirichlet boundary conditi
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF output]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{This section of the NetCDF parameter file controls how often selected  variables are written to file.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{This section controls how often selected variables are written to files.}\\
     \hline
-    \texttt{name} & The name of the output NetCDF file. Typically NetCDF files end with \texttt{.nc}.\\
+    \texttt{name} & Name of the output netCDF file. Typically, netCDF files end with \texttt{.nc}.\\
     \texttt{start} & Start writing to file when this time is reached (default: first time slice).\\
-    \texttt{stop} & Stop writin to file when this time is reached (default: last time slice). \\
+    \texttt{stop} & Stop writing to file when this time is reached (default: last time slice). \\
     \texttt{frequency} & The time interval in years, determining how often selected variables are written to file.\\
-    \texttt{xtype} & Set the floating point representation used in NetCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). (If the  name \texttt{restart} is included in the list of \texttt{variables}, \texttt{xtype} is automatically set to \texttt{double} to ensure bit-reproducible restarts, overriding the value set here.)\\
-    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case sensitive. The name \texttt{restart} selects all variables necessary for a restart based on the specified model configuration.  (The name \texttt{hot} is also retained for this purpose for backwards compatability.)  If the  name \texttt{restart} is included, the \texttt{xtype} option is automatically set to \texttt{double} to ensure bit-reproducible restarts.\\
+    \texttt{xtype} & Set the floating point representation used in netCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). (If the  name \texttt{restart} is included in the list of \texttt{variables}, \texttt{xtype} is automatically set to \texttt{double} to ensure bit-reproducible restarts, overriding the value set here.)\\
+    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case-sensitive. The name \texttt{restart} selects all variables necessary for a restart based on the specified model configuration.  (The name \texttt{hot} is also retained for this purpose for backwards compatability.)  If the  name \texttt{restart} is included, the \texttt{xtype} option is automatically set to \texttt{double} to ensure bit-reproducible restarts.\\
     \hline
   \end{supertabular*}
 \end{center}

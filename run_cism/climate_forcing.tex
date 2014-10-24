@@ -1,5 +1,5 @@
 \section{Climate Forcing Configuration}
-The core ice sheet model is connected to the climate via the surface mass balance (SMB) (\texttt{acab} field) 
+The core ice sheet model is connected to the climate via the surface mass balance (\texttt{acab} field) 
 and air temperature (\texttt{artm} field) and (optionally) a scalar value for eustatic sea level. 
 This climate forcing can come from:
 \begin{itemize}
@@ -12,7 +12,7 @@ This climate forcing can come from:
   \item  data input into the model:
     \begin{itemize}
       \item directly as user-supplied \texttt{acab} and \texttt{artm} fields
-      \item from a global or regional climate model (e.g., CESM, GENIE, either from data or coupled) throught the GLINT interface
+      \item from a global or regional climate model (e.g., CESM, GENIE, either from data or coupled) throught the Glint interface
     \end{itemize}
 \end{itemize}
 
@@ -25,7 +25,7 @@ This climate forcing can come from:
 %________________________________________________
 %________________________________________________
 \subsection{EISMINT Climate Forcing}\label{driver:eismint}
-CISM includes a set of idealized climate forcings used in the 
+Like previous versions of Glimmer, CISM includes a set of idealized climate forcings used in the 
 European Ice Sheet Modeling INiTiative (EISMINT) Phase 1 and 2
 series of experiments.  These forcings calculate surface mass balance and 
 air temperature fields for predefined experiments.  See Chapter \ref{chp:testcases}
@@ -36,7 +36,7 @@ for a more detailed description of the tests and the forcings associated with ea
 \subsubsection{Configuration}
 The various EISMINT climate forcings are enabled by adding one of the following
 sections to the configuration file used for running CISM.  See the files associated
-with the EISMINT test cases (Chapter \ref{chp:testcases}) for examples of their usage
+with the EISMINT test cases (Chapter \ref{chp:testcases}) for examples of their use
 for each of the specific experiment setups described in \citet{Huybrechts1996} and \citet{Payne2000}.
 
 \begin{center}
@@ -64,8 +64,8 @@ for each of the specific experiment setups described in \citet{Huybrechts1996} a
     \hline
     \texttt{temperature} & (real(2 values)) Temperature forcing $$T_{\mbox{surface}}=t_1+t_2d$$ where $$d=\max\{|x-x_{\mbox{summit}}|,|y-y_{\mbox{summit}}|\}$$\\
     \texttt{massbalance} & (real) Mass balance forcing \\
-    \texttt{period} & (real) period of time--dependent forcing (switched off when set to 0) $$\Delta T=10\sin\frac{2\pi t}{T}$$ and $$\Delta M=0.2sin\frac{2\pi t}{T}$$\\
-    \texttt{mb\_amplitude} & (real) amplitude of the surface mass balance when \texttt{period} is greater than 0 \\
+    \texttt{period} & (real) Period of time--dependent forcing (switched off when set to 0) $$\Delta T=10\sin\frac{2\pi t}{T}$$ and $$\Delta M=0.2sin\frac{2\pi t}{T}$$\\
+    \texttt{mb\_amplitude} & (real) Amplitude of the surface mass balance when \texttt{period} $>0$ \\
     \hline
     \hline
     \hline
@@ -80,8 +80,8 @@ for each of the specific experiment setups described in \citet{Huybrechts1996} a
     \hline
     \texttt{temperature} & (real(2 values)) Temperature forcing $$T_{\mbox{surface}}=t_1-t_2H$$ where $H$ is the ice thickness\\
     \texttt{massbalance} & (real(3 values)) Mass balance forcing $$M=\min\{m_1,m_2(m_3-d)\}$$ where $$d=\sqrt{(x-x_{\mbox{summit}})^2+(y-y_{\mbox{summit}})^2}$$\\
-    \texttt{period} & (real) period of time--dependent forcing (switched off when set to 0) $$\Delta T=10\sin\frac{2\pi t}{T}$$ and $$M=\min\left\{m_1,m_2\left(m_3+100sin\frac{2\pi t}{T}-d\right)\right\}$$\\
-    \texttt{mb\_amplitude} & (real) amplitude of the surface mass balance when \texttt{period} is greater than 0 \\
+    \texttt{period} & (real) Period of time--dependent forcing (switched off when set to 0) $$\Delta T=10\sin\frac{2\pi t}{T}$$ and $$M=\min\left\{m_1,m_2\left(m_3+100sin\frac{2\pi t}{T}-d\right)\right\}$$\\
+    \texttt{mb\_amplitude} & (real) Amplitude of the surface mass balance when \texttt{period} $>0$ \\
     \hline
     \hline
     \hline
@@ -90,7 +90,7 @@ for each of the specific experiment setups described in \citet{Huybrechts1996} a
     \hline
     \multicolumn{2}{|l|}{\texttt{[EISMINT-2]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{EISMINT 2 climate forcing.  Both surface mass balance and air temperature are dependent solely on position and not on ice-surface elevation.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{EISMINT 2 climate forcing.  Both surface mass balance and air temperature depend solely on position in the map plane and not on ice-surface elevation.}\\
     \hline
     \texttt{temperature} & (real(2 values)) Temperature forcing $$T_{\mbox{surface}}=t_1-t_2d$$ where $d$ is the distance from the summit, $$d=\sqrt{(x-x_{\mbox{summit}})^2+(y-y_{\mbox{summit}})^2}$$\\
     \texttt{massbalance} & (real(3 values)) Mass balance forcing $$M=\min\{m_1,m_2(m_3-d)\}$$ where $d$ is the distance from the summit, $$d=\sqrt{(x-x_{\mbox{summit}})^2+(y-y_{\mbox{summit}})^2}$$\\
@@ -108,67 +108,85 @@ for each of the specific experiment setups described in \citet{Huybrechts1996} a
 
 \subsection{GLINT driver}
 
-** I don't know how much of this is still accurate. Maybe this is something for Bill, Jer, and / or Bill S. to look over? I know there have been changes made to GLINT that are not likely
-documented here. **
-
-\subsubsection{Overview}
 %
-GLINT is the most complex of the drivers supplied as part of GLIMMER. It was
-originally developed as an interface between GLIDE and the GENIE Earth-system
-model, but is designed to be flexible enough to be used with a wide range of
-global climate models. Perhaps the most distinctive feature of GLINT is the
-way it uses the object-oriented GLIDE architecture to enable multiple ice
-models to be coupled to the same climate model. This means that regional ice
-models can be run at high resolution over several parts of the globe, but
-without the expense of running a global ice model.
+Glint (originally an acronym for ``Glimmer interface'') allows CISM
+to be run with forcing from an external climate model or global data sets.
+Earlier code versions included a Glint driver called \texttt{glint\_example},
+which was distinct from the basic driver \texttt{simple\_glide}.
+In CISM2, Glint is launched with \texttt{cism\_driver} followed by the
+names of two configuration files, as in this example:
+\begin{verbatim}
+ cism_driver ice_sheet.config climate.config
+\end{verbatim}
+The first file specifies the ice sheet configuration as described in Section~\ref{ug.sec.config},
+and the second provides details about the climate forcing.
+Examples of both kinds of file are included in the directory \texttt{tests/glint-example}.
 
-GLINT automates the processes required in coupling regional models to a global
+Glint was originally developed as an interface between Glide and the GENIE Earth-system
+model, but is designed to be flexible enough to be used with a wide range of
+global climate models. In older versions of Glint, it was assumed that forcing from the climate
+model would include the temperature and precipitation fields required to
+force a positive-degree-day (PDD) scheme for the surface mass balance (SMB).
+In CISM2, Glint can also receive the SMB (typically computed in multiple
+elevation classes on the relatively coarse grid of a climate model such as CESM)
+and downscale it directly to the ice sheet model grid.
+
+A distinctive feature of Glint is the
+way it uses the object-oriented Glide architecture to enable multiple ice
+models to be coupled to the same climate model. This means that regional ice
+models can be run at high resolution over several parts of the globe,
+without the expense of running a global ice sheet model.
+
+Glint automates the processes required in coupling regional models to a global
 model, particularly the down- and up-scaling of the fields that form the
 interface between the two models. The user may specify map projection
-parameters for each of the ice models (known as \emph{instances}), and choose
-one of several alternative mass-balance schemes to use in the coupling. The
-differing time-steps of global model, mass-balance scheme, and ice model are
-handled automatically by temporal averaging or accumulation of quantities (as
-appropriate). This is illustrated schematically in figure~\ref{ug.fig.glint_timesteps}.  
+parameters for each of the ice sheet models (known as \emph{instances}).
+The different time-steps of global model, mass-balance scheme, and ice sheet model are
+handled automatically by temporal averaging or accumulation of quantities as
+appropriate. 
+
+%WHL: I removed the figure because some of the details are out of date, and it's too
+%     much work to make a new one.
+%This is illustrated schematically in figure~\ref{ug.fig.glint_timesteps}.  
 %
-\begin{figure}[htbp]
-  \centering
+%\begin{figure}[htbp]
+%  \centering
 %  \includegraphics[width=0.6\textwidth]{\dir/figs/glint_timesteps.eps}
-  \caption{Relationship between the timesteps in GLINT. The filled circles
-  represent timesteps, the rectangles represent averaging/accumulation, and the arrows,
-  flow of coupling fields. \textbf{DO WE STILL WANT THIS FIGURE? IS IT STILL ACCURATE?}}
-  \label{ug.fig.glint_timesteps}
-\end{figure}
+%  \caption{Relationship between the timesteps in GLINT. The filled circles
+%  represent timesteps, the rectangles represent averaging/accumulation, and the arrows,
+%  flow of coupling fields. \textbf{DO WE STILL WANT THIS FIGURE? IS IT STILL ACCURATE?}}
+%  \label{ug.fig.glint_timesteps}
+%\end{figure}
 %
 \subsubsection{Prerequisites}
 %
-If you plan to use GLINT, the following should be borne in mind:
+Glint users should bear the following in mind:
 %
 \begin{itemize}
 \item Global input fields must be supplied on a latitude-longitude
   grid. The grid does not have to be uniform in latitude, meaning that
-  Gaussian grids may be used. Irregular grids (e.g. icosahedral grids) are not
-  supported currently. The boundaries of the grid boxes may be specified; if
-  not, they are assumed to lie half-way between the grid-points in lat-lon space.
-\item In the global field arrays, latitude must be indexed from north to south
-  -- i.e. the first row of the array is the northern-most one. Again, some
-  flexibility might be introduced into this in the future.
+  Gaussian grids may be used. Irregular grids (e.g., icosahedral grids) are not
+  currently supported. The boundaries of the grid boxes may be specified; if
+  not, they are assumed to lie halfway between the grid points in lat-lon space.
+\item In the global field arrays, latitude must be indexed from north to south.
+  That is, the first row of the array is the northernmost one. (Some
+  flexibility might be introduced here in the future.)
 \item The global grid must not have grid points at either of the
-  poles. This restriction is not expected to be permanent, but in the meantime
+  poles. This restriction is not expected to be permanent, and in the meantime
   can probably be overcome by moving the location of the polar points to be
   fractionally short of the pole (e.g. at 89.9$^{\circ}$ and -89.9$^{\circ}$).
 \end{itemize}
 %
-\subsubsection{Initialising and calling}
+\subsubsection{Initializing and calling}
 
-The easiest way to learn how GLINT is used is by way of an
-example. GLINT should be built automatically as part of GLIMMER, and we assume
-here that this has been achieved successfully.
+The easiest way to learn how Glint is used is by way of an
+example. Glint should be built automatically as part of CISM, and we assume
+here that this has been done successfully.
 
-Typically, GLINT will be called from the main program body of a
-climate model. To make this possible, the compiler needs to be told to use the
-GLINT code. Use statements appear at the very beginning of f90 program
-units, before even \texttt{implicit none}:
+Typically, Glint will be called from the main program body of a
+climate model. (In CESM, Glint subroutines are called from a wrapper layer
+called \bf{glc}}.)  To make this possible, the compiler needs to be told to use the
+Glint code, with ``use'' statements like the following:
 %
 \begin{verbatim}
   use glint_main
@@ -183,39 +201,44 @@ instances:
 \end{verbatim}
 %
 Before the ice-sheet model may be called from the climate model, it must be
-initialised. This is done with the following subroutine call:
+initialized. This can be done with the following subroutine call\footnote
+{The spelling of some subroutine names reflects the British origins
+of the code.}:
 %
 \begin{verbatim}
   call initialise_glint(ice_sheet,lats,lons,time_step,paramfile)
 \end{verbatim}
 %
-In this call, the arguments are as follows:
+These are the required arguments; many optional arguments are also possible.
+The required arguments are defined as follows:
 %
 \begin{itemize}
 \item \texttt{ice\_sheet} is the variable of type \texttt{glint\_params}
  defined above;
 \item \texttt{lats} and \texttt{lons} are one-dimensional arrays giving the
   locations of the global grid-points in latitude and longitude, respectively;
-\item \texttt{time\_step} is the intended interval between calls to GLINT, in
+\item \texttt{time\_step} is the intended interval between calls to Glint, in
 hours. This is known as the \emph{forcing timestep}. 
-\item \texttt{paramfile} is the name of the GLINT configuration file.
+\item \texttt{paramfile} is the name of the Glint configuration file.
+The contents of this file are discussed below. 
 \end{itemize}
-%
-The contents of the configuration file will be dealt with later. Having
-initialised the model, it may now be called as part of the main climate
+
+If Glint is to be forced with an externally computed surface mass balance
+(rather than the fields that would drive a PDD scheme), the climate model
+should instead call the subroutine \texttt{initialise\_glint\_gcm},
+which has the same required arguments but a different set of optional arguments.
+
+After Glint is initialised, it may be called as part of the main climate
 model time-step loop:
 %
 \begin{verbatim}
     call glint(ice_sheet,time,temp,precip,orog)
 \end{verbatim} 
 %
-The arguments given in this example are the compulsory ones only; a large number of
-optional arguments may be specified -- these are detailed in the reference
-section below. The compulsory arguments are:
+Here the compulsory arguments are
 %
 \begin{itemize}
-\item \texttt{ice\_sheet} is the variable of type \texttt{glint\_params}
- defined above;
+\item \texttt{ice\_sheet} is the variable of type \texttt{glint\_params} defined above;
 \item \texttt{time} is the current model time, in hours;
 \item \texttt{temp} is the daily mean $2\,\mathrm{m}$ global air temperature field, in
   $^{\circ}\mathrm{C}$;
@@ -224,40 +247,77 @@ section below. The compulsory arguments are:
   between rain, snow, etc.);
 \item \texttt{orog} is the global orography field, in $\mathrm{m}$.
 \end{itemize}
-%
-Two mass-balance schemes, both based on the positive degree day (PDD) method,
-are supplied with GLIMMER, and are available through GLINT. One of these calculates the mass-balance for the
-whole year (the \emph{Annual PDD scheme}), while the other calculates on a
-daily basis (the \emph{Daily PDD scheme}). The annual scheme incorporates a
+Many optional arguments (detailed below) may also be specified.
+
+The latter three compulsory fields are needed to drive a PDD scheme.
+Glint includes two such schemes.  One of these calculates the mass-balance for the
+whole year (the \emph{annual PDD scheme}), while the other calculates on a
+daily basis (the \emph{daily PDD scheme}). The annual scheme incorporates a
 stochastic temperature variation to account for diurnal and other variations,
-which means that if this scheme is to be used, GLINT should be called such
-that it sees a seasonal temperature variation which has had those variations
-removed. In practice, this means calling GLINT on a monthly basis, with
-monthly mean temperatures. For the daily scheme, no such restriction exists,
+which means that if this scheme is used, Glint should be called such
+that short-term variations have been removed.  In practice, this means calling 
+Glint on a monthly basis, with monthly mean temperatures. 
+For the daily scheme, no such restriction exists,
 and the scheme should be called at least every 6 hours.
+
+If the SMB is computed externally by a climate model, the call to Glint would resemble this one:
+\begin{verbatim}
+    call glint_gcm(ice_sheet,time,qsmb,tsrf,topo)
+\end{verbatim} 
+%
+where the last three arguments (all compulsory) are defined as follows:
+%
+\begin{itemize}
+\item \texttt{qsmb} is the surface mass balance in kg m$^{-2}$ s$^{-1}$;
+\item \texttt{tsrf} is the surface ground temperature in $^{\circ} C$, used as an upper 
+thermal boundary condition for the ice sheet; and
+\item \texttt{topo} is the surface elevation in m.
+\end{itemize}
+These fields contain two horizontal dimensions, along with a third dimension
+for elevation class.  CESM typically computes these quantities in 10 elevation classes
+per glaciated grid cell in the climate model.
+
+Among the optional arguments are the following:
+\begin{itemize}
+\item \texttt{gfrac} is the fractional grid cell area covered by ice;
+\item \texttt{gtopo} is the mean surface elevation in m;
+\item \texttt{ghflx} is the upwelling heat flux at the ice sheet surface, in W m$^2$;
+\item \texttt{grofi} is the solid runoff flux (i.e., the calving flux) in kg m$^{-2}$ s$^{-1}$;
+\item \texttt{grofl} is the liquid runoff flux in kg m$^{-2}$ s$^{-1}$.
+This includes basal and possibly internal melting, but not surface melting
+(which has already been computed by the climate model).
+\end{itemize}
+%
+These are the fields required by CESM to update its land-surface types and topography and to conserve heat
+and water when CISM is coupled interactively to the climate model.  
+The first three fields are computed for each elevation class in each climate model grid cell,
+and the two runoff fluxes are simply computed for each grid cell.
+The initial ``g'' denotes that these fields have been upscaled to the global climate grid.
 %
 \subsubsection{Finishing off}
 %
-After the desired number of time-steps have been run, GLINT may have some
-tidying up to do. To accomplish this, the subroutine \texttt{end\_glint}
+After the desired number of time steps have been run, Glint may have some
+tidying up to do. To do this, the subroutine \texttt{end\_glint}
 must be called:
 %
 \begin{verbatim}
   call end_glint(ice_sheet)
 \end{verbatim}
 %
-\subsubsection{API}
+%WHL - Commented out this subsubsection, since the API material has been commented out in the appendices.
+%\subsubsection{API}
 %
-A detailed description of the GLINT API may be found in the appendices.
+%A detailed description of the Glint API may be found in the appendices.
 %
 \subsubsection{Configuration}
 %
-GLINT uses the same configuration file format as the rest of GLIMMER. In the
-case where only one GLIDE instance is used, all the configuration data for
-GLINT and GLIDE can reside in the same file. Where two or more instances are
+Glint uses the same configuration file format as the rest of CISM. In the
+case where there is only one ice sheet instance, all the configuration data for
+Glint and Glide (or Glissade) can reside in the same file.  If two or more instances are
 used, a top-level file specifies the number of model instances and the name of
 a configuration file for each one. Possible configuration sections specific to
-GLINT are as follows:
+Glint are as follows:
+%
 \begin{center}
   \tablefirsthead{%
     \hline
@@ -275,7 +335,7 @@ GLINT are as follows:
   \begin{supertabular}{|l|p{11cm}|}
 %%%% 
     \hline
-    \multicolumn{2}{|l|}{\texttt{[GLINT]}}\\
+    \multicolumn{2}{|l|}{\texttt{[Glint]}}\\
     \hline
     \multicolumn{2}{|p{0.98\textwidth}|}{Section specifying number of instances.}\\
     \hline
@@ -283,24 +343,25 @@ GLINT are as follows:
     \hline
 %%%% 
     \hline
-    \multicolumn{2}{|l|}{\texttt{[GLINT instance]}}\\
+    \multicolumn{2}{|l|}{\texttt{[Glint instance]}}\\
     \hline
     \multicolumn{2}{|p{0.98\textwidth}|}{Specifies the name of an
     instance-specific configuration file. Unnecessary if we only have one
     instance whose configuration data is in the main config file.}\\
     \hline
-    \texttt{name} & Name of instance-sepcific config file (required).\\
+    \texttt{name} & Name of instance-specific config file (required).\\
     \hline
 %%%% 
     \hline
-    \multicolumn{2}{|l|}{\texttt{[GLINT climate]}}\\
+    \multicolumn{2}{|l|}{\texttt{[Glint climate]}}\\
     \hline
-    \multicolumn{2}{|p{0.98\textwidth}|}{GLINT climate configuration}\\
+    \multicolumn{2}{|p{0.98\textwidth}|}{Glint climate configuration}\\
     \hline
     \texttt{evolve\_ice} & {\raggedright
       specify whether or not the ice sheet evolves in time: \\
       \begin{tabular}{lp{10cm}}
-        0 &  Do not evolve ice sheet (hold fixed in time)\\
+        0 &  Do not evolve ice sheet (hold fixed in time). This setting is appropriate if we want to
+        analyze the SMB downscaled to the observed ice sheet geometry, without the complexity of evolution.\\
         {\bf 1} & Allow the ice sheet to evolve \\
       \end{tabular}}\\
     \texttt{precip\_mode} & {\raggedright
@@ -311,13 +372,14 @@ GLINT are as follows:
       \end{tabular}}\\
     \texttt{acab\_mode} & {\raggedright
       Mass-balance model to use:\\
-      \begin{tabular}{lp{7cm}}
-        {\bf 1} & Annual PDD mass-balance model (see section \ref{ug.mbal.pdd_scheme}) \\
+      \begin{tabular}{lp{10cm}}
+        0 & The surface mass balance is computed externally (e.g., by a climate model)\\
+        {\bf 1} & Annual PDD mass-balance model (Section~\ref{ug.mbal.pdd_scheme})\\
         2 & Annual accumulation only\\
-        3 & Hourly energy-balance model (RAPID - not yet available) \\
-        4 & Daily PDD mass-balance model (no docs yet)\\
+        3 & Hourly energy-balance model (NOTE: not supported) \\
+        4 & Daily PDD mass-balance model (Section \ref{ug.mbal.daily_pdd_scheme})\\
       \end{tabular}}\\
-    \texttt{ice\_albedo} & Albedo of ice --- used for coupling to climate
+    \texttt{ice\_albedo} & Albedo of ice---may be used for coupling to climate
     model (default=0.4) \\
     \texttt{lapse\_rate} & Atmospheric temperature lapse-rate, used to correct
     the atmospheric temperature onto the ice model orography. This should be
@@ -326,50 +388,50 @@ GLINT are as follows:
     %%%%%%%%%%%%%%
     \texttt{data\_lapse\_rate} & Atmospheric temperature vertical lapse rate,
     to be used in the calculation of temperature at
-    sea-level. The variable \texttt{lapse\_rate} is then used to adjust the
+    sea level. The variable \texttt{lapse\_rate} is then used to adjust the
     temperature to the surface of the local ice sheet topography. If
     \texttt{data\_lapse\_rate} is not set, it is set to the value of
     \texttt{lapse\_rate} by default. \\
     %%%%%%%%%%%%%%
     \texttt{ice\_tstep\_multiply} & Ice time-step multiplier: allows
-    asynchronous climate-ice coupling. See below for full explanation of GLINT
+    asynchronous climate-ice coupling. See below for full explanation of Glint
     time-stepping. (default = 1) \\
     %%%%%%%%%%%%%%
     \texttt{mbal\_accum\_time} & Mass-balance accumulation time (in years,
-    default is equal to mass-balance timestep).  See below for full explanation of GLINT
+    default is equal to mass-balance timestep).  See below for full explanation of Glint
     time-stepping. \\
     \hline
   \end{supertabular}
 \end{center}
 
-\subsubsection{GLINT timestepping --- an explanation}
+\subsubsection{Glint timestepping --- an explanation}
 
 By default, the model accepts input on each forcing timestep (as specified in 
-the call to \texttt{initialise\_glint}, above). These are accumulated over the course 
+the call to \texttt{initialise\_glint}). Input fields are accumulated over the course 
 of a mass-balance time-step, whereupon the mass-balance model is called. The 
-output from the mass-balance model is accumulated over the course of an ice 
-model time-step, and finally the ice model is called.
+output from the mass-balance model is accumulated over the course of an ice sheet
+model time-step, and finally the ice sheet model (Glide or Glissade) is called.
 
 This default behaviour can be altered, in two ways:
 \begin{enumerate}
-\item The number of ice sheet time-steps executed for each accumulated 
-mass-balance field may be increased - thus accelerating the icesheet relative 
-to the forcing. To do this, set \texttt{ice\_tstep\_multiply} in the \texttt{[GLINT climate]} 
-config section - must be an integer. This is only possible if the 
-mass-balance is accumulated over an integer number of years.
+\item The number of ice sheet time steps executed for each accumulated 
+mass-balance field may be increased---thus accelerating the ice sheet relative 
+to the forcing. To do this, set \texttt{ice\_tstep\_multiply} in the \texttt{[Glint climate]} 
+config section; this must be an integer. This acceleration is possible only if the 
+mass balance is accumulated over an integer number of years.
 \item The mass-balance accumulation period can be altered by setting  
-\texttt{mbal\_accum\_time} in the \texttt{[GLINT climate]} config section --- this is a 
+\texttt{mbal\_accum\_time} in the \texttt{[Glint climate]} config section; this is a 
 floating-point value in years.
 \end{enumerate}
-
-The interaction of these two parameters is fairly complex, and permits a 
-reasonably sophisticated control of how the ice sheet model is forced. 
-Various checks are made at run-time to make sure sensible/possible values are selected. Most 
+%
+The interaction of these two parameters is fairly complex, and permits
+fairly sophisticated control of how the ice sheet model is forced. 
+Various checks are made at run-time to make sure that sensible values are selected. Most 
 importantly, all relevant time-steps must divide into one another 
-appropriately - the model will (should\ldots) stop if an un-sensible combination 
+appropriately. The model will (or should) stop if an un-sensible combination 
 of values is detected.
 
-\subsubsection{GLINT timestepping --- further examples}
+\subsubsection{Glint timestepping --- further examples}
 
 To aid understanding of the time-stepping controls, here are some examples. First, suppose we have these time-step values:
 
@@ -381,7 +443,7 @@ ice time-step: & 0.5 year
 \end{tabular}
 \vspace{0.5cm}
 
-By default, the model will accumulate 6 months' worth of mass-balance 
+By default, the model will accumulate 6 months of mass-balance 
 calculations, and force the ice sheet model based on that. This might not be 
 desirable, so you could set:
 
@@ -389,22 +451,22 @@ desirable, so you could set:
     mbal_accum_time = 1.0
 \end{verbatim}
 
-This would make GLINT accumulate 1 year's worth of mass-balance output before 
+This would make Glint accumulate 1 year of mass-balance output before 
 forcing the ice sheet (at which point it would execute \emph{two} ice sheet 
 time-steps of 0.5 years each).
 
 Having done that, you could accelerate the ice model by a factor of ten, by 
-setting:
+setting
 
 \begin{verbatim}
     ice_tstep_multiply = 10
 \end{verbatim}
-
+%
 In this scenario, 20 ice sheet time-steps of 0.5 years each would be done 
 after each 12-month accumulation of mass-balance data.
 
-For the second example, we consider the contrasting situation where we don't want to calculate a 
-mass-balance on all the available data (perhaps to save time). Consider 
+For the second example, we consider the contrasting situation where we do not want to calculate a 
+mass balance on all the available data (perhaps to save time). Consider 
 these time-step values:
 
 \vspace{0.5cm}
@@ -414,30 +476,30 @@ mass-balance time-step: & 1 day \\
 ice time-step:       &   10 years
 \end{tabular}
 \vspace{0.5cm}
-
-(Clearly this a fairly numerically stable and/or low-resolution ice sheet).
+%
+(Clearly this is a numerically stable and/or low-resolution ice sheet).
 
 To avoid running the daily PDD scheme c.3600 times (depending on the value of 
-\texttt{days\_in\_year}), we can set to only use the first two years of data:
+\texttt{days\_in\_year}), we can choose to use only the first two years of data:
 
 \begin{verbatim}
     mbal_accum_time = 2.0
 \end{verbatim}
-
-GLINT accumulates mass-balance for 2 years, then waits for 8 years (incoming 
-data are ignored during this time), before calling the ice sheet. Ice sheet 
+%
+Glint accumulates the mass balance for 2 years, then waits for 8 years (ignoring incoming 
+data during this time) before calling the ice sheet. Ice sheet 
 acceleration may be enabled with \texttt{ice\_tstep\_multiply} as before.
 
 %________________________________________________
 %________________________________________________
 %
-%   GLINT example described here
+%   Glint example described here
 %________________________________________________
 %________________________________________________
 
 
-\section{GLINT: using glint-example}
-If finally you want to see what GLIMMER can do using the GLINT climate driver,
+\section{Glint: using glint-example}
+If finally you want to see what GLIMMER can do using the Glint climate driver,
 download the \texttt{glint-example} and try one of the provided example setups.
 CD into the directory and try any of the config examples. Start glint\_example
 by typing
