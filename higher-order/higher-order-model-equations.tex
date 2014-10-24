@@ -61,8 +61,7 @@ This is simply a statement that the full vertical normal stress is balanced by t
 \end{equation}
 
 \noindent
-Using the incompressibility constraint \eqref{ho.eq.incompress} and stress-strain colinearity constraint \textit{(WHL: need an equation for this)}, 
-we can write
+Using the incompressibility constraint \eqref{ho.eq.incompress} and the assumption that stress and strain are aligned we can write
 
 \begin{equation}
   \label{ho.eq.incompress_tau}
@@ -121,7 +120,7 @@ In order, the five expressions above give:
 
 \begin{enumerate}
 \item  Glen's flow law\footnote{Technically, we are using the \textit{inverse} form of the flow-law here.}, where 
-$B(T) = A(T)^{\frac{1-n}{n}}$ is the temperature dependent rate factor \textit{(WHL: I think this should be $B = A^{\frac{-1}{n}}$)} 
+$B = A^{\frac{-1}{n}}$ is the temperature dependent rate factor 
 \item  The definition of the strain-rate tensor in terms of velocity gradients
 \item  The definition of the effective strain rate, $\dot{\varepsilon }_{e}$, a norm of the strain-rate tensor
 \item  A definition of the ``effective viscosity" (after rearranging some terms in (1))

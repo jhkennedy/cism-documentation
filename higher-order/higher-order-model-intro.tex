@@ -37,7 +37,7 @@ The term ``higher-order'' comes from scaling analyses of the Stokes equations fo
   \begin{center}
     \includegraphics[width=0.7\columnwidth]{\dir/figs/HOeqns.eps}
    \end{center}
-  \caption{Stokes-flow (top) and first-order (bottom) constitutive equations. \textit{WHL: ``constitutive'' is misspelled above.}}
+  \caption{Stokes-flow (top) and first-order (bottom) constitutive equations, which relate stresses to strain rates (and in turn to velocity gradients). \textbf{$\tau$} is the deviatoric stress tensor, \textit{\textbf{I}} is the identity tensor, and $\eta$ is the effective ice viscosity. The strain rate tensor is given by the term in parentheses on the right-hand side of the equation. For the first-order approximation (bottom), the bold terms from the Stokes equations are assumed negligible.}
   \label{fig:hoeqns}
 \end{figure} 
 
@@ -50,19 +50,22 @@ Current DOE-funded efforts include implementation of a nonlinear Stokes model on
 \end{itemize}
 
 \begin{itemize}
-\item \textit{WHL: Is the SSA truly a higher-order approximation?}
-Probably the most long-lived higher-order approximation in glaciology is the shallow-shelf approximation (or SSA) describing flow within an ice shelf (or ice stream if non-zero basal drag is included). The SSA was developed and made popular by Douglas MacAyeal (e.g., \citet{Macayeal:1989uo}). 
-Its main disadvantage is that it is not fully 3d, as it assumes uniform velocity throughout the ice thickness driven only by horizontal stress gradients. It is, however, adequate for describing fast flow in many parts of ice sheets, such as ice shelves and some ice streams. In these regions, not resolving vertical gradients is a computational advantage.   
+\item 
+Probably the most long-lived higher-order approximation in glaciology is the shallow-shelf approximation (or SSA) describing flow within an ice shelf. While not truly ``higher-order" when only applied to ice shelf flow, it can provide nearly equivalent results to ``true" higher-order models in cases where basal drag is small, but non-zero (e.g. for modeling the flow of ice streams). The SSA was developed and made popular by Douglas MacAyeal (e.g., \citet{Macayeal:1989uo}). 
+Its main disadvantage is that it is not fully 3d, as it assumes uniform velocity throughout the ice thickness driven only by horizontal stress gradients. It is adequate for describing fast flow in many parts of ice sheets, such as ice shelves and some ice streams. In these regions, not resolving vertical gradients is a computational advantage.   
 \end{itemize}
 
 \begin{itemize}
 \item The SSA equations are actually a depth-averaged form of a more general higher-order model, commonly referred to as the ``Blatter-Pattyn model" (\citet{BLATTER:1995wz}; \citet{Pattyn:2003tj}). 
 Blatter-Pattyn dynamics, synonymous with and more formally described as the ``first-order accurate Stokes approximation"\footnote{See \citet{Schoof:2010dl} and \citet{DUKOWICZ:2010wb} for a more complete scaling analysis and derivation of the first-order Stokes approximation.}, are currently implemented in CISM's default higher-order dynamical core.
-\textit{WHL: Should we distinguish Blatter-Pattyn from L1L2, which also is formally first-order accurate? Should there be a following item on L1L2?}
 \end{itemize}
 
 \begin{itemize}
-\item Several hybrid schemes exist that are computationally cheaper than the Blatter-Pattyn model. These combine solutions to the shallow ice approximation (for resolving vertical gradients) and the SSA approximation (for resolving horizontal gradients) so that a fully 3d solution is obtained. 
+\item Another formally first-order accurate Stokes approximation, which might be considered ``quasi" three-dimensional, is the so-called ``L1L2" approximation \citep{Schoof:2010dl}. This model combines a two-dimensional SSA solve and a one-dimensional (column) SIA solve in a mathematically rigorous way. The model solution, from a combination of the SSA (for approximating membrane stresses) and SIA (for vertical shear stresses) solutions, mimics a fully three-dimensional, higher-order model solution but at a fraction of the computational cost.
+\end{itemize}
+
+\begin{itemize}
+\item Several ``hybrid" schemes exist that are also computationally cheaper than the Blatter-Pattyn model. These are similar to the L1L2 model in spirit, but combine solutions to the SSA and SIA models in a heuristic fashion. 
 %It isn't yet known how well these model solutions compare to fully 3d models, or if one approach (hybrid vs. fully 3d solution) is superior to the other. 
 David Pollard of Penn State and Ed Bueler of Univ. of Alaska Fairbanks have developed large-scale models using distinct hybrid approaches (\citet{Bueler:2009ee}; \citet{Pollard:2009ed}).
 \end{itemize}
@@ -114,7 +117,7 @@ Most recent development work on CISM has focused on higher-order dynamics.
 %=\rho_w gH \frac{\partial s}{\partial y}
 %\end{align*}
 
-The equations describing a (3d) higher-order flow\footnote{Specifically, the first-order accurate Stokes approximation discussed above. These will be derived in more detail in Section \ref{sc:higher-order-mom}.} are:
+Using the constitutive law from the lower panel of Figure \ref{fig:hoeqns}, the equations describing a (3d) higher-order flow\footnote{Specifically, the first-order accurate Stokes approximation discussed above. These will be derived in more detail in Section \ref{sc:higher-order-mom}.} are:
 
 \begin{equation}
   \begin{split}
@@ -133,8 +136,7 @@ The equations describing a (3d) higher-order flow\footnote{Specifically, the fir
   \end{split}
 \end{equation}
 
-\textit{WHL: Since the constitutive law hasn't been introduced yet, I wonder if these equations should be written in terms
-of $\tau$ instead of strain rates. Also, do any symbols need to be defined?}
+
 In these equations we can point out several important differences between shallow-ice and higher-order models: 
 \begin{enumerate}
 %\item  The vertically integrated model includes the ice thickness, $H$, in each term. This is a reflection of the integration and does not appear in the first-order equations.
