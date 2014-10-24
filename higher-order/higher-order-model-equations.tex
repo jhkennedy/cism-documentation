@@ -10,7 +10,7 @@
   \label{fig:GIS_PNAS}
 \end{figure} 
 
-The higher-order dynamics scheme in CISM (some output from which is shown in Figure \ref{fig:GIS_PNAS}) is discussed in more detail in the following sections. 
+CISM'S higher-order dynamics scheme (some output from which is shown in Figure \ref{fig:GIS_PNAS}) is discussed in more detail in the following sections. 
 First we describe the derivation of the equations themselves, followed by a discussion and derivation of the boundary conditions.
 We then describe generic solution methods for the nonlinear system of equations, followed by a
 brief discussion of the solution of the thickness evolution equation.
@@ -19,7 +19,7 @@ brief discussion of the solution of the thickness evolution equation.
 %\subsection{Derivation of the Blatter-Pattyn Equations}
 %\label{sc:higher-order-blatter-pattyn}
 
-The higher-order dynamics scheme in CISM is based on the 3d first-order accurate Stokes approximation (also often referred to as the ``Blatter-Pattyn" model). The starting point is the nonlinear Stokes equations:
+The higher-order scheme is based on the 3D first-order accurate Stokes approximation (often referred to as the ``Blatter-Pattyn" model). The starting point is the nonlinear Stokes equations:
 
 \begin{equation}
   \begin{split}
@@ -36,6 +36,7 @@ where {\large \(\sigma{}\)} is the full stress tensor.
 There are a number of ways to argue that, due to the shallowness of ice sheets (i.e., the small value of \textit{H}/\textit{L}, where \textit{H} is the thickness and \textit{L} is a relevant horizontal length scale), the Stokes equations can be reduced to the following first-order approximation:
 
 \begin{equation}
+  \label{ho.eq.first_order}
   \begin{split}
     & x:\quad \frac{\partial \tau _{xx}}{\partial x} + \frac{\partial \tau _{xy}}{\partial y} + \frac{\partial \tau _{xz}}{\partial z} - \frac{\partial P}{\partial x} = 0, \\ 
     & y:\quad \frac{\partial \tau _{yy}}{\partial y} + \frac{\partial \tau _{xy}}{\partial x} + \frac{\partial \tau _{yz}}{\partial z} - \frac{\partial P}{\partial y} = 0, \\ 
@@ -46,7 +47,7 @@ There are a number of ways to argue that, due to the shallowness of ice sheets (
 \noindent
 The arguments supporting this reduction are fairly complex and are based on either a variational analysis or an asymptotic analysis (see \citet{Schoof:2010dl} and \citet{DUKOWICZ:2010wb} for details).
 
-The third (vertical) balance equation above can be integrated vertically to give an expression for the pressure:
+The third (vertical) balance equation in \eqref{ho.eq.first_order} can be integrated vertically to give an expression for the pressure:
 \begin{equation}
 P = \rho g\left( s-z \right) + \tau _{zz}(z).
 \end{equation} 
@@ -101,7 +102,7 @@ At this point we have removed the vertical balance equation entirely; it has bee
 % & y:\quad 2\frac{\partial \tau _{yy}}{\partial y}+\frac{\partial \tau _{xx}}{\partial y}+\frac{\partial \tau _{xy}}{\partial x}+\frac{\partial \tau _{yz}}{\partial z}=\rho g\frac{\partial s}{\partial y}. \\
 %\end{align*}
 
-Next we want to write these equations in terms of the velocities for which we are ultimately solving. Stresses and velocities are linked through the 
+Next we write these equations in terms of the velocities for which we are ultimately solving. Stresses and velocities are linked through the 
 constitutive law for ice, which relates strain rates to stresses (here we assume Nye's generalization of Glen's law), and through the 
 definition of the strain rate tensor, which relates strain rates to velocity gradients:
 
@@ -124,11 +125,11 @@ $B = A^{\frac{-1}{n}}$ is the temperature dependent rate factor
 \item  The definition of the strain-rate tensor in terms of velocity gradients
 \item  The definition of the effective strain rate, $\dot{\varepsilon }_{e}$, a norm of the strain-rate tensor
 \item  A definition of the ``effective viscosity" (after rearranging some terms in (1))
-\item  Items (1)-(4) allow us to write the relationship between stress and strain in a standard ``Newtonian" way, but with a non-Newtonian (nonlinear) viscosity
+\item  Items (1)-(4) allow us to write the relationship between stress and strain in a standard ``Newtonian" way, but with a non-Newtonian (nonlinear) viscosity.
 \end{enumerate}
 
 \noindent
-Now, taking these definitions into the stress balance equations \eqref{ho.eq.stress_balance_x} and \eqref{ho.eq.stress_balance_y} 
+Taking these definitions into the stress balance equations \eqref{ho.eq.stress_balance_x} and \eqref{ho.eq.stress_balance_y} 
 and expanding in terms of strain rates and effective viscosity, we have (for the \textit{x} direction only):
 
 \begin{equation}

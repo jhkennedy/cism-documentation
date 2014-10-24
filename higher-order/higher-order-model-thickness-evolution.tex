@@ -6,49 +6,55 @@
 As mentioned previously, conservation of mass for an ice sheet can be expressed by
 
 \begin{equation}
+\label{ho.eq.mass_conserv}
 \frac{\partial H}{\partial t}=-\nabla \cdot \left( \vec{U}H \right)+B,
 \end{equation}
 
-where $\vec{U}=(U,V)$ is the 2-dimensional, depth-integrated velocity vector, $H$ is the ice thickness, $\vec{U}H$ is the 2-dimensional ice flux vector, and $B$ represents the sum of surface and basal mass balance terms. The change in thickness per unit time is given by the negative of the flux divergence plus a source term. 
+\noindent
+where $\vec{U}=(U,V)$ is the 2D, depth-integrated velocity vector, $H$ is the ice thickness, $\vec{U}H$ is the 2D ice flux vector, and $B$ is the sum of surface and basal mass balance terms. The change in thickness per unit time is given by the negative of the flux divergence plus a source term. 
 %We can expand this a bit as,
 %
 %\begin{align*}\frac{\partial H}{\partial t}=-\left( \frac{\partial \left( UH \right)}{\partial x}+\frac{\partial \left( VH \right)}{\partial y} \right)+\dot{b}, \\ 
 %\end{align*}
 %
 %where $\vec{U}$ is the depth-averaged velocity vector (in map plane), and \textit{U} and \textit{V} are the depth integrated \textit{x} and \textit{y} velocity fields, \textit{H} is the ice thickness, and $\dot{b}$ is the source term, which is the surface mass balance (>0 for accumulation and <0 for ablation). 
-Note that the negative sign in front of the divergence (terms in parentheses on the right-hand side) insures sensible behavior: consider a section of the ice sheet where the thickness is nearly constant and there is no accumulation or ablation. If the velocity gradient along-flow is negative (the ice is slowing down), then we expect local thickening (left-hand side of the equation is $>0$) and vice versa (if the ice is speeding up along flow, we expect local thinning). This is the equation that needs to be solved to calculate the evolution of the ice sheet geometry.
+The minus sign in front of the divergence (terms in parentheses on the right-hand side) ensures sensible behavior: consider a section of the ice sheet where the thickness is nearly uniform and there is no accumulation or ablation. If the velocity gradient along the flow is negative (the ice is slowing down), then we expect local thickening (left-hand side of the equation is $>0$), and if the ice is speeding up along flow, we expect local thinning. This is the equation that needs to be solved to calculate the evolution of the ice sheet geometry.
 
 \subsection{A diffusive approach}
-For the case of a shallow-ice model, the values of $U$ and $V$ are recast in terms of ice thickness and elevation gradients, in which case the whole problem can be recast as a diffusion equation in ice thickness. In 1-dimension, the equation becomes
+For the case of a shallow-ice model, $U$ and $V$ are expressed in terms of ice thickness and elevation gradients, in which case the problem can be recast as a diffusion equation in ice thickness. In 1D, \eqref{ho.eq.mass_conserv} becomes
 
 \begin{equation}
 \frac{\partial H}{\partial t}=\frac{\partial }{\partial x}\left( D\frac{\partial s}{\partial x} \right)+B,\quad D=\frac{2A}{n+2}\left( \rho g \right)^{n}H^{n+2}\left| \frac{\partial s}{\partial x} \right|^{n-1},
 \end{equation}
 
-where $D$ is the non-linear diffusivity (because it depends on the solution to the equation, $H$), $A$ is the rate factor in Glen's flow law, $n$ is the power-law exponent, $s$ is the ice surface elevation, and $\rho$ and $g$ are the ice density and the acceleration due to gravity. Importantly, we need only local information in order to solve the above equation. If our velocity solution can not be solved locally, as in the case of higher-order models, we cannot easily use the above formulation to solve ice sheet evolution. In an attempt to use this form and retain a diffusion-solution approach to the problem (diffusion problems generally have nice numerical properties), we could try the following approach (again, in 1-dimensions only),
+\noindent
+where the diffusivity $D$ is nonlinear (because it depends on the solution $H$), $A$ is the rate factor in Glen's flow law, $n$ is the power-law exponent, $s$ is the ice surface elevation, and $\rho$ and $g$ are the ice density and the acceleration due to gravity. Importantly, we need only local information in order to solve the above equation. If the velocity cannot be solved locally, as in the case of higher-order models, we cannot easily use the above formulation to solve ice sheet evolution. In an attempt to use this form and retain a diffusion-solution approach to the problem (diffusion problems generally have favorable numerical properties), we could try the following approach (again, in 1D):
 
 \begin{equation}
 \frac{\partial H}{\partial t}=\frac{\partial }{\partial x}\left( D\frac{\partial s}{\partial x} \right)+B,\quad D=UH\left( \frac{\partial s}{\partial x} \right)^{-1},
 \end{equation}
 
-where the $U$ in the expression for $D$ is the depth-integrated velocity field from the higher-order model. This is the approach initially taken by \citet{Pattyn:2003tj} in one of the first higher-order modeling studies to deal with this particular problem. Notice that ice sheet surface slope is in the denominator of the diffusivity here and, as slopes get smaller and smaller (as they tend to do in regions of fast flow like ice streams and ice shelves) the diffusivity will get larger and larger (approaching infinity as the slope goes to zero). The faster velocities in these regions appear in the numerator of the diffusivity, also making it larger. This is a severe restriction on this approach because, for explicit schemes, the diffusive CFL condition requires that
+\noindent
+where the $U$ in the expression for $D$ is the depth-integrated velocity field from the higher-order model. This is the approach initially taken by \citet{Pattyn:2003tj} in one of the first higher-order modeling studies to deal with this particular problem. Notice that ice sheet surface slope is in the denominator of the diffusivity. As slopes become smaller (as they tend to do in fast-flowing ice streams and ice shelves), the diffusivity grows larger, approaching infinity as the slope goes to zero. The faster velocities in these regions appear in the numerator of the diffusivity, also making it larger. This is a severe restriction because, for explicit schemes, the diffusive CFL condition requires that
 
 \begin{equation}
 \Delta t<\frac{\left( \Delta x \right)^{2}}{2D},
 \end{equation}
 
-where $\Delta t$ is the time step required for numerical stability and $\Delta x$ is the grid spacing. As the diffusivity goes to infinity (i.e., for faster flows and shallower slopes), the stable time step goes to zero. Thus in practice, this approach has proven very difficult to use for calculating ice sheet evolution in most of the dynamically interesting areas of ice sheets that we are interested in. An alternate approach is needed.
+\noindent
+where $\Delta t$ is the time step required for numerical stability and $\Delta x$ is the grid spacing. As the diffusivity goes to infinity (i.e., for faster flows and shallower slopes), the stable time step goes to zero. Thus in practice, this approach has proven very difficult to use for calculating ice sheet evolution in the dynamically interesting areas of ice sheets. An alternate approach is needed.
 
 \subsection{Advection schemes}
-An alternate approach is to solve the evolution equation using an advection scheme. Numerically, advection schemes can be more problematic than diffusion schemes, but in some cases like this one, they are difficult to avoid. The most general advection scheme is a first-order, upwind-advection scheme (as above, ``first-order" here refers to first-order accurate), and we will outline the implementation of such a scheme below.
+An alternate approach is to solve the evolution equation using an advection scheme. Numerically, advection schemes can be more problematic than diffusion schemes, but in cases like this one, they are difficult to avoid. One of the simplest advection schemes is a first-order, upwind-advection scheme (as above, ``first-order" here refers to first-order accurate), and we will outline the implementation of such a scheme below.
 
-Most ice sheet models (and fluid dynamics models in general) perform calculations on a ``staggered" grid of the type shown below in Figure \ref{fig:stag_c_grid}, where velocity components live on one grid and scalar components (e.g. temperatures, pressures, thickness, etc.) live on a grid that is staggered by 1/2 grid space in the horizontal dimensions (this is essential for numerical stability reasons that we won't discuss here).
+Most ice sheet models (and fluid dynamics models in general) perform calculations on a ``staggered" grid of the type shown below in Figure \ref{fig:stag_c_grid}, where scalar components (e.g., temperature, pressure, and thickness) live on one grid, and velocity components live on 
+a grid that is staggered by 1/2 grid cell in the horizontal direction. (This is essential for numerical stability for reasons not discussed here).
 
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.4\columnwidth]{\dir/figs/Stag_grid.eps}
   \end{center}
-\caption{Staggered grid in two dimensions, showing scalars (like thickness, $H$) at grid cell centers and velocity components, $U$ and $V$, at grid cell faces. This is a ``C" grid. Another staggered-grid possibility is a ``B" grid, for which both velocity components live at the grid cell corners. While CISM uses a B grid, averaging of corner velocities to face centers allows one to express them on a C grid, if necessary.}
+\caption{Staggered grid in two dimensions, showing scalars (like thickness, $H$) at grid cell centers and velocity components, $U$ and $V$, at grid cell edges. This is a ``C" grid. Another staggered-grid possibility is a ``B" grid, in which both velocity components live at the grid cell corners. While CISM uses a B grid, averaging of corner velocities to edges allows one to express them on a C grid, if necessary.}
   \label{fig:stag_c_grid}
 \end{figure} 
 
@@ -58,12 +64,14 @@ A control volume (or finite volume) approach to solving the equation
 \frac{\partial H}{\partial t}=-\left( \frac{\partial \left( UH \right)}{\partial x}+\frac{\partial \left( VH \right)}{\partial y} \right)+B \\ 
 \end{equation}
 
-would be to integrate our equation over a control volume centered on the scalar values (Figures \ref{fig:stag_c_grid} and \ref{fig:stag_c_grid2}). Ignoring source terms for now (assume $B=0$), and assuming flow along the \textit{x} direction only (assume $V=0$) we have
+\noindent
+would be to integrate the equation over a control volume centered on the scalar values (Figures \ref{fig:stag_c_grid} and \ref{fig:stag_c_grid2}). Ignoring source terms for now (assume $B=0$), and assuming flow in the \textit{x} direction only (assume $V=0$) we have
 
 \begin{equation}
 \frac{\partial H}{\partial t}=-\frac{1}{\Delta y\Delta x}\int_{s}^{n}{\int_{w}^{e}{\frac{\partial \left( UH \right)}{\partial x}}}dxdy=-\frac{1}{\Delta y\Delta x}\left( HU_{e}-HU_{w} \right)\Delta y. \\
 \end{equation}
 
+\noindent
 The ``east" and ``west" (subscripts $e$ and $w$) faces of the control volume are shown in Figure \ref{fig:stag_c_grid2}.
 
 \begin{figure}
@@ -85,22 +93,26 @@ Is this an explicit or implicit scheme? If we discretize the right-hand side of 
 \begin{equation}
 \begin{split}
   & \frac{\partial H}{\partial t}=-\nabla \cdot \left( UH \right)+B, \\
- & \frac{H_{t=1}-H_{t=0}}{\Delta t}\approx -\nabla \cdot \left( UH \right)+B\\
+ & \frac{H_{t=1}-H_{t=0}}{\Delta t}\approx -\nabla \cdot \left( UH \right)+B.\\
 \end{split}
 \end{equation}
 
-This can be rearranged to,
+\noindent
+This can be rearranged to
 
 \begin{equation}
 H_{t_{t=1}}\approx H_{t=0}+\left[ -\nabla \cdot \left( UH \right)+B \right]_{t=0}\Delta t.
 \end{equation}
 
-The thickness at the new time step $t=1$ is a function of \textit{only} variables evaluated at the previous time step $t=0$. Thus, the scheme is \textit{explicit} and, as such, is subject to the advective CFL condition for stability,
+\noindent
+The thickness at the new time step $t=1$ is a function only of variables evaluated at the previous time step $t=0$. Thus, the scheme is \textit{explicit} and, as such, is subject to the advective CFL condition for stability:
 
 \begin{equation}
 \Delta t<\frac{\Delta x}{U}.\\
 \end{equation}
 
-Essentially, this means that we cannot take such a large time step that we advect mass through more than one volume (past more than one grid space) per time step.
+\noindent
+Essentially, this means that we cannot take such a large time step that we advect mass through more than one grid cell per time step.
 
-There is not much more to a first-order advection scheme other than extending it to two dimensions for non-zero \textit{V}. The finite volume formulation guarantees that it will be conservative globally (i.e. all mass moved around on the grid is accounted for at each time step). There are many other ``higher-order" advection schemes available (e.g., the incremental remapping scheme used in CISM and described in Chapter \ref{ch:glissade}), but they are mainly based on the principles outlined here and rely on corrections to the simple upwind assumption in order to gain more accuracy.
+There is not much more to a first-order advection scheme other than extending it to two dimensions for non-zero \textit{V}. The finite volume formulation guarantees that it will conserve mass (i.e., the mass moving out of one grid cell across a given cell face is equal to the mass moving into an adjacent grid cell across that face).
+There are many ``higher-order" advection schemes (e.g., the incremental remapping scheme used in CISM and described in Chapter \ref{ch:glissade}), but they are mainly based on the principles outlined here and rely on corrections to the simple upwind assumption in order to gain more accuracy.
