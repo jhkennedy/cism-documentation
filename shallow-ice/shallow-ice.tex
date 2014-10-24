@@ -1,6 +1,6 @@
 \label{ch:glide}
 
-In this chapter the numerical implementation of mass, momentum, and energy conservation in the GLIDE dynamical core is described. For a model governed by shallow-ice dynamics, the solution for the conservation of mass and momentum are intimately linked.
+This chapter describes the numerical implementation of mass, momentum, and energy conservation in the Glide dynamical core. For a model governed by shallow-ice dynamics, the solutions for the conservation of mass and momentum are intimately linked.
 
 \input{\dir/kinematics.tex}
 \input{\dir/temp.tex}
@@ -13,11 +13,10 @@ In this chapter the numerical implementation of mass, momentum, and energy conse
 
 \section{Time Step Ordering}
 
-Relative to Glimmer-CISM 1.x, the order of operations on each time step have been
-reorganized somewhat in CISM2.0.  This was done for consistency with the ordering
+Relative to Glimmer-CISM 1.x, the order of operations on each time step has been
+somewhat reorganized in CISM2.0.  This was done for consistency with the ordering
 of operations used in Glissade and to eliminate discrepancies between time levels
 applied in the model and the time levels written in output files.  
-
 \textbf{These changes have only a minor impact on model results, but do result 
 in output that will not be an exact match between the two model versions for the
 same configuration and initial conditions.}
@@ -27,7 +26,7 @@ migrating from Glimmer-CISM 1.x, the details of these changes follow.
 Specifically, in Glimmer-CISM 1.x, for a given time step, $H$ is advanced in time
 relative to $T$ and $\vec{v}$, and, because a complete solve occurs even at the 
 initial time, the output for the initial time is different than the input for 
-the prognostic variabels $H$ and $T$, even though no time step has occurred at 
+the prognostic variables $H$ and $T$, even though no time step has occurred at 
 that point.
 
 In Glimmer-CISM 1.x, the time-stepping loop is organized as follows:
@@ -61,7 +60,7 @@ $v$  &  0                    &  1                    &  2  \\
 In CISM 2.0, the time-stepping loop is now organized as follows:
 \begin{verbatim}
 initialize modules
-initial diagnostic solve of v (and any other diagnostic variables like upper surface).
+initial diagnostic solve of v (and any other diagnostic variables like upper surface)
 write output for time 0
 do while (t <= tend)
    advance time
@@ -72,7 +71,8 @@ do while (t <= tend)
 end do
 \end{verbatim}
 
-\noindent and this results in the following relation between the state of model variables and
+\noindent
+This results in the following relation between the state of model variables and
 the time level at which they are output:
 
 %\begin{table}[h]
