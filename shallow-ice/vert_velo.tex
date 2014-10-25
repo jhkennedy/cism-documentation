@@ -1,6 +1,6 @@
-\subsection{Calculating Vertical Velocities}
+\subsection{Calculating vertical velocities}
 
-\subsubsection{Grid Velocity}
+\subsubsection{Grid velocity}
 The vertical grid moves as a result of using a $\sigma$--coordinate system. The grid velocity is
 \begin{equation}
   \label{kin.eq.grid_velo}
@@ -8,7 +8,7 @@ The vertical grid moves as a result of using a $\sigma$--coordinate system. The 
 \end{equation}
 The numerical implementation of \eqref{kin.eq.grid_velo} is straightforward.
 
-\subsubsection{Vertical Velocity}
+\subsubsection{Vertical velocity}
 The discretized version of the vertical velocity equation \eqref{kin.eq.vert_velo_scaled} is slightly more compilicated because the horizontal velocities are calculated on the $(r,s)$ grid. The vertical velocity at the ice base is $w_{i,j,N}=w^{\text{grid}}_{i,j,N}-M_b{i,j}$, where $M_b{i,j}$ is the basal melt rate. Integrating from the bottom, the vertical velocity is then
 \begin{equation}
   \label{kin.eq.wvel_unc}

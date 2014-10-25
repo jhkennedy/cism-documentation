@@ -3,15 +3,16 @@
 %
 \href{http://oceans11.lanl.gov/cism/}{CISM}, 
 the Community Ice Sheet Model, originates from the Glimmer and Glimmer--CISM 
-projects\footnote{{\it Glimmer} was originally an acronym (GENIE Land Ice Model with Multiply Enabled Regions)
-reflecting the project's origin within the GENIE climate model.}.
+projects \citep{Rutt2009}\footnote{
+{\it Glimmer} was originally an acronym for GENIE Land Ice Model with Multiply Enabled Regions,
+reflecting the project's origin within the GENIE (Grid ENabled Integrated Earth-system) model.}.
 The current name reflects
 the project's evolution from a stand-alone ice sheet model to a fully supported, 
 coupled component of the \href{http://www2.cesm.ucar.edu/}{Community Earth System Model}, or CESM. 
 CISM is a numerical model---a collection of software libraries, utilities and drivers---
- used to simulate ice sheet evolution. CISM is modular in design and coded almost 
+used to simulate ice sheet evolution. CISM is modular in design and coded almost 
 entirely in standards-compliant Fortran 95. It currently supports two different 
-dynamical cores (``dycores''), which solve the equations for the conservation of mass, energy, and momentum. 
+dynamical cores (``dycores''), which solve the equations for conservation of mass, energy, and momentum. 
 As with previous versions of Glimmer and Glimmer-CISM, the current version of CISM 
 supports a serial, shallow-ice representation of ice dynamics. 
 New with CISM2 are support for ``higher-order" ice dynamics, scalable parallelism, 
@@ -36,19 +37,22 @@ This component is responsible for solving the governing conservation equations a
 determining ice velocities, internal ice temperature, 
 and ice geometry evolution (see Chapter \ref{ch:glide}). 
 Apart from minor changes, this is the same shallow-ice dynamical core 
-used by previous versions of Glimmer and Glimmer-CISM.
+used by Glimmer and Glimmer-CISM.
 
-\item {\bf Glissade:} the dynamical core based on the first-order-accurate Stokes approximation. As with Glide, this component solves the governing conservation equations. Unlike Glide, Glissade is fully parallel in order to take advantage of modern, multi-processor, high-performance architectures (see Chapter \ref{ch:glissade}).
+\item {\bf Glissade:} the dynamical core based on a first-order-accurate approximation
+of the Stokes equations for ice flow.  This dycore, like Glide, solves the governing conservation equations. 
+Unlike Glide, Glissade is fully parallel in order to take advantage of modern, multi-processor, high-performance architectures 
+(see Chapter \ref{ch:glissade}).
 
 %\item {\bf GLINT:} {\bf GL}IMMER {\bf Int}erface. Originally developed for the GENIE %\footnote{Grid-ENabled Integrated Earth-system model} 
 %Earth Systems Model, GLINT allows the core ice model to be coupled to a variety of global climate models, or indeed any source of time-varying climate data on a lat-long grid. 
 \item {\bf Glint:} the climate model interface. Glint allows the core ice sheet model to be coupled to a variety of 
-global climate models, or indeed any source of time-varying climate data on a lat-long grid. 
+global climate models, or indeed any source of time-varying climate data on a lat-lon grid. 
 
 \item {\bf Test cases:} idealized test cases for the Glide and Glissade dynamical cores 
 and for the Glint climate interface. These are used to (1) confirm that the model 
 is working as expected and (2) provide a range of simple model configurations 
-from which new users can learn about model configuration options and 
+from which new users can learn about model options and 
 create their own configurations (see Chapter \ref{ch:tests}). 
 
 \item {\bf Shared code:} a number of modules shared by different parts of the code. 
@@ -78,12 +82,13 @@ the configuration file and data input/output (I/O), as discussed below.
 
 %\subsection{Model Configuration, I/O and Visualisation}
 Each component is configured using a configuration file (*.config) 
-similar to Windows \texttt{.ini} files. At run-time, model configuration is printed
+similar to Windows \texttt{.ini} files. At run-time, the model configuration is written
 to a log file. 
 
 1D, 2D, and 3D data are written and read to and from netCDF files using the 
 %CF (Climate-Forecast) metadata convention\footnote{\texttt{http://www.cgd.ucar.edu/cms/eaton/cf-metadata/}}. 
-\href{http://cfconventions.org/}{CF (Climate-Forecast) metadata convention}. 
+\href{http://cfconventions.org/}{CF (Climate-Forecast) metadata convention}\footnote
+{http://cfconventions.org/}. 
 NetCDF is a scientific data format for storing multidimensional data in a platform- 
 and language-independent binary format. The CF conventions specify the metadata 
 used to describe the file contents.

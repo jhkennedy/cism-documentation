@@ -1,5 +1,5 @@
 
-\section{Mass and tracer transport}
+\section{Mass and Tracer Transport}
 \label{sc:glissade-transport}
 
 We wish to solve the continuity or transport equation for the ice thickness:
@@ -240,17 +240,18 @@ the north and east edges of each grid cell, we compute the
 vertices of all the departure triangles associated with each cell
 edge.
 
-\begin{figure}
-  \label{fig:gliss.deparr}
-  \centering
+\begin{figure}[htbp]
+  \begin{center}
     \includegraphics[width=0.5\columnwidth]{\dir/figs/deparr.eps}
-    \caption{In incremental remapping, conserved
-      quantities are remapped from the shaded departure region, a
-      quadrilateral formed by connecting the backward trajectories
-      from the four cell corners, to the grid cell labeled $H$.
-      The region fluxed across the north edge of cell $H$ consists
-      of a triangle ($abc$) in the $NW$ cell and a quadrilateral 
-      (two triangles, $acd$ and $ade$) in the $N$ cell.}
+  \end{center}
+  \caption{In incremental remapping, conserved
+    quantities are remapped from the shaded departure region, a
+    quadrilateral formed by connecting the backward trajectories
+    from the four cell corners, to the grid cell labeled $H$.
+    The region fluxed across the north edge of cell $H$ consists
+    of a triangle ($abc$) in the $NW$ cell and a quadrilateral 
+    (two triangles, $acd$ and $ade$) in the $N$ cell.}
+  \label{fig:gliss.deparr}
 \end{figure}
 
 Figure~\ref{fig:gliss.triangles}, reproduced from \citet{Dukowicz2000}, shows all possible

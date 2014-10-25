@@ -11,16 +11,16 @@ to these same tests. Additional test cases will be added as needed.
 % =====================================
 \subsection{Dome}
 % =====================================
-The Dome test case is based on a parabolic dome of ice, similar to the Halfar test case.
-By default the Dome has the same radius and center thickness as the Halfar case.
+The dome test case is based on a parabolic dome of ice, similar to the Halfar test case.
+By default the dome has the same radius and center thickness as the Halfar case.
 However, it uses a simple square root function to define thickness as a function 
 of distance from the dome center, resulting in a somewhat steeper profile.  
-The Dome has been widely used for day-to-day testing
+The dome test has been widely used for day-to-day testing
 because it is simple and relatively fast to run.  It is a good test
 to confirm that basic higher-order model physics is working correctly, but does
 not strenuously test the physics and boundary conditions, or analytically verify the model.
 
-\subsubsection{Provided Files}
+\subsubsection{Provided files}
 
 \begin{itemize}
 	\item README \\
@@ -46,7 +46,7 @@ There is no script for analyzing the results.
 %\textit{Optional: Time-dependent forcing example} \\
 
 \par
-The Dome test case can be used to set up an example of CISM's time-dependent
+The dome test case can be used to set up an example of CISM's time-dependent
 forcing capability.  (See Section \ref{io-config} for details.)
 To create a forcing file with some time-varying (though arbitrary) forcing, run:
 
@@ -88,7 +88,7 @@ scripts) were created to run experiments A through F using CISM and compare the 
 Note: The \texttt{README} file gives many additional details about running and analyzing the
 test case that are not described here.
 
-\subsubsection{Provided Files}
+\subsubsection{Provided files}
 
 \begin{itemize}
 	\item README \\
@@ -148,13 +148,13 @@ step function). For the Schoof test case, the till yield stress across the ice s
 In both cases, the basal properties vary in the across-flow direction only and are symmetric about the ice stream centerline.
 As a result, the velocity solutions are also uniform along flow and symmetric about the centerline.
 
-\subsubsection{Provided Files}
+\subsubsection{Provided files}
 
 \begin{itemize}
 	\item README \\
 		Information about the test case, including technical details about running it.
 	\item runStream.py \\
-		The script to setup and run the test test.
+		The script to set up and run the test test.
 	\item stream.config.in \\
   The default configuration settings for running CISM with the test case. Note that this
   file is parsed by the runStream.py script. Most of the relevant options that might be changed
@@ -179,6 +179,14 @@ The \texttt{plotStream.py} script will plot model output relative to the analyti
 in \citet{Raymond2000} and \citet{Schoof2006}. The choice of analytical solution for comparison
 is automatic, based on the yield stress chosen in the runStream.py script. 
 Figure \ref{fig:stream-results} shows example output for both test cases.
+
+Note: The excellent agreement between the CISM results and the Raymond analytical solution
+requires setting \texttt{which\_ho\_assemble\_beta = 1} in the config file
+(see Section~\ref{ug.sec.config}). With this setting, the step change in yield
+stress is well resolved. Otherwise there is some smoothing of the traction 
+parameter $\beta$ over neighboring nodes during finite-element assembly
+(Section~\ref{sec:glissade-assembly}), and the results are less accurate.
+ 
 	
 \begin{figure}[H!]
   \begin{center}
@@ -191,9 +199,9 @@ Additional runtime options are described in the \texttt{README} and by invoking 
 \end{figure} 
 
 % =====================================
-\subsection{Confined Shelf}
+\subsection{Confined shelf}
 % =====================================
-The Confined Shelf test is based on tests 3 and 4 of the idealized (i.e., not Ross) EISMINT shelf test 
+The confined shelf test is based on tests 3 and 4 of the idealized (i.e., not Ross) EISMINT shelf test 
 cases.  It simulates the flow within an idealized, 500 m thick ice shelf in a 
 confined, rectangular embayment.  Grounded ice is not explicitly modeled but included in the 
 model setup as Dirichlet boundary conditions for velocity along the ice shelf edges.
@@ -202,10 +210,10 @@ More detailed information on this test case can be found
 \footnote{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html} in the 
 ``shelf-descr.pdf" document.
 
-Note that the Confined Shelf and Circular Shelf experiments are both in the 
+Note that the confined shelf and circular shelf experiments are both in the 
 \texttt{tests/higher-order/shelf} directory and share some files.
 
-\subsubsection{Provided Files}
+\subsubsection{Provided files}
 
 \begin{itemize}
 	\item README \\
@@ -236,16 +244,16 @@ Figure \ref{fig:confinedshelf-results} shows an example.
 \FloatBarrier
 
 % =====================================
-\subsection{Circular Shelf}
+\subsection{Circular shelf}
 % =====================================
-The Circular Shelf test case is a variant on the Confined Shelf discussed above. It simulates the flow within a circular ice shelf with a uniform thickness
+The circular shelf test case is a variant on the confined shelf discussed above. It simulates the flow within a circular ice shelf with a uniform thickness
 of 1000 m, which is grounded at a single grid point at its center. This test case confirms a working ``floating ice" boundary condition
 in 2D (i.e, in map plane view) and also confirms radial symmetry. 
 
-Note that the Confined Shelf and Circular Shelf experiments are both in the 
+Note that the confined shelf and circular shelf experiments are both in the 
 \texttt{tests/higher-order/shelf} directory and share some files.
 
-\subsubsection{Provided Files}
+\subsubsection{Provided files}
 
 \begin{itemize}
 	\item README \\
@@ -287,13 +295,13 @@ takes about 10 minutes to run on a single processor.  Using the shallow-shelf ap
 the results are very similar and are found more quickly (in less than a minute).
 For this reason, the SSA (\texttt{which\_ho\_approx = 1}) is the default.
 
-\subsubsection{Provided Files}
+\subsubsection{Provided files}
 
 \begin{itemize}
 	\item README \\
 		Information about the test case, including technical details about running it.
 	\item runRoss.py \\
-		The script to setup and run the test test.
+		The script to set up and run the test test.
 	\item ross.config \\
   The default configuration settings for running CISM with the test case.
 	\item plotRoss.py \\
@@ -334,7 +342,7 @@ compare these with similar figures in the paper by \citet{MacAyeal:1996vn}.
 
 
 % =====================================
-\subsection{Other Tests}
+\subsection{Other tests}
 % =====================================
 Other higher-order tests that are still in development (e.g., ``slab") are also included in the \texttt{./tests/higher-order/}
 directory. Instructions for running these tests are included in each directory. Since these tests have not yet been validated, 

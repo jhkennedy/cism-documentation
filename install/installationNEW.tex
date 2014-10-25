@@ -16,7 +16,7 @@ Please report unresolved problems using the bug reporting facility at the
 \href{https://github.com/CISM/CISM-release/issues}{CISM Github website}\footnote{\texttt{https://github.com/CISM/CISM-release/issues}}. 
 
 CISM is distributed as source code, and a reasonably complete build environment is therefore required to compile the model. 
-For UNIX and LINUX based systems (including Mac), the \href{http://www.cmake.org/}{Cmake} build system is used to build the model. 
+For UNIX and LINUX based systems (including Mac), the \href{http://www.cmake.org/}{CMake} build system is used to build the model. 
 Sample build scripts for a number of standard architectures are included, as are working build scripts 
 for a number of large-scale, high-performance-computing architectures 
 (e.g., \textit{Yellowstone} (CISL), \textit{Titan} (OLCF), and \textit{Hopper} (NERSC) ). 
@@ -30,7 +30,7 @@ There are two ways to get the source code:
 \texttt{git clone https://github.com/CISM/CISM-release/archive/master.zip}  
 (It is also possible to clone the repository using the SSH protocol 
 if you have an SSH keypair generated on your computer and attached to your GitHub account.  
-See the \href{https://github.com/CISM/CISM-release}{CISM Github repository wepage} and 
+See the \href{https://github.com/CISM/CISM-release}{CISM Github repository webpage} and 
 \href{https://help.github.com/articles/which-remote-url-should-i-use}{Github's help pages} for more information.)
 
 \end{enumerate}
@@ -46,7 +46,7 @@ Other software dependencies include the \href{http://www.unidata.ucar.edu/packag
 with a number of specific Python modules. Users who want to run the code in parallel will need to install MPI, 
 and users who want access to the \textit{Trilinos} solver library will need to 
 download and build \textit{Trilinos}, and link to it when building CISM. 
-Finally, you will need Cmake and Gnu Make to compile the code and link to the various third-party libraries. 
+Finally, you will need CMake and Gnu Make to compile the code and link to the various third-party libraries. 
 
 If you have not done so already, clone a tagged version of CISM or download an archive of the code, as noted above. Store the code or the unzipped, untarred archive in a location of your choice. More detailed build instructions, including instructions for the installation of supporting software, are given below.
 
@@ -68,9 +68,11 @@ This is a common configuration to use on supercomputing clusters, but can also b
 convenient on modern desktops and laptops which often have four or more cores available.
 However, the parallel build requires additional supporting software, so we first 
 detail how to build serial CISM.  For new users, it is recommended to first build
-and successfully run serial CISM before moving on to the parallel build.  \textbf{Note
-that currently, the Shallow Ice Approximation dycore (Glide) can only run on a single processor, 
-even when the code is built with full parallel support.}
+and successfully run serial CISM before moving on to the parallel build.  
+
+\textbf{Note:} Glide, the shallow-ice dycore, can only run on a single processor, 
+even when the code is built with full parallel support. This is also true of the SLAP
+solver routines.
 
 The instructions below assume the user has administrative privileges for
 installing new software (note the extensive use of \texttt{sudo}).  
@@ -271,7 +273,7 @@ Install these tools with:
 
 
 % =====================================
-\subsection{Install Build Tools}
+\subsection{Install build tools}
 % =====================================
 
 Additional tools are needed for managing the build process.  \texttt{make} (specifically, GNU's gmake)
@@ -307,7 +309,7 @@ for compiling code. Install these tools and \texttt{CMake} with:
 
 
 % =====================================
-\subsection{Install NetCDF}
+\subsection{Install netCDF}
 % =====================================
 \label{sec:install-netcdf}
 NetCDF stands for ``network Common Data Form'' libraries, which are a
@@ -367,7 +369,7 @@ Install netCDF libraries with:
 
 
 % =====================================
-\subsection{Install Python and needed modules}
+\subsection{Install Python and related modules}
 % =====================================
 Python is used by CISM to autogenerate I/O code during compilation, and is also
 used by most test case scripts to set up initial conditions and analyze and plot
@@ -450,7 +452,7 @@ Install \texttt{netCDF4} using pip:
 
 % =====================================
 % =====================================
-\section{Building serial CISM}
+\section{Building Serial CISM}
 \label{serial-build}
 % =====================================
 % =====================================
@@ -580,7 +582,7 @@ Also, there are standard CMake options that can be set (e.g., \texttt{CMAKE\_C\_
 
 % =====================================
 % =====================================
-\section{Supporting software needed for parallel CISM}
+\section{Installing Supporting Software for Parallel CISM}
 % =====================================
 % =====================================
 To build parallel CISM, MPI compilers and libraries are required.  
@@ -814,7 +816,7 @@ is set to the Trilinos installation directory.
 
 % =====================================
 % =====================================
-\section{Building parallel CISM}
+\section{Building Parallel CISM}
 % =====================================
 % =====================================
 

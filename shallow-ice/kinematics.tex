@@ -76,7 +76,7 @@ where $M_b$ is the basal melt rate given by \eqref{temp.eq.meltrate}. The upper 
 \input{\dir/grid.tex}
 %===================
 
-\subsection{Ice Sheet Equations in $\sigma$--Coordinates}
+\subsection{Ice sheet equations in $\sigma$--coordinates}
 The horizontal velocity, \eqref{kin.eq.horiz_velo}, becomes in the $\sigma$--coordinate system
 \begin{equation}
   \label{kin.eq.vert_velo_sigma}
@@ -97,7 +97,7 @@ with lower boundary condition
   w(1)=\frac{\pd b}{\pd t}+\vec u(1)\cdot\vec\nabla b - M_b.
 \end{equation}
 
-\subsection{Calculating the Horizontal Velocity and the Diffusivity}
+\subsection{Calculating the horizontal velocity and diffusivity}
 Horizontal velocity and diffusivity calculations are split up into two parts:
 \begin{subequations}
   \label{kin.eq.horiz_diffusivity}
@@ -125,7 +125,7 @@ Quantities $\vec u$ and $D$ are found on the velocity grid. Integrating from the
 \end{subequations}
 Expressions for $\vec{u}_{i,j,k}$ and $\vec{q}_{i,j}$ are straightforward.
 
-\subsection{Solving the Ice Thickness Evolution Equation}
+\subsection{Solving the ice thickness evolution equation}
 Equation \eqref{kin.eq.ice_thickness} can be rewritten as a diffusion equation, with nonlinear diffusion coefficient $D$:
 \begin{equation}
   \label{kin.eq.ice_evo}
@@ -179,7 +179,7 @@ The RHS is given by
 
 A similar tridiagonal system is found for each column $i$ of \eqref{kin.eq.adi_2}.
 
-\subsubsection{Linearised Semi--Implicit Scheme}
+\subsubsection{Linearised semi--implicit scheme}
 Using the Crank--Nicolson scheme, the semi--implicit temporal discretisation of \eqref{kin.eq.ice_evo} is
 \begin{multline}
 \label{kin.eq.ice_evo_disc1}
@@ -209,7 +209,7 @@ Here the elements of the sparse matrix are
 
 This matrix equation is solved using an iterative solver for non-symmetric sparse matrices. The solver used here is the bi--conjugate gradient method with incomplete LU decomposition preconditioning provided by the SLAP package.
 
-\subsubsection{Nonlinear Scheme}
+\subsubsection{Nonlinear scheme}
 The nonlinearity of \eqref{kin.eq.ice_evo} arises from the dependance of $D$ on $s$. A nonlinear scheme for \eqref{kin.eq.ice_evo} can be formulated using Picard iteration, which consists of two iterations: an outer, nonlinear and an inner, linear equation. The scheme starts with the diffusivity from the previous time step:
 \begin{subequations}
   \begin{equation}

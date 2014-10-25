@@ -4,7 +4,7 @@
 
 We now carry out an approximate derivation of the boundary conditions in a higher-order scheme. By ``approximate'' we mean that some of the derivation is guided by physical intuition and reasonable arguments, rather than rigorous mathematics. In the end, we derive the same set of equations as when following the more rigorous approach (e.g., \citet{DUKOWICZ:2010wb}). We will consider the boundary conditions in three parts: (1) the free surface BC, (2) the basal traction BC, and (3) lateral BCs.
 
-\subsection{Stress-free Surface}
+\subsection{Stress-free surface}
 At the upper ice surface, a stress-free boundary condition is applied. The traction vector $T_i$ must be continuous across the ice sheet surface and, assuming that atmospheric pressure and surface tension are small, we have
 
 \begin{equation}
@@ -127,7 +127,7 @@ Moving terms to one side and dividing through by the effective viscosity \textit
 \end{split}
 \end{equation}
 
-\subsection{Specified Basal Traction}
+\subsection{Specified basal traction}
 Derivation of the basal boundary condition follows that above for the free surface except that
 \begin{enumerate}
 
@@ -220,7 +220,7 @@ The release version of CISM does not currently include a hydrology model
 that computes effective pressure, so at present the effective pressure fields must be
 input as data to use these two basal friction laws.
 
-\subsection{Specified Basal Yield Stress}
+\subsection{Specified basal yield stress}
 The above implementation of a specified basal traction can be altered to simulate sliding over a sediment-covered bed for which the sediment has a plastic or ``Coulomb friction" rheology. That is, sliding does not occur below the specified yield stress of the underlying material (e.g., a water-saturated subglacial till). When the yield stress, $\tau_0$ is reached, sliding occurs at a rate that maintains but does not exceed that yield stress. Consider the \textit{x}--direction boundary condition in \eqref{ho.eq.basal_bc}, written out in terms of basal stress components:
 
 \begin{equation}
@@ -263,7 +263,7 @@ Figure \ref{fig:plasticbed1} shows an example of this type of boundary condition
 %    \label{fig:plasticbed2}
 %\end{figure} 
 
-\subsection{Lateral Boundary Conditions}
+\subsection{Lateral boundary conditions}
 Currently, the only significant lateral boundary condition implemented in CISM 
 is that for floating ice; the depth-averaged stress resulting from an adjacent column of ocean water is applied at the location of an ice shelf (or ice tongue) front. The derivation largely follows those for the free surface and specified basal traction boundary conditions, except that the surface normal vectors, $n_{x}$ and $n_{y}$, are taken as lying entirely in the $x$, $y$ plane (i.e., they are perpendicular to a vertical shelf front). Thus we have
 

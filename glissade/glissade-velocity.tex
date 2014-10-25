@@ -1,5 +1,5 @@
 
-\section{Velocity solver}
+\section{Velocity Solver}
 \label{sc:glissade-velocity}
 
 Glissade computes the ice velocity by solving an appropriate
@@ -119,7 +119,7 @@ This procedure is known as Picard iteration.
 The following sections describe how the matrix equations are assembled and solved. 
 
 \subsubsection{Assembly}
-
+\label{sec:glissade-assembly}
 The coupled PDEs \eqref{gliss.eq.stress_balance} are discretized using the finite-element method.
 Here we give a detailed but non-rigorous description of the method as applied to the Blatter-Pattyn
 approximation on the CISM mesh.
@@ -601,7 +601,7 @@ $v$ but not $u$, we form 2D matrices $\mathbf{K_{uu}}$ and $\mathbf{K_{vv}}$, bu
 Each term of $\mathbf{K_{uu}}$ is then inserted into the global matrix $\mathbf{A_{uu}}$, and
 similarly for $\mathbf{K_{vv}}$ and $\mathbf{A_{vv}}$.
 
-(\textbf{Add a paragraph here on plastic bed conditions.})
+(\textbf{Add a reference here to plastic bed conditions. Also discuss alternate beta assembly.})
 
 \paragraph{Lateral boundary conditions.}
 
@@ -1376,7 +1376,7 @@ the effective viscosity.
 
 After solving the 2D L1L2 system for the basal velocity, the velocity profile at each vertex
 can be found by vertical integration. First we estimate
-$\tau_{xz}$ and $\tau_{yz}$ at each level.  Since the depth-independent membrane stresses
+$\tau_{xz}$ and $\tau_{yz}$ in each layer.  Since the depth-independent membrane stresses
 are determined by the basal velocity, $\tau_{xz}$ and $\tau_{yz}$ are now the
 only unknowns in \eqref{gliss.eq.stress_balance_tau}.  These equations can be integrated
 from the top surface (assumed to be stress-free) to depth $z$ to give

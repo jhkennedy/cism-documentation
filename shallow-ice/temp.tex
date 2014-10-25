@@ -26,7 +26,7 @@ where
 \end{subequations}
 (Note the different meanings for $b$ and $c$ here relative to usage elsewhere in this document.)
 
-\subsection{Vertical Diffusion}
+\subsection{Vertical diffusion}
 Discretization of $\pd^2T/\pd\sigma^2$ is slightly complicated because the vertical grid is irregular. Using Taylor series the central difference formulas are
 \begin{subequations}
   \begin{align}
@@ -50,7 +50,7 @@ Finally, the terms of equation \eqref{temp.eq.d4} are rearranged:
   + \frac{2T_{k+1}}{(\sigma_{k+1}-\sigma_k)(\sigma_{k+1}-\sigma_{k-1})}.
 \end{multline}
 
-\subsection{Horizontal Advection}
+\subsection{Horizontal advection}
 The horizontal advection term, $- \vec{u}\cdot\vec\nabla T$, is found using an upwinding scheme. We start with the 1D case. (The method can readily be extended to 2D.) As always, the temperature function is expressed as a Taylor series:
 \begin{subequations}
   \begin{align}
@@ -83,7 +83,7 @@ A similar expression is found for $b_y$ by substituting $y$ for $x$. The combine
   b=-\vec{u}\cdot\vec\nabla T=-\left(u_x\frac{\pd T}{\pd x}+u_y\frac{\pd T}{\pd y}\right)=b_x+b_y=b_1+b_2T_i.
 \end{equation}
 
-\subsection{Heat Generation}
+\subsection{Heat generation}
 Taking the derivative of \eqref{kin.eq.vert_velo_sigma} with respect to $\sigma$, we get
 \begin{equation}
   \frac{\pd u_x}{\pd\sigma} = -2(\rho g)^nH^{n+1}|\vec\nabla s|^{n-1}\frac{\pd s}{\pd x}A(T^\ast)\sigma^n.
@@ -110,13 +110,13 @@ The final factor is found by averaging over the neighboring nodes:
   \mathcal{A}_{i,j}=4A_{i,j}+2(A_{i-1,j}+A_{i+1,j}+A_{i,j-1}+A_{i,j+1})+(A_{i-1,j-1}+A_{i+1,j-1}+A_{i+1,j+1}+A_{i-1,j+1}).
 \end{equation}
 
-\subsection{Vertical Advection}\label{temp.sec.vert_ad}
+\subsection{Vertical advection}\label{temp.sec.vert_ad}
 The vertical advection term $\pd T/\pd\sigma$ is computed from the central difference formula for unevenly spaced nodes:
 \begin{equation}
   \frac{\pd T}{\pd\sigma}=\frac{T_{k+1}-T_{k-1}}{\sigma_{k+1}-\sigma_{k-1}}.
 \end{equation}
 
-\subsection{Boundary Conditions}
+\subsection{Boundary conditions}
 At the upper boundary, ice temperatures are set to the surface temperature, $T_{\text{surf}}$. The ice at the base is heated by the geothermal heat flux and sliding friction:
 \begin{equation}
   \left.\frac{\pd T}{\pd\sigma}\right|_{\sigma=1}=-\frac{GH}k-\frac{H\vec{\tau}_b\cdot\vec{u}(1)}k,
@@ -136,7 +136,7 @@ where $L$ is the latent heat of fusion. Finally, basal temperatures are held con
 \end{equation}
 
 
-\subsection{Putting It All Together}
+\subsection{Putting it all together}
 Equation \eqref{temp.eq.temp} is solved for each ice column. The horizontal dependency of the horizontal advection term, \eqref{temp.eq.hadv}, is resolved by iterating the vertical solution. Combining the individual terms using a fully explicit finite-difference scheme, \eqref{temp.eq.temp2} becomes
 \begin{subequations}
   \begin{multline}
@@ -164,7 +164,7 @@ where for $k = 2$ to $N-1$ we have
     \delta_k &= -\alpha_kT_{k-1,t}+(2-\beta_k)T_{k,t}-\gamma_kT_{k+1,t}+\frac12({b_1}_{k,t}+{b_1}_{k,t+1})\Delta t+\Phi_k\Delta t.
   \end{align}
 
-\subsubsection{Boundary Conditions}
+\subsubsection{Boundary conditions}
 At the upper boundary we have
 \begin{equation}
   \alpha_1=0,\quad\beta_1=1,\quad\gamma_1=0,\quad\delta_1=T_{\text{surf}}.

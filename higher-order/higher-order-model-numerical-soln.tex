@@ -4,7 +4,7 @@
 
 This section describes numerical methods for solving the higher-order equations discussed above. More specific details are given in Chapter \ref{ch:glissade}.
 
-\subsection{Governing Matrix Equations}
+\subsection{Governing matrix equations}
 We would like to solve the stress-balance equations \eqref{ho.eq.stress_balance_final_x} and \eqref{ho.eq.stress_balance_final_y} for the
 horizontal velocity components $u$ and $v$.
  %\begin{align*}
@@ -152,10 +152,10 @@ An example is given below, where the coefficients of $u$ and $v$ are contained i
 \noindent
 Here the \textbf{uu} subscript denotes block matrices containing coefficients for gradients of \textit{u} in the equation for the \textit{x} component of velocity (i.e., \textit{u}). The subscript \textbf{uv} denotes block matrices containing coefficients for gradients of \textit{v} in the equation for the \textit{x} component of velocity (and similarly for the \textbf{vu} and \textbf{vv} subscripts). On the right-hand side, the subscripts \textbf{u} and \textbf{v} are attached to the geometric source terms for the \textit{x} and \textit{y} components of velocity, respectively.
 
-\subsection{Treating Nonlinearity Through a Fixed Point Iteration}
+\subsection{Treating nonlinearity through a fixed-point iteration}
 The nonlinearity of the equations---the fact that the matrix coefficients (in particular, the effective viscosity) depend
 on the velocity (or more specifically, the velocity gradients)---is handled through a fixed-point iteration. 
-A general fixed point iteration for a vector of unknowns \textit{u} can be written as 
+A general fixed-point iteration for a vector of unknowns \textit{u} can be written as 
 
 \begin{equation}
   u^{k} = \mathbf{B}\left( u^{k-1} \right),
