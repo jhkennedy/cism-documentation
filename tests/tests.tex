@@ -3,27 +3,27 @@
 
 Test cases for CISM include experiments with analytic solutions, standardized experiments
 without analytic solutions but for which community benchmarks are available, and
-some experiments specific to CISM which have been well-characterized by CISM developers.
+some experiments specific to CISM which have been well characterized by CISM developers.
 
-Here we organize test cases based on the velocity solver that is more appropriate
-for each test.  Note, however, that any velocity solver can be used with any test
-if .config file settings are adjusted manually.  (However, in some cases the results
-would be difficult to interpret.)
+Here we organize test cases based on the velocity solver that is most appropriate
+for each test.  Any velocity solver can be used with any test
+if the .config file settings are adjusted manually.  In some cases, however, the results
+may be difficult to interpret.
 
-In general, each test directory includes a README file with some technical details 
-about how to run the test.  Many tests have python scripts that are used to setup
-the initial condition and, in many cases, actually execute the model.  Some tests
-also have an additional python script for analyzing the CISM output in some way.
+Each test directory includes a README file with some technical details 
+about how to run the test.  Many tests have python scripts that are used to set up
+the initial condition and, in some cases, execute the model.  Some tests
+have an additional python script for analyzing the CISM output.
 
 The user must manually provide each test with access to the CISM executable.
-There are a few ways this can be done:
+There are several ways to do this:
 
 \begin{itemize}
   \item Softlink the executable into the directory, e.g.:
 
         \texttt{ln -s ../../../builds/mac-gnu/cism\_driver/cism\_driver ./}
 
-        This is the recommended procedure when doing development so that the test
+        This is the recommended procedure during development so that the test
         will always be using the most up-to-date version of the executable.
 
   \item Use the -e command line option to point to include an explicit path for the executable (for test case run scripts that support this option), e.g.:
@@ -33,19 +33,19 @@ There are a few ways this can be done:
         This is useful for quickly trying a different version of CISM (e.g., comparing 
         serial and parallel executables).
 
-  \item Add the directory that contains the CISM executable to your environment PATH.
+  \item Add the directory containing the CISM executable to your environment PATH.
 
   \item Copy the executable into the directory.  This is generally not the best practice,
-        but may make sense it some situations.
+        but may make sense in some situations.
 \end{itemize}
 
-For tests that use python scripts, the scripts generally have a number of useful
+The python scripts generally have useful
 command line options that control their execution.  Typically, you can see details 
 by using the --help (or -h) command line option, e.g.:
 
 \texttt{./dome.py --help}
 
-
+The various tests are described below.
 
 % =====================================
 \input{\dir/shallow-ice-model-tests.tex}
