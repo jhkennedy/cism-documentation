@@ -9,7 +9,7 @@ Also, while not required, in almost all situations  \texttt{[options]}
 and (if using a higher-order dycore) \texttt{[ho\_options]} will be included in .config files.
 The \texttt{[parameters]} and \texttt{[sigma]} sections are also commonly used.  
 The \texttt{[GTHF]}, \texttt{[isostasy]}, and \texttt{[projection]} sections
-are only needed if the associated features are desired.  Details of each of these
+are needed only if the associated features are desired.  Details of each of these
 sections, what they control, and the available options for each section are listed 
 in the tables below.
 
@@ -74,7 +74,7 @@ in the tables below.
     \hline
     \multicolumn{2}{|p{0.95\textwidth}|}{Define the sigma levels used in the vertical discretization (\texttt{sigma}=2 above). This is an alternative to using a separate file (specified in section \texttt{[grid]} above). If neither is used, the levels are calculated as described above.} \\
     \hline
-    \texttt{sigma\_levels} & (real) list of sigma levels, in ascending order, separated by spaces. These run between 0.0 and 1.0 \\
+    \texttt{sigma\_levels} & (real) list of sigma levels, in ascending order, separated by spaces. These run between 0.0 and 1.0. \\
 
 
 

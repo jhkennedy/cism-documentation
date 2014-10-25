@@ -41,14 +41,14 @@ hence the plus sign in (\ref{load_sea_grounded}).
 \subsection{Elastic lithosphere model}
 The elastic model is selected by setting \texttt{lithosphere = 1} in the
 configuration file. By simulating the deformation of the lithosphere, the
-deformation seen by the aesthenosphere beneath is calculated. In the absence of this
+deformation seen by the asthenosphere beneath is calculated. In the absence of this
 model, the deformation is that due to Archimedes' Principle, as though the
-load were floating on the aesthenosphere.
+load were floating on the asthenosphere.
 
 The elastic lithosphere model is based on work by \cite{Lambeck1980}, and its
 implementation is fully described in \cite{Hagdorn2003}. The lithosphere
 model affects only the geometry of the deformation; the timescale for
-isostatic adjustment is controlled by the aesthenosphere model. 
+isostatic adjustment is controlled by the asthenosphere model. 
 
 The load due to a single (rectangular) grid point is approximated as being
 applied to a disc of the same area. The deformation due to a disc of ice of
@@ -78,7 +78,7 @@ D_4&=&-a\,\mathrm{Ber}'(a).
 \end{equation}
 Here, the prime indicates the first spatial derivative of the Kelvin functions.
 
-\subsection{Relaxing aesthenosphere model}
+\subsection{Relaxing asthenosphere model}
 If a fluid mantle is selected, it adjusts instantly to changes in lithospheric
 loading. However, a relaxing mantle is also available.
 

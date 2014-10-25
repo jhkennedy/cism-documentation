@@ -27,7 +27,7 @@ This climate forcing can come from:
 \subsection{EISMINT Climate Forcing}\label{driver:eismint}
 Like previous versions of Glimmer, CISM includes a set of idealized climate forcings used in the 
 European Ice Sheet Modeling INiTiative (EISMINT) Phase 1 and 2
-series of experiments.  These forcings calculate surface mass balance and 
+series of experiments.  These forcings consist of surface mass balance and 
 air temperature fields for predefined experiments.  See Chapter \ref{chp:testcases}
 for details of how to run the individual tests, and see the EISMINT publications
 for a more detailed description of the tests and the forcings associated with each.
@@ -106,42 +106,42 @@ for each of the specific experiment setups described in \citet{Huybrechts1996} a
 %________________________________________________
 
 
-\subsection{GLINT driver}
+\subsection{Glint driver}
 
 %
 Glint (originally an acronym for ``Glimmer interface'') allows CISM
 to be run with forcing from an external climate model or global data sets.
-Earlier code versions included a Glint driver called \texttt{glint\_example},
-which was distinct from the basic driver \texttt{simple\_glide}.
-In CISM2, Glint is launched with \texttt{cism\_driver} followed by the
-names of two configuration files, as in this example:
-\begin{verbatim}
- cism_driver ice_sheet.config climate.config
-\end{verbatim}
-The first file specifies the ice sheet configuration as described in Section~\ref{ug.sec.config},
-and the second provides details about the climate forcing.
-Examples of both kinds of file are included in the directory \texttt{tests/glint-example}.
-
+%WHL: Commenting out the following because it's described again below.
+%Earlier code versions included a Glint driver called \texttt{glint\_example},
+%which was distinct from the basic driver \texttt{simple\_glide}.
+%In CISM2, Glint is launched with \texttt{cism\_driver} followed by the
+%names of two configuration files, as in this example:
+%\begin{verbatim}
+% cism_driver ice_sheet.config climate.config
+%\end{verbatim}
+%The first file specifies the ice sheet configuration as described in Section~\ref{ug.sec.config},
+%and the second provides details about the climate forcing.
+%Examples of both kinds of file are included in the directory \texttt{tests/glint-example}.
 Glint was originally developed as an interface between Glide and the GENIE Earth-system
 model, but is designed to be flexible enough to be used with a wide range of
 global climate models. In older versions of Glint, it was assumed that forcing from the climate
 model would include the temperature and precipitation fields required to
 force a positive-degree-day (PDD) scheme for the surface mass balance (SMB).
-In CISM2, Glint can also receive the SMB (typically computed in multiple
-elevation classes on the relatively coarse grid of a climate model such as CESM)
+In CISM2, PDD forcing is still supported, but Glint can also receive the SMB (typically computed in multiple
+elevation classes on the relatively coarse grid of a climate model)
 and downscale it directly to the ice sheet model grid.
 
 A distinctive feature of Glint is the
 way it uses the object-oriented Glide architecture to enable multiple ice
 models to be coupled to the same climate model. This means that regional ice
-models can be run at high resolution over several parts of the globe,
-without the expense of running a global ice sheet model.
+models can potentially run at high resolution over several parts of the globe
+(e.g., Greenland and Antarctica), without the expense of running a global ice sheet model.
 
 Glint automates the processes required in coupling regional models to a global
-model, particularly the down- and up-scaling of the fields that form the
+model, particularly the downscaling and upscaling of the fields that form the
 interface between the two models. The user may specify map projection
 parameters for each of the ice sheet models (known as \emph{instances}).
-The different time-steps of global model, mass-balance scheme, and ice sheet model are
+The different time steps of the global model, mass-balance scheme, and ice sheet model are
 handled automatically by temporal averaging or accumulation of quantities as
 appropriate. 
 
@@ -235,7 +235,7 @@ model time-step loop:
     call glint(ice_sheet,time,temp,precip,orog)
 \end{verbatim} 
 %
-Here the compulsory arguments are
+where
 %
 \begin{itemize}
 \item \texttt{ice\_sheet} is the variable of type \texttt{glint\_params} defined above;
@@ -247,7 +247,7 @@ Here the compulsory arguments are
   between rain, snow, etc.);
 \item \texttt{orog} is the global orography field, in $\mathrm{m}$.
 \end{itemize}
-Many optional arguments (detailed below) may also be specified.
+Many optional arguments may also be specified.
 
 The latter three compulsory fields are needed to drive a PDD scheme.
 Glint includes two such schemes.  One of these calculates the mass-balance for the
@@ -277,7 +277,7 @@ These fields contain two horizontal dimensions, along with a third dimension
 for elevation class.  CESM typically computes these quantities in 10 elevation classes
 per glaciated grid cell in the climate model.
 
-Among the optional arguments are the following:
+Among the optional arguments are the following output fields (returned by Glint to the climate model):
 \begin{itemize}
 \item \texttt{gfrac} is the fractional grid cell area covered by ice;
 \item \texttt{gtopo} is the mean surface elevation in m;
@@ -288,10 +288,10 @@ This includes basal and possibly internal melting, but not surface melting
 (which has already been computed by the climate model).
 \end{itemize}
 %
-These are the fields required by CESM to update its land-surface types and topography and to conserve heat
+These fields are required by CESM to update its land-surface types and topography and to conserve heat
 and water when CISM is coupled interactively to the climate model.  
 The first three fields are computed for each elevation class in each climate model grid cell,
-and the two runoff fluxes are simply computed for each grid cell.
+and the two runoff fluxes are averaged over each grid cell.
 The initial ``g'' denotes that these fields have been upscaled to the global climate grid.
 %
 \subsubsection{Finishing off}
@@ -311,11 +311,11 @@ must be called:
 %
 \subsubsection{Configuration}
 %
-Glint uses the same configuration file format as the rest of CISM. In the
-case where there is only one ice sheet instance, all the configuration data for
+Glint uses the same configuration file format as the rest of CISM. If
+there is only one ice sheet instance, all the configuration data for
 Glint and Glide (or Glissade) can reside in the same file.  If two or more instances are
 used, a top-level file specifies the number of model instances and the name of
-a configuration file for each one. Possible configuration sections specific to
+a configuration file for each one. Configuration sections specific to
 Glint are as follows:
 %
 \begin{center}
@@ -425,7 +425,7 @@ floating-point value in years.
 \end{enumerate}
 %
 The interaction of these two parameters is fairly complex, and permits
-fairly sophisticated control of how the ice sheet model is forced. 
+sophisticated control of how the ice sheet model is forced. 
 Various checks are made at run-time to make sure that sensible values are selected. Most 
 importantly, all relevant time-steps must divide into one another 
 appropriately. The model will (or should) stop if an un-sensible combination 
@@ -442,15 +442,15 @@ mass-balance time-step: & 1 day \\
 ice time-step: & 0.5 year
 \end{tabular}
 \vspace{0.5cm}
-
+%
 By default, the model will accumulate 6 months of mass-balance 
-calculations, and force the ice sheet model based on that. This might not be 
+calculations, and force the ice sheet model based on the 6-month average. This might not be 
 desirable, so you could set:
-
+%
 \begin{verbatim}
     mbal_accum_time = 1.0
 \end{verbatim}
-
+%
 This would make Glint accumulate 1 year of mass-balance output before 
 forcing the ice sheet (at which point it would execute \emph{two} ice sheet 
 time-steps of 0.5 years each).
@@ -473,12 +473,11 @@ these time-step values:
 \begin{tabular}{ll}
 forcing time-step:   &   6 hours \\
 mass-balance time-step: & 1 day \\
-ice time-step:       &   10 years
+ice time-step:       &   10 years\\
 \end{tabular}
 \vspace{0.5cm}
 %
 (Clearly this is a numerically stable and/or low-resolution ice sheet).
-
 To avoid running the daily PDD scheme c.3600 times (depending on the value of 
 \texttt{days\_in\_year}), we can choose to use only the first two years of data:
 
@@ -498,43 +497,52 @@ acceleration may be enabled with \texttt{ice\_tstep\_multiply} as before.
 %________________________________________________
 
 
-\section{Glint: using glint-example}
-If finally you want to see what GLIMMER can do using the Glint climate driver,
-download the \texttt{glint-example} and try one of the provided example setups.
-CD into the directory and try any of the config examples. Start glint\_example
-by typing
-\begin{verbatim}
-    glint_example
-\end{verbatim}
-You will then be asked for a climate configuration file and an ice model 
-configuration file.
-For the climate file, a global example including precipitation and temperature timeseries
-is provided. To let glint know about it, type
-\begin{verbatim}
-    glint_example.config
-\end{verbatim}
-For the ice model config, there are two examples, Greenland and North America. To chose either one, type
-\begin{verbatim}
-  gland20.config
-\end{verbatim}
-or
-\begin{verbatim}
-  namerica20.config
-\end{verbatim}
-respectively at the prompt asking for the config file, to start the model.
-Both models are outputting three files each, containing different variables.
-Every 100 years, a file \texttt{namerica20.hot.nc} or \texttt{gland20.hot.nc}, respectively is output, 
-which can be used to hotstart the model later from any of the recorded stages.
+\section{Glint: Using glint-example}
+To run CISM using the Glint climate driver,
+go to directory \texttt{tests/glint\_example} 
+and see the \texttt{README} file.
+This file gives directions for downloading a tar file,
+\texttt{glint-example.1.0.0.tar.gz}, that contains three data files
+used to force Glint:
+%
+\begin{itemize}
+\item \texttt{ncep-doe\_6h\_climate.64x32.nc} consists of 6-hourly precipitation and
+surface temperature data on a coarse global grid;
+\item \texttt{orog.igcmgrid.64x32.nc} consists of surface elevation data on a global grid
+(these data are used to downscale temperature as a function of elevation); and
+\item \texttt{gland20.input.nc} includes thickness and topography data for the Greenland 
+ice sheet on a 20-km mesh.
+\end{itemize}
+%
+These files should be placed in directory \texttt{tests/glint\_example}. 
+This directory already includes the following config files:
+\begin{itemize}
+\item \texttt{greenland\_20km.config.pdd} and \texttt{greenland\_20km.config.smb} are
+ice sheet configuration files for PDD and SMB forcing, respectively;
+\item \texttt{glint\_example.config.pdd} and \texttt{glint\_example.config.smb} are the
+corresponding climate configuration files.
+\end{itemize}
 
-As mentioned above, the model type (binary) to use can be stated in the configuration file,
-or given using the \texttt{-m} option. Currently, the three model binaries that
-come with GLIMMER are \texttt{simple\_glide, eis\_glide} and
-\texttt{glint\_example}. The simple\_glide and eis\_glide drivers that are started using the glide\_launch.py Python script,
-which needs to know which binary to address. The model binary can also be set as an environment variable \$GLIDE\_MODEL. 
-However, as glint is called directly using the compiled binary \texttt{glint\_example} here, it is not necessary to further 
-specify the model.
-
-
+To apply the PDD scheme, type
+\begin{verbatim}
+cism_driver greenland_20km.config.pdd glint-example.config.pdd
+\end{verbatim}
+%
+and to apply the SMB scheme, type
+\begin{verbatim}
+cism_driver greenland_20km.config.pdd glint-example.config.pdd
+\end{verbatim}
+%
+The 6-hourly temperature and precipitation data 
+are tailored for a PDD scheme.  The same data, however, can also supply a crude
+surface mass balance and surface temperature in multiple elevation classes, imitating
+the forcing from a climate model such as CESM.  (Accumulation is set equal to precipitation,
+and ablation is assumed to be linearly related to the downscaled temperature.
+This scheme is convenient for testing but obviously is not appropriate for science.)
+By default, two files are output at a specified frequency: a history file
+containing variables of interest (e.g., thickness, velocity, and SMB) is output every 10 years,
+and a ``hot'' file containing the variables required for exact restart is output every 1000 years.
+ 
 %________________________________________________
 %________________________________________________
 %
@@ -545,22 +553,26 @@ specify the model.
 
 \section{Supplied mass-balance schemes}
 
-** We don't use these for anything, and I don't know if any one of us knows about them in any detail. Have we tested them at all recently? If we aren't familiar with them
-perhaps we should not support them? **
+%** We don't use these for anything, and I don't know if any one of us knows about them in any detail. Have we tested them at all recently? If we aren't familiar with them perhaps we should not support them? **
+%WHL - See the warning I added two paragraphs below.
 
-\subsection{Overview}
-The user is, of course, free to supply their own mass-balance model for use
-with GLIDE. However, GLIMMER includes within it a annual positive-degree-day model
-for mass balance, shortly to be augmented by a similar daily model and an
-hourly energy balance model. This section gives details of how to configure
-and call these models.
+Users are free to supply their own mass-balance model for use
+with Glide. However, Glint includes two positive-degree-day models
+for mass balance, one annual and one daily.
+This section describes how to configure and call these models.
+
+NOTE: CISM2 development has focused on CESM-style coupling where the SMB
+is computed externally.  The two PDD schemes (and the following description)
+are identical to those in the original Glimmer code, but the schemes 
+have not been extensively tested. Users should proceed with caution.
+
 \subsection{Annual PDD scheme}
 \label{ug.mbal.pdd_scheme}
 The annual PDD scheme is contained in the f90 module \texttt{glimmer\_pdd},
 and the model parameters are contained in the derived type
 \texttt{glimmer\_pdd\_params}. Configuration data is contained in a standard
-GLIMMER config file, which needs to be read from file before initialising the
-mass-balance model. The model is initialised by calling the subroutine
+CISM config file, which needs to be read before initializing the
+mass-balance model. The model is initialized by calling the subroutine
 \texttt{glimmer\_pdd\_init}, and the mass-balance may be calculated annually
 by calling \texttt{glimmer\_pdd\_mbal}. 
 
@@ -588,15 +600,14 @@ parameter variable \texttt{pdd\_scheme}, there are three input fields
 annual mean air temperature, annual temperature half-range, and annual
 accumulated precipitation fields. The final two arguments are output fields
 --- annual ablation (\texttt{ablt}) and annual mass-balance
-(\texttt{acab}). All arrays are of type \texttt{real(sp)}. Temperatures are
-degrees Celcius, and precipitation, ablation and mass-balance are measured in
+(\texttt{acab}). 
+Temperatures are in degrees Celsius, and precipitation, ablation and mass-balance are measured in
 m of water equivalent.
 %
+
+\subsubsection{Degree-day calculation}
 %
-%
-\subsubsection{Day-degree calculation}
-%
-The greater part of the information held in the \texttt{glimmer\_pdd\_params}
+The greater part of the information in the \texttt{glimmer\_pdd\_params}
 derived type comprises a look-up table (the \emph{PDD table}). The model is
 implemented this way for computational efficiency.
 
@@ -624,7 +635,7 @@ as
     dt
 \end{equation}
 where $t$ is time.  The table is completed by evaluating this integral using a
-public-domain algorithm (Romberg integration), by {\it Bauer} [1961]. The
+public-domain algorithm (Romberg integration) by {\it Bauer} [1961]. The
 inner and outer integrals are coded as two subroutines
 (\texttt{inner\_integral} and \texttt{pdd\_integrand}), which call the Romburg
 integration recursively.
@@ -636,7 +647,7 @@ default is 5 $^\circ $C).
 The positive-degree days are then looked up in the table (as a function of
 $T_a$ and $\Delta T_a$). We take care to check that this look up is in done
 within the bounds of the table.  The final value of $P$ is determined using
-bi-linear interpolation given the four nearest entries in the table to the
+bilinear interpolation given the four nearest entries in the table to the
 actual values of $T_a$ and $\Delta T_a$.
 
 The remainder of the loop completes the calculation of the
@@ -647,21 +658,20 @@ ablation and accumulation given this value for $P$.
 We use the following symbols: $a$ is total annual ablation; $a_s$
 is potential snow ablation; $b_0$ is the capacity of the snowpack
 to hold meltwater by refreezing; the total number of positive
-degree days ($D$); day-degree factors for snow and ice ($f_s$ and
+degree days ($D$); degree-day factors for snow and ice ($f_s$ and
 $f_i$); and the fraction of snowfall that can be held in the
-snowpack as refrozen meltwater ($W_max$). Note that the
-day-degree factors have been converted from ice to water
+snowpack as refrozen meltwater ($W_{\textrm{max}}$). The
+degree-day factors have been converted from ice to water
 equivalents using the ratio of densities.
 
- First,
-determine the depth of superimposed ice ($b_0$) that would have to
+First, determine the depth of superimposed ice ($b_0$) that would have to
 be formed before runoff (mass loss) occurs as a constant fraction
-($W_{max}$) of precipitation ($P$)
+($W_{\textrm{max}}$) of precipitation ($P$):
 \begin{equation}
-    b_0=W_{max} P.
+    b_0=W_{\textrm{max}} P.
 \end{equation}
 Now determine the amount of snow melt by applying a constant
-day-degree factor for snow to the number of positive day-degrees
+degree-day factor for snow to the number of positive degree-days:
 \begin{equation}
     a_s=f_s D.
 \end{equation}
@@ -675,17 +685,17 @@ $a=a_s-b_0$. Finally, the potential snow melt is greater than the
 precipitation (amount of snow available), so that ice melt ($a_i$)
 has to be considered as well.  The total ablation is therefore the
 sum of snow melt (total precipitation minus meltwater held in
-refreezing) and ice melt (deduct from total number of degree days,
-the number of degree days needed to melt all snowfall and convert
-to ice melt)
+refreezing) and ice melt (from the total number of degree-days,
+deduct the number of degree-days needed to melt all snowfall and convert
+to ice melt):
 \begin{equation}
     a=a_s + a_i = P - b_0 + f_i \left( D-\frac{P}{f_s} \right).
 \end{equation}
 We now have a total annual ablation, and can find total net mass
-balance as the difference between the total annual precipitation
-and the total annual ablation.
+balance as the difference between the annual precipitation
+and the annual ablation.
 
-Note that this methodology is fairly standard and stems from a
+This methodology is fairly standard and stems from a
 series of Greenland papers by Huybrechts, Letreguilly and Reeh in
 the early 1990s.
 %
@@ -749,7 +759,7 @@ Glaciology} \textbf{37}, 149-157.
 %
 \subsection{Daily PDD scheme}
 \label{ug.mbal.daily_pdd_scheme}
-The other PDD scheme supplied with GLIMMER is a daily scheme. This is simpler than the annual scheme in that it does not incorporate any stochastic variations. The mass-balance is calculated on a daily basis, given the daily mean temperature and half-range, and assuming a sinusoidal diurnal cycle. Consequently, the firn model is more sophisticated than with the annual scheme, and includes a snow-densification parameterization.
+The other PDD scheme is a daily scheme. This is simpler than the annual scheme in that it does not incorporate any stochastic variations. The mass balance is calculated on a daily basis, given the daily mean temperature and half-range, and assuming a sinusoidal diurnal cycle. Consequently, the firn model is more sophisticated than with the annual scheme, and includes a snow-densification parameterization.
 %
 \subsubsection{Configuration}
 The daily PDD scheme is configured using a single section in the configuration file:

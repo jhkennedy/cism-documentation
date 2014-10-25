@@ -13,8 +13,8 @@ on your situation.  See the introduction to Chapter \ref{chp:testcases} for
 an overview of how to make the executable available to other locations on your system
 (e.g., symlinking, copying, or modifying your PATH environment variable).
 
-Unlike previous versions of Glimmer, with CISM 2.0 this single \texttt{cism\_driver} 
-executable is used for running the model in all configurations.
+Unlike previous versions of Glimmer, CISM 2.0 has a single executable, \texttt{cism\_driver},
+for running the model in all configurations.
 \texttt{cism\_driver} can be invoked with a single argument specifying 
 a CISM .config file to run CISM as a standalone ice sheet model without Glint climate forcing,
 or with two arguments (a CISM config file and a Glint config file) 
@@ -38,20 +38,17 @@ of the climate configuration file.  For example: \newline
  \indent \texttt{mpirun -np 4 cism\_driver dome.config}\newline
 would run the dome test case on four processors.
 
-Finally, note that instructions for running CISM within the Community Earth System Model (CESM)
-or another climate model are not described here.
-
 When CISM runs, some basic information about its operation will be output to 
 the screen (standard out).  More verbose information about the run will be written 
-to a log file which is named \texttt{\textit{ice\_sheet.config}.log} where 
-\texttt{\textit{ice\_sheet.config}} is the name of the .config file use to perform
-the run.  (For example, if running the model with  \texttt{./cism\_driver dome.config},
+to a log file which is named \texttt{\textit{ice\_sheet.config}.log}, where 
+\texttt{\textit{ice\_sheet.config}} is the name of the .config file used to perform
+the run.  (For example, if running the model with \texttt{./cism\_driver dome.config},
 the log file will be called  \texttt{dome.config.log}.)  The log file is an
 important reference, especially for debugging runs that do not behave as expected.
-For example, the log file includes a list of configuration options and parameter
+For example, this file includes a list of configuration options and parameter
 values, which can be useful in diagnosing problems like typos in your .config file.
 The log file also indicates what files were used for input and output and at which
-times I/O occurred.  The log file may contain warnings about potentially
+times I/O occurred.  The log file may contain warnings about potentially 
 problematic configuration combinations or model behavior, such as the use of
 configurations settings that are not scientifically validated, or a CFL violation
 during advection.  In contrast, fatal errors will kill the model and the error
@@ -67,8 +64,19 @@ point \texttt{(idiag,jdiag)}.
 In addition to the log file, the model will create any netCDF output files requested
 in the config file (see Section \ref{io-config} below for details).  
 If the model dies for some reason midway through a simulation,
-the netCDF files will still include output for the portion of the simulation that 
+the netCDF files will still include output for the part of the simulation that 
 was completed.
+
+CISM2 (like its predecessor, Glimmer-CISM) has been coupled to the 
+\href{https://www2.cesm.ucar.edu/}{Community Earth System Model}\footnote{www2.cesm.ucar.edu}
+and will be included in future CESM releases. 
+\citet{Lipscomb_2013} described the initial implementation of CISM in CESM, with one-way forcing
+of the Greenland ice sheet (using the shallow-ice approximation) by the surface mass balance
+computed in CESM's land model.  Interactive coupling between ice sheets and other climate components
+has recently been implemented and is now being tested. This document, however, does not provide 
+instructions for running CISM within CESM or other climate models. 
+Please see \href{http://www.cesm.ucar.edu/models/cesm1.2/cism/}{here}\footnote{www.cesm.ucar.edu/models/cesm1.2/cism}
+for guidance on running CISM in CESM.
 
 \section{Overview of Configuration Files}
 

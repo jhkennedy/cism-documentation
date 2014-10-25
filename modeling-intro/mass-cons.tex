@@ -57,7 +57,7 @@ u_{z} \left(s\right)-u_{z} \left(b\right) & = & -~\frac{\partial}{\partial x} \i
 \end{equation}
 
 The vertical velocity at the upper surface $u_{z}(s)$ is the result of motion parallel to the surface slope, 
-the rate of new ice accumulation $B_s$, and any time-change in the surface height,
+the rate of new ice accumulation $B_s$, and any time change in the surface height,
 
 \begin{equation}
 u_{z} \left(s\right)~=~\frac{\partial s}{\partial t}~+~u_{x}(s)\frac{\partial s}{\partial x}~+~u_{y}(s)\frac{\partial s}{\partial y}~-~B_s, 
@@ -68,16 +68,16 @@ u_{z} \left(s\right)~=~\frac{\partial s}{\partial t}~+~u_{x}(s)\frac{\partial s}
 recognizing that a negative accumulation rate indicates ablation. Similarly, the vertical velocity at the lower surface is
 
 \begin{equation}
-u_{z} \left(b\right)~=~\frac{\partial b}{\partial t}~+~u_{x}(b)\frac{\partial b}{\partial x}~+~u_{y}(b)\frac{\partial b}{\partial y}~-~B_b
+u_{z} \left(b\right)~=~\frac{\partial b}{\partial t}~+~u_{x}(b)\frac{\partial b}{\partial x}~+~u_{y}(b)\frac{\partial b}{\partial y}~-~M_b
 \label{eq:mascon8}
 \end{equation}
 
 \noindent
-in which $B_b$ is the basal accumulation rate.
+in which $M_b$ is the basal melt rate ($M_b < 0$ for freeze-on).
 Substituting \eqref{eq:mascon7} and \eqref{eq:mascon8} into \eqref{eq:mascon6}, we find that many terms cancel:
 
 \begin{equation}
-\frac{\partial s}{\partial t}~-~B_s~-~\frac{\partial b}{\partial t}~+~B_b~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz.
+\frac{\partial s}{\partial t}~-~B_s~-~\frac{\partial b}{\partial t}~+~M_b~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz.
 \label{eq:mascon9}
 \end{equation}
 
@@ -85,7 +85,7 @@ Substituting \eqref{eq:mascon7} and \eqref{eq:mascon8} into \eqref{eq:mascon6}, 
 Finally, making the substitution that the ice thickness $H=s-b$, we obtain
 
 \begin{equation}
-\frac{\partial H}{\partial t}~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz ~+~B_s~+~B_b.
+\frac{\partial H}{\partial t}~=~-~\frac{\partial}{\partial x} \int_{b}^{s} u_{x} dz~-~\frac{\partial}{\partial y} \int_{b}^{s} u_{y} dz ~+~B_s~-~M_b.
 \label{eq:mascon10}
 \end{equation}
 
@@ -93,7 +93,7 @@ Finally, making the substitution that the ice thickness $H=s-b$, we obtain
 Integrating in the vertical gives
 
 \begin{equation}
-\frac{\partial H}{\partial t}~=~-~\nabla \cdot \left( U_{i} H \right) +~B_s~+~B_b,
+\frac{\partial H}{\partial t}~=~-~\nabla \cdot \left( U_{i} H \right) +~B_s~-~M_b,
 \label{eq:mascon11}
 \end{equation}
 
