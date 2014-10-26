@@ -1,9 +1,7 @@
 \section{Mass and Tracer Transport}
 \label{sc:glissade-transport}
 
-We wish to solve the continuity or transport equation for the ice thickness:
-
-(Insert correct equation)
+Ice sheet models must solve a transport equation for ice thickness $H$:
 
 \begin{equation}
   \label{gliss.eq.transport_mass}
@@ -11,74 +9,107 @@ We wish to solve the continuity or transport equation for the ice thickness:
 \end{equation}
 
 \noindent
-where ${\bf U}$ is the vertical average velocity and $B$ is the 
-mass balance at the upper and lower surfaces.
-Equation (\ref{gliss.eq.transport_mass}) describes the conservation of
-ice mass under horizontal transport.  
-Mass conservation is equivalent to volume conservation with the assumption
-of uniform density.
-
-There is a similar conservation equation for internal energy:
+where $\mathbf{U}$ is the vertically averaged 2D velocity and $B$ is the 
+total surface mass balance.
+Eq. (\ref{gliss.eq.transport_mass}) describes the conservation of
+ice volume under horizontal transport.  
+With the assumption of uniform density, volume conservation is equivalent to mass conservation.
+There is a similar conservation equation for the internal energy in each ice layer:
 
 \begin{equation}
   \label{gliss.eq.transport_energy}
-  \frac{\partial{H T}}{\partial t} + \nabla \cdot (H T {\bf U}) = 0,
+  \frac{\partial{(h T)}}{\partial t} + \nabla \cdot (h T \mathbf{u}) = 0,
 \end{equation}
 
-where $T$ is the internal ice temperature, and we have neglected other terms in the
-energy equations (e.g., vertical diffusion and internal dissipation, which Glissade handles
-separately).
-Advection of tracers other than temperature (e.g., internal water fraction and ice age)
-can be described with similar equations.
+\noindent
+where $h$ is the layer thickness, $T$ is the temperature (defined at the layer midpoint),
+and $\mathbf{u}$ is the horizontal velocity.  
+If other tracers (e.g., internal water fraction
+or ice age) are present, their transport is described by equations of the
+same form as \eqref{gliss.eq.transport_energy}.  In the discussion below,
+everything said about temperature and internal energy applies also to
+other tracers and the associated conserved quantities.
 
+Unlike Glide, which solves for mass transport and temperature advection independently,
+Glissade solves \eqref{gliss.eq.transport_mass} and \eqref{gliss.eq.transport_energy}
+in a coordinated way, one layer at a time. (Advection of tracers other than temperature
+is carried out in conjunction with temperature advection.)
+This coordination makes it possible to avoid numerical oscillations
+with undesirable effects, such as raising $T$ above the melting point.
+The non--advective terms of the energy equation \eqref{gliss.eq.temp_evol}
+(i.e., vertical diffusion and internal dissipation) are handled in a separate 
+vertical column solve, as described in Section~\ref{sc:glissade-temperature}.
 
-Once the IR algorithm has been applied to each ice layer, the new layer thicknesses
-generally do not have the desired spacing in $\sigma$ coordinates.
-A vertical remapping step is needed to move ice thickness (and associated
-tracers) between layers to conserve volume and energy.
+Glissade has two horizontal transport schemes: a first-order
+upwind scheme and a more accurate incremental remapping (IR) scheme
+\citep{Dukowicz2000, Lipscomb2004}.
+The transport driver is in \texttt{glissade\_transport.F90}, and the
+IR scheme is in \texttt{glissade\_remap.F90}.
+The IR scheme was originally implemented in the Los Alamos sea ice model, CICE,
+and has been adapted for CISM. It is fairly complex and is described in
+detail in Section~\ref{sc:incremental_remapping}.
 
-Glissade has two transport schemes: a basic first-order
-upwind scheme and a more complex incremental remapping (IR) scheme.
-The IR scheme \citep{Dukowicz2000, Lipscomb2004} 
-was originally implemented in the Los Alamos sea ice model, CICE,
-and has been simplified and adapted for CISM.  
+Following horizontal transport, the mass balance is applied at each surface.
+Ice is added to or removed from the top surface depending on the sign of $B_b$,
+and similarly is removed from or added to the basal layer based on the sign of $M_b$.
+Any energy that is available for melt after an ice
+column has entirely melted is discarded, but in coupled applications
+could be returned to the climate model if needed to conserve energy.
+
+After the transport scheme and mass-balance update have been applied, 
+the new layer thicknesses generally do not have the desired spacing in $\sigma$ coordinates.
+A vertical remapping scheme is used to move ice thickness (and associated
+tracers) between layers to restore $\sigma$ layers in a way that conserves mass and energy. 
+This scheme computes overlaps between the new layers and the target
+$\sigma$ layers.  If, for example, part of new layer $k$ overlaps with target layer $k+1$,
+the mass and internal energy are computed for the overlap region, with the assumption 
+that temperature is uniform within each layer.
+(A more accurate reconstruction of temperature may be added in the future.) 
+Mass and internal energy are then transferred between layers, and the
+new layer temperatures are derived from the ratio of internal energy to mass.
 
 \subsection{Incremental remapping}
 \label{sc:incremental_remapping}
 
-The remapping scheme has several desirable features:
+Next we describe the incremental remapping scheme, which has several desirable features:
 \begin{itemize}
-\item It conserves the quantity being transported (volume or energy).
+\item It conserves the quantities being transported (mass and energy).
 \item It is non-oscillatory; that is, it does not create spurious
       ripples in the transported fields.
 \item It preserves tracer monotonicity.  That is, it does not create
-      new extrema in the temperature field; the values
+      new extrema in temperature; the values
       at time~$m+1$ are bounded by the values at time~$m$.
 \item It is second-order accurate in space and therefore is
-      less diffusive than first-order schemes (e.g., upwind).
+      less diffusive than first-order schemes.
       The accuracy may be reduced locally to first order to preserve monotonicity.
 \item It is efficient for large numbers of tracers.
       Much of the work is geometrical and is performed
-      only once per grid cell instead of being repeated for each
+      only once per cell edge instead of being repeated for each
       quantity being transported.  (This is more of an issue for CICE than
-      for CISM, but for some application it might be desirable to transfer 
+      for CISM, but for some applications it might be desirable to carry
       additional tracers in CISM.)
 \end{itemize}
-The time step is limited by the requirement that trajectories
+
+\noindent
+The upwind scheme, like IR, is conservative, non-oscillatory, and
+monotonicity-preserving, but because it is first-order it is highly diffusive.
+
+The IR time step is limited by the requirement that trajectories
 projected backward from grid cell corners are confined to the four
 surrounding cells; this is what is meant by incremental
 remapping as opposed to general remapping. This requirement leads to a 
-CFL-like condition, 
+Courant--Friedrichs--Lewy (CFL) condition, 
 
 \begin{equation}
 \label{eq:CFL}
   \frac{\max|{\bf u}|\Delta t} {\Delta x} \leq 1 
 \end{equation}
 
+\noindent
 For highly divergent velocity fields the maximum time
 step must be reduced by a factor of two to ensure that
 trajectories do not cross.  However, ice-sheet velocity fields
-usually have small divergences per time step relative to the grid size.
+usually have small divergence per time step relative to the grid size.
 
 The remapping algorithm can be summarized as follows:
 \begin{enumerate}
@@ -106,35 +137,37 @@ the cell center, along with gradients in the
 $x$ and $y$ directions. The gradients are limited to preserve
 monotonicity.  When integrated over a grid cell, the reconstructed
 fields must have mean values equal to the known state variables,
-denoted by $\bar{H}$ for ice thickness and $\tilde{T}$ for temperature.
+denoted by $\bar{h}$ for ice thickness and $\tilde{T}$ for temperature.
 
 Consider first the ice thickness in a given layer. We contruct a field
-field $H({\bf{r}})$ whose mean is $\bar{H}$, where $\mathbf{r} = (x,y)$ 
-is the position vector relative to the cell center. That
-is, we require
+$h({\bf{r}})$ whose mean is $\bar{h}$, where $\mathbf{r} = (x,y)$ 
+is the position vector relative to the cell center. 
+%(The cell center is a node of the unstaggered grid).
+That is, we require
 
 \begin{equation}
   \label{gliss.eq.IR_mean_thickness}
-  \int_A H \, dH = {\bar H} \, A,
+  \int_A h \, dh = {\bar h} \, A,
 \end{equation}
 
 \noindent
 where $A=\int_A dA$ is the grid cell area.
-Eq.~\eqref{gliss.eq.IR_mean_thickness} is satisfied if $H({\bf r})$ has the form
+Eq.~\eqref{gliss.eq.IR_mean_thickness} is satisfied if $h(\mathbf{r})$ has the form
 
 \begin{equation}
   \label{gliss.eq.IR_recon_thickness}
-  H({\bf r}) = \bar{H} + \alpha_H \left<\nabla H\right> \cdot ({\bf r}-{\bf \bar{r}}),
+  h({\bf r}) = \bar{h} + \alpha_h \left<\nabla h\right> \cdot (\mathbf{r}-\mathbf{\bar{r}}),
 \end{equation}
 
 \noindent
-where $\left<\nabla H\right>$ is a centered estimate of the thickness
-gradient within the cell, $\alpha_H$ is a limiting coefficient that
-enforces monotonicity, and ${\bf \bar{r}}$ is the cell centroid:
+where $\left<\nabla h\right>$ is a centered estimate of the thickness
+gradient within the cell, $\alpha_h$ is a limiting coefficient that
+enforces monotonicity, and $\mathbf{\bar{r}}$ is the cell centroid
+in a local coordinate system whose origin lies at the cell center:
 \[{\bf \bar{r}} = \frac{1}{A} \int_A {\bf r} \, dA.\]
-On CISM's structured rectangular grid we have $\mathbf{\bar{r}} = 0$;
-thus $H(\mathbf{bar{r}}) = \bar H$.
-
+On CISM's structured rectangular grid the cell center and centroid
+coincide, so that $\mathbf{\bar{r}} = 0$ and
+$h(\mathbf{\bar{r}}) = \bar h$.
 
 %${\bf \bar{r}}$, $\overline{x} = \int_A x \, dA / A$ and
 %$\overline{y} = \int_A y \, dA / A$, are evaluated using the triangle
@@ -142,12 +175,12 @@ thus $H(\mathbf{bar{r}}) = \bar H$.
 %These means, along with higher-order means such as $\overline{x^2}$,
 %$\overline{xy}$, and $\overline{y^2}$, are computed once and stored.
 
-Next consider the ice temperature field in a layer of thickness $H$. 
+Next consider the ice temperature field in a layer of thickness $h$. 
 The reconstructed temperature must satisfy
 
 \begin{equation}
   \label{gliss.eq.IR_mean_temperature}
-  \int_A H \, T \, dA = \bar{H} \, \tilde{T} \, A,    \\
+  \int_A h \, T \, dA = \bar{h} \, \tilde{T} \, A,    \\
 \end{equation}
 
 \noindent
@@ -161,28 +194,33 @@ Eq. \eqref{gliss.eq.IR_mean_temperature} is satisfied when $T({\bf r})$ is given
 \end{equation}
 
 \noindent
-where $\alpha_T$ is a limiting coefficient, and the center of ice mass
-${\bf\tilde{r}}$ is given by
+where $\left<\nabla T\right>$ is a centered estimate of the thickness
+gradient, $\alpha_T$ is a limiting coefficient, and the center of ice mass
+$\mathbf{\tilde{r}}$ is given by
 
 \begin{equation}
-{\bf \tilde{r}} = \frac{1}{\bar H \, A} \int_A H \, {\bf r} \, dA.
+{\bf \tilde{r}} = \frac{1}{\bar h \, A} \int_A h \, {\bf r} \, dA.
 \end{equation}
 
 \noindent
-Evaluating the integrals, we find that the components of ${\bf \tilde{r}}$ are
+Evaluating the integrals, we find that the components of $\mathbf{\tilde{r}}$ are
 \begin{equation}
   \begin{split}
-    \tilde{x} & = \frac{H_c \overline{x} + H_x \overline{x^2} + H_y \overline{xy}} {\bar{H}}, \\
-    \tilde{y} & = \frac{H_c \overline{y} + H_x \overline{xy} + H_y \overline{y^2}} {\bar{H}}.
+    \tilde{x} & = \frac{h_c \overline{x} + h_x \overline{x^2} + h_y \overline{xy}} {\bar{h}}, \\
+    \tilde{y} & = \frac{h_c \overline{y} + h_x \overline{xy} + h_y \overline{y^2}} {\bar{h}}.
   \end{split}
 \end{equation}
 
 \noindent
-From \eqref{gliss.eq.IR_recon_temperature}), the temperature at the cell center is given by
+where $h_c = \overline{h}$ is the thickness at the cell center,
+$(h_x,h_y)$ is the limited thickness gradient, and the terms with overbars are geometric
+means.  On a rectangular mesh, only the terms proportional to $\overline{x^2}$ and $\overline{y^2}$
+are nonzero.
+From \eqref{gliss.eq.IR_recon_temperature}, the temperature at the cell center is given by
 \[ T_c = \tilde{T} - T_x \tilde{x} - T_y \tilde{y}, \]
-where ($T_x, T_y$ is the limited gradient of temperature.
+where ($T_x, T_y$) is the limited gradient of temperature.
 
-We preserve monotonicity by van Leer limiting. If
+We preserve monotonicity by limiting the gradients. If
 $\bar{\phi}(i,j)$ denotes the mean value of some field in grid cell
 $(i,j)$, we first compute centered gradients of $\bar{\phi}$ in
 the $x$ and $y$ directions, then check whether these gradients
@@ -212,7 +250,7 @@ Otherwise the gradient need not be limited.
 \subsubsection{Locating departure triangles}
 \label{sc:glissade-IR-departure} 
 The method for locating departure triangles is discussed in detail by 
-\citet{Dukowicz2000}. The basic idea is illustrated in Figure ~\ref{fig:gliss.deparr}, 
+\citet{Dukowicz2000}. The basic idea is illustrated in Figure~\ref{fig:gliss.deparr}, 
 which shows a shaded quadrilateral departure region whose contents are transported to
 the target or home grid cell, labeled $H$. The neighboring grid
 cells are labeled by compass directions: $NW$, $N$, $NE$, $W$, and
@@ -232,9 +270,8 @@ coordinates of vertices $b$ and $c$ relative to the cell corner
 (vertex $a$), using Euclidean geometry to find vertex $c$. Then we
 translate the three vertices to a coordinate system centered in
 the $NW$ cell.  This translation is needed in order to integrate
-fields (Section~\ref{sc:glissade-IR-integrate}) in the coordinate
-system where they have been reconstructed
-(Section~\ref{sc:glissade-IR-reconstruct}). Repeating this process for
+fields in the coordinate system where they have been reconstructed.
+Repeating this process for
 the north and east edges of each grid cell, we compute the
 vertices of all the departure triangles associated with each cell
 edge.
@@ -330,30 +367,31 @@ It can be shown that $y_a$, $y_b$, and $x_c$ are given by
 
 \begin{equation}
   \begin{aligned}
-    y_a &=& \frac {{x_{CL} (y_{DM}-y_{DL}) + x_{DM}y_{DL} - x_{DL}y_{DM}}} {x_{DM} - x_{DL}}, \\
-    y_b &=& \frac {{x_{CR} (y_{DR}-y_{DM}) - x_{DM}y_{DR} + x_{DR}y_{DM}}} {x_{DR} - x_{DM}}, \\
-    x_c &=& (x_{DL} - y_{DL}) \frac{(x_{DR} - x_{DL})} {(y_{DR} - y_{DL})}.
+    y_a &= \frac {{x_{CL} (y_{DM}-y_{DL}) + x_{DM}y_{DL} - x_{DL}y_{DM}}} {x_{DM} - x_{DL}}, \\
+    y_b &= \frac {{x_{CR} (y_{DR}-y_{DM}) - x_{DM}y_{DR} + x_{DR}y_{DM}}} {x_{DR} - x_{DM}}, \\
+    x_c &= (x_{DL} - y_{DL}) \frac{(x_{DR} - x_{DL})} {(y_{DR} - y_{DL})}.
   \end{aligned}
 \end{equation}
 Each departure triangle is defined by three of the seven points (CL, CR, DL, DR, IL, IR, IC).
 
-Given a 2D velocity field {\bf u}, the divergence $\nabla\cdot{\bf u}$  
-in a given grid cell can be computed from the local velocities and written in terms of fluxes across each cell edge:
-\begin{equation}
-  \label{gliss.eq.IR_divergence}
-  \nabla\cdot{\bf u} = \frac{1}{A} 
-  \left[\left(\frac{u_{NE}+u_{SE}}{2}\right)L_E + \left(\frac{u_{NW}+u_{SW}}{2}\right)L_W + 
-        \left(\frac{u_{NE}+u_{NW}}{2}\right)L_N + \left(\frac{u_{SE}+u_{SW}}{2}\right)L_S \right],
-\end{equation}
+%WHL - Commented out this paragraph because not relevant to CISM
+%Given a 2D velocity field {\bf u}, the divergence $\nabla\cdot{\bf u}$  
+%in a given grid cell can be computed from the local velocities and written in terms of fluxes across each cell edge:
+%\begin{equation}
+%  \label{gliss.eq.IR_divergence}
+%  \nabla\cdot{\bf u} = \frac{1}{A} 
+%  \left[\left(\frac{u_{NE}+u_{SE}}{2}\right)L_E + \left(\frac{u_{NW}+u_{SW}}{2}\right)L_W + 
+%        \left(\frac{u_{NE}+u_{NW}}{2}\right)L_N + \left(\frac{u_{SE}+u_{SW}}{2}\right)L_S \right],
+%\end{equation}
 
-\noindent
-where $L$ is an edge length and the indices $N, S, E, W$ denote compass directions.  
-In general, the fluxes in Eq. \eqref{gliss.eq.IR_divergence} are not equal to those implied by the above scheme for locating departure regions.  
-For some applications it may be desirable to prescribe the divergence by prescribing the area of the departure region for each edge.  
-This can be done by setting {\tt prescribed\_area  = .true.} in {\bf glissade\_transport.F90} and passing the prescribed departure areas 
-({\tt edgearea\_e} and {\tt edgearea\_n}) into the remapping routine.  
-An extra triangle is then constructed for each departure region to ensure that the total area is equal to the prescribed value.  
-This scheme has been used in CICE, but not yet tested in CISM.
+%\noindent
+%where $L$ is an edge length and the indices $N, S, E, W$ denote compass directions.  
+%In general, the fluxes in Eq. \eqref{gliss.eq.IR_divergence} are not equal to those implied by the above scheme for locating departure regions.  
+%For some applications it may be desirable to prescribe the divergence by prescribing the area of the departure region for each edge.  
+%This can be done by setting {\tt prescribed\_area  = .true.} in {\bf glissade\_transport.F90} and passing the prescribed departure areas 
+%({\tt edgearea\_e} and {\tt edgearea\_n}) into the remapping routine.  
+%An extra triangle is then constructed for each departure region to ensure that the total area is equal to the prescribed value.  
+%This scheme has been used in CICE, but not yet tested in CISM.
 
 In \citet{Dukowicz2000}, departure points are defined by projecting cell
 corner velocities directly backward.  That is,
@@ -363,9 +401,8 @@ corner velocities directly backward.  That is,
 \end{equation}
 where $\mathbf{x}_D$ is the location of the departure point
 relative to the cell corner and $\mathbf{u}$ is the velocity at the corner. 
-This approximation is only first-order accurate. Accuracy can be improved by estimating the 
-velocity at the midpoint of the trajectory; this is the default in CISM.
-(\textbf{Change the default in the code.})
+This approximation is only first-order accurate. In CISM, accuracy is improved 
+by estimating the velocity at the midpoint of the trajectory.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Integrating fields}
@@ -374,7 +411,7 @@ velocity at the midpoint of the trajectory; this is the default in CISM.
 Next, we integrate the reconstructed fields over the departure
 triangles to find the total volume and internal energy transported
 across each cell edge.  Volume transports are easy to compute since the
-area is linear in $x$ and $y$.  Given a triangle with vertices
+ice thickness is linear in $x$ and $y$.  Given a triangle with vertices
 $\mathbf{x_i} = (x_i,y_i)$, $i\in\{1,2,3\}$, the triangle area is
 
 \begin{equation}
@@ -392,15 +429,15 @@ where $\mathbf{x}_0 = (x_0,y_0)$ is the triangle midpoint,
 \begin{equation}
   \mathbf{x}_0 = \frac{1}{3} \sum_{i=1}^3\mathbf{x}_i.
 \end{equation}
-To compute the thickness transport, we evaluate the thickness at the midpoint,
+Thus, to compute the volume transport, we evaluate the thickness at the midpoint,
 \begin{equation}
-  a(\mathbf{x}_0)  = a_c + a_x x_0 + a_y y_0,
+  h(\mathbf{x}_0)  = h_c + h_x x_0 + h_y y_0,
 \end{equation}
 and multiply by $A_T$.  By convention, northward and eastward
 transport is positive, while southward and westward transport is
 negative.
 
-Eq. \eqref{gliss.eq.IR_integrate2} cannot be used for energy transport, because
+Eq. \eqref{gliss.eq.IR_integrate1} cannot be used for energy transport, because
 the reconstructed internal energy is a quadratic function of position.
 (It is the product of two linear functions, for thickness and temperature.)
 The integral of a quadratic polynomial over a triangle requires
@@ -417,10 +454,10 @@ points lying halfway between the midpoint and the three vertices.
 \label{sc:glissade-IR-update}
 
 Finally, we compute new values of the state variables in each ice layer of each grid cell.
-The new ice thickness $H^\prime(i,j)$ is given by
+The new ice thickness $h^\prime(i,j)$ is given by
 \begin{equation}
   \label{gliss.eq.IR_new_area}
-  H^\prime(i,j) = H(i,j) + 
+  h^\prime(i,j) = h(i,j) + 
   \frac{F_{E}(i-1,j) - F_{E}(i,j) + F_{N}(i,j-1) - F_{N}(i,j)} {A(i,j)}
 \end{equation}
 where $F_{E}(i,j)$ and $F_{N}(i,j)$ are the volume transports across the
@@ -430,63 +467,63 @@ subtracted from a neighboring cell; thus \eqref{gliss.eq.IR_new_area}
 conserves total ice volume.
 
 The new internal energy in each layer is computed analogously.
-New temperatures are then given by the ratio of energy to volume
-(and other tracers, if present, are updated in the same way).
+New temperatures are then given by the ratio of energy to volume.
+(Other tracers, if present, are updated in the same way.)
 Tracer monotonicity is ensured because
-\[ T^\prime = \frac{\int_A H \, T \, dA} {\int_A H \, dA}, \]
+\[ T^\prime = \frac{\int_A h \, T \, dA} {\int_A h \, dA}, \]
 where $T^\prime$ is the new-time temperature, given by 
 integrating the old-time thickness and temperature
 over a Lagrangian departure region with area $A$. That is,
 the new-time temperature is a weighted averages over
-old-time values, with non-negative weight $H$. Thus the
+old-time values, with non-negative weights $h$. Thus the
 new-time values must lie between the maximum and minimum of the
 old-time values.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{CFL checks}
+\subsection{CFL checks}
 \label{sc:glissade-IR-CFL}
 
-As mentioned above, the time step used for explicit advection is limited by an
-advective CFL (Courant--Friedrichs--Lewy) condition (Eq. \ref{eq:CFL}).  
+As mentioned above, the time step used for explicit advection is limited by the
+advective CFL condition \eqref{eq:CFL}.  
 Furthermore, for ice flux parallel to $\nabla s$, ice thickness evolution is diffusive,
-rising to an additional diffusive CFL condition \citep{Bueler:2009ee}:
+giving rise to an additional diffusive CFL condition \citep{Bueler:2009ee}:
 \begin{equation}
     \frac{\max D \Delta t} { {\Delta x}^\frac{1}{2}} \leq 2 
 \end{equation}
-Flow governed by the Shallow Ice Approximation is always subject to this diffusive CFL,
-but some component of higher-order flow may not be because some component of the ice
+Flow governed by the shallow-ice approximation is always subject to this diffusive CFL,
+but some component of higher-order flow may not be because the ice
 velocity may not be parallel to $\nabla s$ \citep{Bueler:2009ee}.
 
-For these reasons, Glissade's transport scheme performs a check of both the
+For these reasons, Glissade's transport scheme checks both the
 advective and diffusive CFL conditions and writes a warning to the log file if
-either of them is violated.  These warnings indicate the $i,j$ indices (on the global domain)
-of where the worst violation occurred, as well as the maximum allowable time step
+either is violated.  These warnings indicate the $i,j$ indices (on the global domain)
+of the point where the worst violation occurred, as well as the maximum allowable time step
 given the CFL condition(s).
 
 The diffusivity is approximated using the component of velocity in the downslope
 direction:
 \begin{equation}
-  D = \frac{(\vec{u} \cdot \nabla h) H}{|\nabla h|}
+  D = \frac{(\vec{u} \cdot \nabla s) H}{|\nabla s|}
 \end{equation}
 Future work may identify a less restrictive diffusivity, so the diffusive CFL 
-warnings currently written may be overly restrictive.  In other words, you may see
-stable model results that generate a diffusive CFL warning.  
+warnings currently written may be overly restrictive.  In other words, it is possible
+for a stable simulation to generate a diffusive CFL warning.  
 
 Advective CFL violations generally lead to stability problems with 
 thickness evolution.  However, since CFL violations may occur in portions of the
-domain that are not of interest to the user, these situations are not set to be
-a fatal error.  Note, however, that the Incremental Remapping scheme may encounter
-a `departure points out of bounds' error when advective CFL violations occur, and this is a
-failure in the method that does result in a fatal error.
+domain that are not of interest to the user, these violations are not set to be
+a fatal error.  Note, however, that the IR scheme may generate
+a ``departure points out of bounds'' error when advective CFL violations occur.
+This is a failure in the method that does result in a fatal error.
 
-Eventually, CISM may include an adaptive time stepping scheme that adjusts the 
-model time step based on the advective and diffusive CFL conditions.  However, 
-at present, the time step must be set manually and remain constant over a simulation.
-To aid in determining an appropriate time step for a simulation, the \texttt{adv\_cfl\_dt}
+Eventually, CISM may include an adaptive time-stepping scheme that adjusts the 
+time step based on the advective and diffusive CFL conditions.
+At present, however, the time step must be set manually and remain constant over a simulation.
+To aid in determining an appropriate time step, the \texttt{adv\_cfl\_dt}
 and \texttt{diff\_cfl\_dt} variables can be added to an output file.  These variables
-write the maximum allowable time step at each time in the model based on the 
-advective and diffusive CFL conditions, respectively.  Note that in some cases 
-stability may only be achieved by taking half of the reported values.
+are the maximum allowable time steps at each time in the model based on the 
+advective and diffusive CFL conditions, respectively.  In some cases,
+stability might require taking half of the reported values.
 
 
 

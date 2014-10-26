@@ -88,6 +88,17 @@ where
 \end{equation}
 
 \noindent
+To compute $A(T)$, we assume an Arrhenius relationship:
+
+\begin{equation}
+  \label{gliss.eq.arrhenius}
+  A(T_{\mathrm{pmp}})=a e^{-Q/RT_{\mathrm{pmp}}},
+\end{equation}
+
+\noindent
+where $T_{\mathrm{pmp}}$ is the pressure melting point temperature,
+$a$ is a temperature--independent material constant (given by \citet{PatersonBudd:1982}),
+$Q$ is the activation energy for creep and $R$ is the universal gas constant.
 
 Given $T$, $s$, $H$, and an initial guess for $u$ and $v$, the problem is to solve Eq. \eqref{gliss.eq.stress_balance}
 for $u$ and $v$ at each active node.  (At inactive nodes we set $u=v=0$.)  This problem can be written in the form

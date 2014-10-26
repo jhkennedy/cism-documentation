@@ -17,8 +17,8 @@ This equation describes the conservation of internal energy under horizontal and
 diffusion (the first term on the RHS), horizontal and vertical advection 
 (the second and third terms, respectively), and internal heat dissipation (the last term).
 Glide solves this equation in module {\tt glide\_temp.F90}.
-Glissade takes a different approach, dividing the temperature evolution into an advective term
-and a diffusion/dissipation term.
+Glissade takes a different approach, dividing the temperature evolution into 
+separate advection and diffusion/dissipation components.
 Module {\tt glissade\_temp.F90} solves for diffusion and internal dissipation:
 
 \begin{equation}
@@ -32,7 +32,7 @@ The advective part of \eqref{gliss.eq.temp_evol} is described
 in Section \ref{sc:glissade-transport}.
 
 Glissade's vertical discretization of temperature is also different from that of Glide.
-In Glide, temperature is located at each of $nz$ vertical levels.
+In Glide, $T$ is located at each of $nz$ vertical levels.
 In Glissade, internal temperatures are located at the midpoints of the $nz-1$ layers.
 Temperature is also defined at the upper and lower ice surface, giving a total
 of $nz+1$ temperature points in each column.  The upper surface temperature is denoted
@@ -220,7 +220,7 @@ Eq. \eqref{gliss.eq.vert_temp_evol} can be discretized for an ice layer $k$ as
 \begin{equation}
   \label{gliss.eq.dTdt1}
   \frac{T_{k}^{n+1}-T_{k}^{n}}{\Delta t} =
-  \frac{k}{\rho c}\left[ {{a}_{k}}T_{k-1}^{n+1}-({{a}_{k}}+{{b}_{k}})T_{k}^{n+1}+{{b}_{k}}T_{k+1}^{n+1} \right]+\frac{{{\Phi }_{k}}}{\rho c},
+  \frac{k}{\rho c H^2}\left[ {{a}_{k}}T_{k-1}^{n+1}-({{a}_{k}}+{{b}_{k}})T_{k}^{n+1}+{{b}_{k}}T_{k+1}^{n+1} \right]+\frac{{{\Phi }_{k}}}{\rho c},
 \end{equation}
 
 \noindent
@@ -273,18 +273,6 @@ This melt is assumed (not very realistically) to drain immediately to the bed.
 If \eqref{gliss.eq.basal_melt} applies, we compute $M_b$ and adjust the basal water depth.
 When the basal water goes to zero, $T_{nz}$ is set to a value slightly below $T_{\mathrm{pmp}}$
 so that the flux boundary condition will apply during the next time step.
-
-Given the new 3D temperature field, we can compute the flow factors $A(T)$ required for
-the velocity solution.  We assume an Arrhenius relationship:
-
-\begin{equation}
-  \label{gliss.eq.arrhenius}
-  A(T_{\mathrm{pmp}})=a e^{-Q/RT_{\mathrm{pmp}}},
-\end{equation}
-
-\noindent
-where $a$ is a temperature--independent material constant (given by \citet{PatersonBudd:1982}),
-$Q$ is the activation energy for creep and $R$ is the universal gas constant.
 
 \subsection{Enthalpy model}
 

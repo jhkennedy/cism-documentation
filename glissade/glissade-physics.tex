@@ -1,0 +1,48 @@
+
+\section{Other model physics}
+\label{glissade-physics}
+The Glissade modules for velocity, temperature, and transport replace the
+corresponding Glide modules when \texttt{dycore} = 2 is set in the config file.
+Other model physics, however, remains similar to Glide.  In particular:
+
+\begin{itemize}
+
+\item Isostasy is treated in the same way as in Glide (see Section~\ref{sc:glide_isos}).
+The lithosphere can be treated as local or elastic, and the asthenosphere is
+either fluid or relaxing.  Note that the elastic lithosphere calculation
+is non-local and has not been parallelized.  Thus it is not possible to simulate
+an elastic lithosphere when running on more than one processor.
+
+\item Typically, the geothermal heat flux is set to a constant or prescribed from
+an input file.  As in Glide, however, it is also possible to compute the
+geothermal heat flux from a model of heat flow in bedrock (see Section~\ref{sc:glide_thermal_bc}).
+This model includes non-local horizontal diffusion which, like the elastic
+lithosphere, has not been parallelized and therefore will not work on multiple
+processors.
+
+\item The calving options in Glissade are the same as those in Glide and
+are specified by the config variable \texttt{marine\_margin}.
+These options are very simple (e.g., remove floating ice whenever the bedrock
+elevation is lower than a prescribed value).  Since all the current options are local,
+they should work in parallel.
+
+\item The basal water options in Glissade are also the same as those in Glide.
+These are all local except for \texttt{basal\_water} = 2, which computes a flux
+of basal water based on a steady-state routing calculation.  The routing calculation
+is not parallel and has not been tested with Glissade.
+
+\end{itemize}
+
+A sophisticated basal hydrology model is under development and will likely be
+included in future versions of CISM.  This model will output the effective pressure,
+which is a required input for the Coulomb friction law
+(\texttt{which\_ho\_babc} = 10) recently introduced in CISM.
+For now the effective pressure is either read from an input file
+or parameterized simply (using \texttt{basal\_water} = 4).
+The Coulomb friction law is not yet scientifically supported and
+should be used at your own risk.
+
+In summary, although CISM has a sophisticated higher-order dycore,
+the physics parameterizations remain fairly simple, especially for runs
+with multiple processors.  This is an area of active development.
+
