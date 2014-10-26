@@ -45,7 +45,7 @@ any internal energy.
 The following sections describe how the terms in \eqref{gliss.eq.vert_temp_evol} are computed,
 how the boundary conditions are determined, and how the equation is solved. 
 
-\subsubsection{Vertical diffusion}
+\subsection{Vertical diffusion}
 
 Computing the vertical diffusion term requires a discretization for ${\nabla}^{2}T$.
 As in Glide (Section~\ref{sc:glide_vert_diff}), we assume that horizontal diffusion is
@@ -98,6 +98,43 @@ the required vertical diffusion term:
 %
 \subsection{Heat dissipation}
 
-In higher-order models, the internal heating term $\Phi$ in \eqref{gliss.eq.vert_temp_evol} is given by
+In higher-order models, the internal heating $\Phi$ in \eqref{gliss.eq.vert_temp_evol} 
+is given by the tensor product of strain rate and stress:
 
 \begin{equation}
+  \label{gliss.eq.dissipation1}
+  \Phi ={\dot{{\varepsilon} }_{ij}}{{\tau }_{ij}}.
+\end{equation}
+
+\noindent
+The effective strain rate and effective stress (cf. \eqref{gliss.eq.effective_strain_rate})
+are defined by
+\begin{equation}
+  \label{gliss.eq.eff_stress_strain}
+   \dot{{\varepsilon}}_{e}^{2}=\frac{1}{2}{\dot{{\varepsilon} }_{ij}}{\dot{{\varepsilon} }_{ij}}, \quad {\tau}_{e}^{2}=\frac{1}{2} {{\tau }_{ij}}{{\tau }_{ij}}.
+\end{equation}
+
+\noindent
+It follows from \eqref{gliss.eq.dissipation1} and \eqref{gliss.eq.eff_stress_strain} that
+\begin{equation}
+  \label{gliss.eq.dissipation2}
+  \Phi = 2 {\dot{{\varepsilon} }_e}{{\tau }_e}.
+\end{equation}
+
+\noindent
+From \eqref{gliss.eq.L1L2_eta2} we can show that
+
+\begin{equation}
+  \dot{\varepsilon}_e = \frac{\tau_e}{2 \eta}, 
+\end{equation}
+
+\noindent
+which can be substituted in \eqref{gliss.eq.dissipation2} to obtain
+\begin{equation}
+  \label{gliss.eq.dissipation3}
+  \Phi = \frac{\tau_e^2}{\eta}.
+\end{equation}
+%
+Both terms on the RHS are available to the temperature solver, since the 
+higher-order velocity solver computes $\eta$ during matrix assembly
+and diagnoses $\tau_e$ from the strain rates at the end of the calculation.

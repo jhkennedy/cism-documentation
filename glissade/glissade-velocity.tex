@@ -1370,8 +1370,12 @@ The effective viscosity at depth $z$ is then given by
 where $\tau_{e}$ is obtained from \eqref{gliss.eq.L1L2_tau_effective},
 \eqref{gliss.eq.L1L2_tau_perp} and \eqref{gliss.eq.L1L2_tau_parallel}.
 Equation \eqref{gliss.eq.L1L2_eta} follows from \eqref{gliss.eq.L1L2_constitutive}
-and the relation ${\dot{\varepsilon }}_{ij} = 2\eta {\tau }_{ij}$, which defines
-the effective viscosity.
+and the relation 
+\begin{equation}
+  \label{gliss.eq.L1L2_eta2}
+  {\tau_{ij}} = 2\eta {\dot{\varepsilon}_{ij}},
+\end{equation} 
+which defines the effective viscosity.
 
 After solving the 2D L1L2 system for the basal velocity, the velocity profile at each vertex
 can be found by vertical integration. First we estimate
