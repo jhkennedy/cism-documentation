@@ -2,20 +2,20 @@
 \section{Temperature Solver}
 \label{sc:glissade-temperature}
 
-As discussed in Section (insert ref here), the thermal evolution of the ice sheet is given by
+As discussed in Section~\ref{sc:glide_temp_solver}, the thermal evolution of the ice sheet is given by
 
 \begin{equation}
   \label{gliss.eq.temp_evol}
   \frac{\partial T}{\partial t} = 
-  \frac{k}{\rho c} {{\nabla }^{2}}T - \bf{u}\cdot \nabla T - w\frac{\partial T}{\partial z} + \frac{\Phi }{\rho c}
+  \frac{k}{\rho c} {{\nabla }^{2}}T - \mathbf{u} \cdot \nabla T - w\frac{\partial T}{\partial z} + \frac{\Phi }{\rho c},
 \end{equation}
 
 \noindent
 where $T$ is the temperature in $^\circ$C, $k$ is the thermal conductivity of ice, $c$ is the specific heat of ice, 
 $\rho$ is the density, and $\Phi$ is the rate of heating due to internal deformation and dissipation.
 This equation describes the conservation of internal energy under horizontal and vertical 
-diffusion (the first term), horizontal and vertical advection (the second and third terms), and 
-internal heat dissipation (the last term).
+diffusion (the first term on the RHS), horizontal and vertical advection 
+(the second and third terms, respectively), and internal heat dissipation (the last term).
 Glide solves this equation in module {\tt glide\_temp.F90}.
 Glissade takes a different approach, dividing the temperature evolution into an advective term
 and a diffusion/dissipation term.
@@ -28,22 +28,26 @@ Module {\tt glissade\_temp.F90} solves for diffusion and internal dissipation:
 
 \noindent
 as described in this section.
-The advective part of \eqref{gliss.eq.temp_evol} is described separately
+The advective part of \eqref{gliss.eq.temp_evol} is described
 in Section \ref{sc:glissade-transport}.
 
 Glissade's vertical discretization of temperature is also different from that of Glide.
 In Glide, temperature is located at each of $nz$ vertical levels.
-In Glissade, however, internal temperatures are located at the midpoints of the $nz-1$ layers.
+In Glissade, internal temperatures are located at the midpoints of the $nz-1$ layers.
 Temperature is also defined at the upper and lower ice surface, giving a total
-of $nz+1$ temperature points in each column.  This convention makes it more straightforward
-to advect temperature conservatively.  The total internal energy is the sum over layers of
-$\rho c T \Delta z$, where $\Delta z$ is that layer thickness.  
-The upper and lower surface temperatures, which are determined by the boundary conditions, 
-are assumed to belong to infinitesimally thin layers, so they are not associated with
+of $nz+1$ temperature points in each column.  The upper surface temperature is denoted
+by $T_0$ and the lower surface temperature by $T_{nz}.$
+
+This convention makes it fairly straightforward
+to advect temperature conservatively.  The total internal energy in a column 
+is the sum over layers of $\rho c T \Delta z$, where $\Delta z$ is the layer thickness.
+This internal energy is conserved under transport (see Section \ref{sc:glissade-transport}).
+$T_0$ and $T_{nz}$, which are determined by the boundary conditions, 
+are associated with infinitesimally thin layers that do not contain
 any internal energy.
 
 The following sections describe how the terms in \eqref{gliss.eq.vert_temp_evol} are computed,
-how the boundary conditions are determined, and how the equation is solved. 
+how the boundary conditions are specified, and how the equation is solved. 
 
 \subsection{Vertical diffusion}
 
@@ -52,7 +56,7 @@ As in Glide (Section~\ref{sc:glide_vert_diff}), we assume that horizontal diffus
 negligible compared to vertical diffusion:
 
 \begin{equation}
-  {{\nabla }^{2}}T\simeq \frac{{{\partial }^{2}}T}{\partial {{z}^{2}}}=\frac{1}{{{H}^{2}}}\frac{{{\partial }^{2}}T}{\partial {{\sigma }^{2}}}
+  {{\nabla }^{2}}T\simeq \frac{{{\partial }^{2}}T}{\partial {{z}^{2}}}=\frac{1}{{{H}^{2}}}\frac{{{\partial }^{2}}T}{\partial {{\sigma }^{2}}},
 \end{equation}
 %
 where the last equality follows from $\sigma = (s-z)/H$.
@@ -66,18 +70,18 @@ for first derivatives at the upper and lower interfaces of layer $k$ are
     {{\left. \frac{\partial T}{\partial \sigma } \right|}_{{{\sigma }_{k}}}} =
     \frac{{{T}_{k}}-{{T}_{k-1}}}{{{{\tilde{\sigma }}}_{k}}-{{{\tilde{\sigma }}}_{k-1}}},\\
     {{\left. \frac{\partial T}{\partial \sigma } \right|}_{{{\sigma }_{k+1}}}} =
-    \frac{{{T}_{k+1}}-{{T}_{k}}}{{{{\tilde{\sigma }}}_{k+1}}-{{{\tilde{\sigma }}}_{k}}}.
+    \frac{{{T}_{k+1}}-{{T}_{k}}}{{{{\tilde{\sigma }}}_{k+1}}-{{{\tilde{\sigma }}}_{k}}},
   \end{split}
 \end{equation}
 %
-Here, $\tilde{\sigma}_k$ is the value of $\sigma$ at the midpoint of layer $k$, 
+where $\tilde{\sigma}_k$ is the value of $\sigma$ at the midpoint of layer $k$, 
 halfway between $\sigma_{k}$ and $\sigma_{k+1}$:
 
 \begin{equation}
   \tilde{\sigma}_k = \frac{\sigma_{k+1} - \sigma_{k}} {2}.
 \end{equation}
 %
-The second partial derivative is
+The second partial derivative, defined at the midpoint of layer $k$, is
 \begin{equation}
   \label{gliss.eq.temp_d2}
         {{\left. \frac{{{\partial }^{2}}T}{\partial {{\sigma }^{2}}} \right|}_{{{{\tilde{\sigma }}}_{k}}}} =
@@ -85,7 +89,7 @@ The second partial derivative is
              {{{\sigma }_{k+1}}-{{\sigma }_{k}}}
 \end{equation}
 %
-Inserting \eqref{gliss.eq.temp_d1} into \eqref{gliss.eq.temp_d2}, we obtain
+Inserting \eqref{gliss.eq.temp_d1} in \eqref{gliss.eq.temp_d2}, we obtain
 the required vertical diffusion term:
 
 \begin{multline}
@@ -98,7 +102,7 @@ the required vertical diffusion term:
 %
 \subsection{Heat dissipation}
 
-In higher-order models, the internal heating $\Phi$ in \eqref{gliss.eq.vert_temp_evol} 
+In higher-order models the internal heating rate $\Phi$ in \eqref{gliss.eq.vert_temp_evol} 
 is given by the tensor product of strain rate and stress:
 
 \begin{equation}
@@ -122,19 +126,172 @@ It follows from \eqref{gliss.eq.dissipation1} and \eqref{gliss.eq.eff_stress_str
 \end{equation}
 
 \noindent
-From \eqref{gliss.eq.L1L2_eta2} we can show that
+Eq. \eqref{gliss.eq.L1L2_eta2}, which defines the effective viscosity, implies
 
 \begin{equation}
   \dot{\varepsilon}_e = \frac{\tau_e}{2 \eta}, 
 \end{equation}
 
 \noindent
-which can be substituted in \eqref{gliss.eq.dissipation2} to obtain
+which can be substituted in \eqref{gliss.eq.dissipation2} to give
 \begin{equation}
   \label{gliss.eq.dissipation3}
   \Phi = \frac{\tau_e^2}{\eta}.
 \end{equation}
 %
-Both terms on the RHS are available to the temperature solver, since the 
-higher-order velocity solver computes $\eta$ during matrix assembly
-and diagnoses $\tau_e$ from the strain rates at the end of the calculation.
+Both terms on the RHS of \eqref{gliss.eq.dissipation3} are available to the temperature solver,
+since the higher-order velocity solver computes $\eta$ during matrix assembly
+and diagnoses $\tau_e$ from $\eta$ and $\dot{\varepsilon}_{ij}$ at the end of the calculation.
+
+\subsection{Boundary conditions}
+The temperature $T_0$ at the upper boundary is set to the surface air temperature $T_{\mathrm{air}}$.
+(In coupled climate applications, $T_0$ may be passed in by the climate model.)
+The diffusive heat flux at the upper boundary (defined as positive up) is
+
+\begin{equation}
+  F_d^{\mathrm{top}} = \frac{k}{H} \frac{T_1 - T_0}{\tilde{\sigma}_1}.
+\end{equation}
+
+\noindent
+(The denominator contains just one term because $\sigma_0 = 0$.)
+Optionally, this flux can be returned to the climate model as a lower boundary
+condition in the land-surface model.
+
+The lower ice boundary is more complex. For grounded ice there are three heat sources and sinks.
+First, the diffusive flux from the bottom surface to the ice interior 
+(positive up) is
+
+\begin{equation}
+  F_d^{\mathrm{bot}} = \frac{k}{H} \frac{T_{nz} - T_{nz-1}}{1 - \tilde{\sigma}_{nz-1}}.
+\end{equation}
+
+\noindent
+Second, there is a geothermal heat flux $F_g$ to the lower boundary. This is typically 
+prescribed as a constant ($\sim 0.05$ W m$^{-2}$) or read from an input file.
+Finally, there is a frictional heat flux associated with basal sliding,
+given by \citep[p. 418]{Cuffey2010}
+
+\begin{equation}
+  F_f = \mathbf{\tau_b} \cdot \mathbf{u_b},
+\end{equation}
+
+\noindent
+where $\mathbf{\tau_b}$ and $\mathbf{u_b}$ are 2D vectors of basal shear stress and basal velocity,
+respectively. With a friction law of the form \eqref{gliss.eq.beta_tau}, this becomes
+
+\begin{equation}
+  F_f = \beta \sqrt{u_b^2 + v_b^2}.
+\end{equation}
+
+If the basal temperature $T_{nz} < T_{\mathrm{pmp}}$ 
+(where $T_{\mathrm{pmp}} = T + 8.7\cdot 10^{-4}(s-z)$ is the pressure melting point temperature),
+then the fluxes at the lower boundary must balance:
+
+\begin{equation}
+  F_g + F_f = F_{d}^{\mathrm{bot}}.
+\end{equation}
+
+\noindent
+In other words, the energy supplied by geothermal heating and sliding friction is equal
+to the energy removed by vertical diffusion.
+If, on the other hand, $T_{nz} = T_{\mathrm{pmp}}$, then the
+lower surface temperature is fixed and the net flux is used to melt or freeze ice at the boundary:
+
+\begin{equation}
+  \label{gliss.eq.basal_melt}
+  M_b = \frac{F_g + F_f - F_d^{\mathrm{bot}}}{\rho L},
+\end{equation}
+ 
+\noindent
+where $M_b$ is the melt rate and $L$ is the latent heat of melting.
+Melting generates basal water, which may either stay in place or flow downstream
+(possibly replaced by water from upstream), depending on the
+parameterization chosen in the config file (\texttt{basal\_water}; see \ref{ug.sec.config}).
+We hold $T_{nz} = T_{\mathrm{pmp}}$ as long as basal water is present.
+
+For floating ice the basal boundary condition is simpler; $T_b$ is simply
+set to the freezing temperature $T_f$ of seawater. Optionally, a melt rate could
+be prescribed at the lower surface.
+
+\subsection{Vertical temperature solution}
+
+Eq. \eqref{gliss.eq.vert_temp_evol} can be discretized for an ice layer $k$ as
+
+\begin{equation}
+  \label{gliss.eq.dTdt1}
+  \frac{T_{k}^{n+1}-T_{k}^{n}}{\Delta t} =
+  \frac{k}{\rho c}\left[ {{a}_{k}}T_{k-1}^{n+1}-({{a}_{k}}+{{b}_{k}})T_{k}^{n+1}+{{b}_{k}}T_{k+1}^{n+1} \right]+\frac{{{\Phi }_{k}}}{\rho c},
+\end{equation}
+
+\noindent
+where the coefficients $a_k$ and $b_k$ are given by \eqref{gliss.eq.temp_d3}, $n$ is the current time level,
+and $n+1$ is the new time level.  The vertical diffusion terms are evaluated at the new time level,
+making the discretization backward Euler (i.e., fully implicit) in time.  A Crank--Nicolson formulation, in which the temperature
+terms are evaluated at time $n+1/2$, is also available.  Although Crank--Nicolson is second-order-accurate
+in time (compared to first-order for backward Euler), it can lead to temperature oscillations in thin ice.
+For this reason, backward Euler is the default.
+
+Eq. \eqref{gliss.eq.dTdt1} can be rewritten as
+\begin{equation}
+  \label{gliss.eq.dTdt2}
+  -{{\alpha }_{k}}T_{k-1}^{n+1} + (1+{{\alpha }_{k}}+{{\beta }_{k}})T_{k}^{n+1} - {{\beta }_{k}}T_{k+1}^{n+1} =
+  T_{k}^{n} + \frac{{{\Phi }_{k}}\Delta t}{\rho c},
+\end{equation}
+
+\noindent
+where
+
+\begin{equation}
+   {{\alpha }_{k}}=\frac{{{a}_{k}}\Delta t}{\rho c}, \quad {{\beta }_{k}}=\frac{{{b}_{k}}\Delta t}{\rho c}.
+\end{equation}
+
+\noindent
+At the upper surface, $T_0 = T_{\mathrm{air}}$.  At the lower surface we have either 
+a temperature boundary condition ($T_{nz} = T_{\mathrm{pmp}}$ for grounded ice, or
+$T_{nz} = T_f$ for floating ice) or a flux boundary condition:
+
+\begin{equation}
+  \label{gliss.eq.lower_flux_bc}
+  {{F}_{f}}+{{F}_{g}}-\frac{k}{H}\frac{T_{nz}^{n+1}-T_{nz-1}^{n+1}}{1-{{{\tilde{\sigma }}}_{nz-1}}} = 0,
+\end{equation}
+
+\noindent
+which can be rearranged to give
+
+\begin{equation}
+  \label{gliss.eq.lower_flux_bc2}
+  -T_{nz-1}^{n+1}+T_{nz}^{n+1} = \frac{\left( {{F}_{f}}+{{F}_{g}} \right)H\left( 1-{{{\tilde{\sigma }}}_{nz-1}} \right)}{k}.
+\end{equation}
+
+\noindent
+In each ice column the above equations form a tridiagonal system that is easily solved for $T_k$.
+
+Occasionally, the solution $T_k$ in one or more layers will exceed $T_{\mathrm{pmp}}$ for the layer.
+If so, we set $T_k = T_{\mathrm{pmp}}$ and use the extra energy to melt ice internally.
+This melt is assumed (not very realistically) to drain immediately to the bed.
+
+If \eqref{gliss.eq.basal_melt} applies, we compute $M_b$ and adjust the basal water depth.
+When the basal water goes to zero, $T_{nz}$ is set to a value slightly below $T_{\mathrm{pmp}}$
+so that the flux boundary condition will apply during the next time step.
+
+Given the new 3D temperature field, we can compute the flow factors $A(T)$ required for
+the velocity solution.  We assume an Arrhenius relationship:
+
+\begin{equation}
+  \label{gliss.eq.arrhenius}
+  A(T_{\mathrm{pmp}})=a e^{-Q/RT_{\mathrm{pmp}}},
+\end{equation}
+
+\noindent
+where $a$ is a temperature--independent material constant (given by \citet{PatersonBudd:1982}),
+$Q$ is the activation energy for creep and $R$ is the universal gas constant.
+
+\subsection{Enthalpy model}
+
+An alternative vertical temperature solver based on enthalpy is under development.
+In this scheme, water that melts internally can be retained in the ice
+instead of draining instantly to the bed. The retained water reduces the ice
+viscosity compared to that of pure ice. Although CISM includes source code
+for an enthalpy model, the model is not yet scientifically supported.
+
+

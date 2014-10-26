@@ -1,4 +1,5 @@
 \section{Temperature Solver}
+\label{sc:glide_temp_solver}
 The flow law coefficient $A$ in \eqref{kin.eq.flowlaw} depends on the ice temperature. Thus it is necessary to determine how the distribution of ice temperatures changes with a changing ice sheet configuration. The thermal evolution of the ice sheet is described by
 \begin{equation}
   \label{temp.eq.temp_z}
@@ -57,7 +58,7 @@ The horizontal advection term, $- \vec{u}\cdot\vec\nabla T$, is found using an u
   \begin{align}
     \label{temp.eq.taylor1}
     T(x+\Delta x) &=T(x)+\Delta xT'(x)+\frac{\Delta x^2}2T''(x)+\ldots\\
-    \intertext{If we replace $\Delta x$ with $2\Delta x$, \eqref{temp.eq.taylor1}} becomes
+    \intertext{If we replace $\Delta x$ with $2\Delta x$, \eqref{temp.eq.taylor1} becomes}
     \label{temp.eq.taylor2}
     T(x+2\Delta x) &=T(x)+2\Delta xT'(x)+2\Delta x^2T''(x)+\ldots
   \end{align}
