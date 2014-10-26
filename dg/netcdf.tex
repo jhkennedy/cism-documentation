@@ -1,55 +1,58 @@
-\section{netCDF I/O}
+\section{NetCDF I/O}
 \label{app:netcdfio}
 The netCDF\footnote{\texttt{http://www.unidata.ucar.edu/packages/netcdf/}} library 
-is used for platform independent, binary file I/O. CISM makes use of the f90 netCDF interface. 
-The majority of the source files are automatically generated from template files and 
+is used for platform-independent, binary file I/O. CISM uses the f90 netCDF interface. 
+Several source files are automatically generated from template files and 
 a variable definition file using a python script. The netCDF files adhere to the 
-CF\footnote{\texttt{http://www.cgd.ucar.edu/cms/eaton/cf-metadata/index.html}} 
-convention for naming climatic variables. The netCDF files also store parameters used to define the geographic projection.
+CF convention\footnote{\texttt{http://cfconventions.org/}}
+for naming climate variables. The netCDF files also store parameters used to define the geographic projection.
 
-The netCDF related functionality is split up so that other subsystems of the model 
-can easily define their own variable sets without the need to recompile the main model. 
-These subsystems can also define their own dimensions and access the dimensions 
-defined by other subsystems. The only restriction is that names should not clash. 
+%WHL - not sure if the following still applies
+%The netCDF functionality is split up so that other subsystems of the model 
+%can easily define their own variable sets without the need to recompile the main model. 
+%These subsystems can also define their own dimensions and access the dimensions 
+%defined by other subsystems. The only restriction is that names should not clash. 
 %Have a look at the implementation of the \texttt{eis} climate driver.
 
-\subsection{Data Structures}
-Information associated with each dataset is stored in the \texttt{glimmer\_nc\_stat} type. Variable and dimension ids are retrived from the data set by using the relevant netCDF library calls. Meta data (such as title, institution and comments) is stored in the derived type \texttt{glimmer\_nc\_meta}.
+\subsection{Data structures}
+Information associated with each dataset is stored in the \texttt{glimmer\_nc\_stat} type. 
+Variable and dimension IDs are retrived from the data set by using the relevant netCDF library calls. 
+Metadata (such as title, institution and comments) are stored in the derived type \texttt{glimmer\_nc\_meta}.
 
 Input and output files are managed by two separate linked lists. Elements of the input file list contain the number of available time slices and information describing which time slice(s) should be read. Output file elements describe how often data should be written and the current time.
 
-\subsection{The Code Generator}
-Much of the code needed to do netCDF I/O is very repetitive and can therefore 
+\subsection{Code generator}
+Much of the code needed to do netCDF I/O is repetitive and can therefore 
 be automatically generated. The code generator, \texttt{generate\_ncvars.py}, 
 is written in python and produces source files from a template \texttt{ncdf\_template.in} 
-and the variable definition file, see Section \ref{dg.sec.vdf}. The templates are
-valid source files, all the generator does is replace special comments with 
+and the variable definition file (Section \ref{dg.sec.vdf}). The templates are
+valid source files; the generator simply replaces special comments with 
 the code generated from the variable file. 
-%% As of 9/15/14, Matt H. says this is not true/working.
+%% As of 9/15/14, Matt H. says this not true/working.
 %For further information check	 
 %the documentation of \texttt{generate\_ncvars.py}
 %\footnote{run \texttt{pydoc generate\_ncvars.py}}. 
 
-\subsection{Variable Definition File}\label{dg.sec.vdf}
+\subsection{Variable definition file}\label{dg.sec.vdf}
 All netCDF variables are defined in control files, \texttt{MOD\_vars.def}, 
 where \texttt{MOD} is the name of the model subsystem. Variables can be modified/added by
 editing these files to provide I/O functionality for additional variables 
 beyond those listed in Appendix \ref{ug.sec.varlist}. A common example would be to modify 
 the file \texttt{glide\_vars.def} in \texttt{./libglide} so that 
-additional standard variables could be treated as ``loadable" on input, or so that other standard 
-variables internal to the code could be written to NetCDF output.
-Note that if \texttt{MOD\_vars.def} is modified the cmake configure script
-must be re-sourced before running ``make'' for those changes to be applied.
+additional standard variables can be treated as ``loadable" on input, or so that other standard 
+variables internal to the code can be written to NetCDF output.
+Note that if \texttt{MOD\_vars.def} is modified, the CMake configure script
+must be re-sourced before running ``make'' in order for those changes to be applied.
 
 The file is read using the python \texttt{ConfigParser} module. 
-The format of the file is similar to Windows \texttt{.ini} files, 
-lines beginning with \texttt{\#} or \texttt{;} or empty lines are ignored. 
+The format of the file is similar to Windows \texttt{.ini} files.
+Lines beginning with \texttt{\#} or \texttt{;} or empty lines are ignored. 
 These files must have a definition section \texttt{[VARSET]} (see Table \ref{dg.tab.vdef}).
 A new variable definition block starts with the variable name in square brackets []. 
 Variables are further specified by parameter name/value pairs which are separated by
- \texttt{:} or \texttt{=}. Parameter names and their meanings are summarised in 
+ \texttt{:} or \texttt{=}. Parameter names and their meanings are summarized in 
 Table \ref{dg.tab.vdf}. All parameter names not recognised by the code generator 
-(i.e. not in Table \ref{dg.tab.vdf}) are added as variable attributes.
+(i.e., not in Table \ref{dg.tab.vdf}) are added as variable attributes.
 
 \begin{table}[htbp]
   \centering
@@ -62,7 +65,7 @@ Table \ref{dg.tab.vdf}. All parameter names not recognised by the code generator
     \hline
     \texttt{datatype} & The name of the f90 type on which the netCDF variables depend.\\
     \hline
-    \texttt{datamod} & The name of f90 module in which the f90 type, \texttt{datatype}, is defined.\\
+    \texttt{datamod} & The name of the f90 module in which the f90 type, \texttt{datatype}, is defined.\\
     \hline
   \end{tabular*}
   \caption{Each variable definition file must have a section, called \texttt{[VARSET]}, containing the parameters described above.}
@@ -76,17 +79,17 @@ Table \ref{dg.tab.vdf}. All parameter names not recognised by the code generator
     name & description \\
     \hline
     \hline
-    \texttt{dimensions} & List of comma separated dimension names of the variable. C notation is used here, i.e. the slowest varying dimension is listed first.\\
+    \texttt{dimensions} & List of comma-separated dimension names of the variable. C notation is used here, i.e. the slowest-varying dimension is listed first.\\
     \hline
-    \texttt{data} & The variable to be stored/loaded. The f90 variable is assumed to have one dimension smaller than the netCDF variable, i.e. f90 variables are always snapshots of the present state of the model. Variables which do not depend on time are not handled automatically. Typically, these variables are filled when the netCDF file is created.\\
+    \texttt{data} & The variable to be stored/loaded. The f90 variable is assumed to be one dimension smaller than the netCDF variable, i.e. f90 variables are always snapshots of the present state of the model. Variables which do not depend on time are not handled automatically. Typically, these variables are filled when the netCDF file is created.\\
     \hline
     \texttt{factor} & Variables are multiplied with this factor on output and divided by this factor on input. Default: 1.\\
     \hline
     \texttt{load} & Set to 1 if the variable can be loaded from file. Default: 0.\\
     \hline
-    \texttt{hot} & Set to 1 if the variable should be saved for hot--starting the model (implies \texttt{load}=1)\\
+    \texttt{hot} & Set to 1 if the variable should be saved for hot--starting (i.e., restarting) the model (implies \texttt{load}=1)\\
     \hline
-    \texttt{average} & Set to 1 if the variable should also be available as a mean over the write--out interval. Averages are only calculated if they are required. To store the average in a netCDF output file append \texttt{\_tavg} to the variable.\\
+    \texttt{average} & Set to 1 if the variable should also be available as a mean over the write--out interval. Averages are calculated only if required. To store the average in a netCDF output file, append \texttt{\_tavg} to the variable.\\
     \hline
     \texttt{units} & UDUNITS compatible unit string describing the variable units.\\
     \hline
