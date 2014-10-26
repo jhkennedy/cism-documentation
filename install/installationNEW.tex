@@ -25,12 +25,12 @@ There are two ways to get the source code:
 
 \begin{enumerate}
 
-\item \href{https://github.com/CISM/CISM-release/archive/master.zip}{Download} a {\it released} version of the code as an archive (zip file). 
-\item Clone the code from the \href{https://github.com/CISM/CISM-release}{CISM Github repository} using the following command: 
-\texttt{git clone https://github.com/CISM/CISM-release/archive/master.zip}  
+\item \href{https://github.com/CISM/cism/releases}{Download} a {\it released} version of the code as an archive (.zip or .tar.gz file).
+\item Clone the code from the \href{https://github.com/CISM/cism}{CISM Github repository} using the following command: 
+\texttt{git clone https://github.com/CISM/cism.git}
 (It is also possible to clone the repository using the SSH protocol 
 if you have an SSH keypair generated on your computer and attached to your GitHub account.  
-See the \href{https://github.com/CISM/CISM-release}{CISM Github repository webpage} and 
+See the \href{https://github.com/CISM/cism}{CISM Github repository webpage} and 
 \href{https://help.github.com/articles/which-remote-url-should-i-use}{Github's help pages} for more information.)
 
 \end{enumerate}
@@ -48,7 +48,7 @@ and users who want access to the \textit{Trilinos} solver library will need to
 download and build \textit{Trilinos}, and link to it when building CISM. 
 Finally, you will need CMake and Gnu Make to compile the code and link to the various third-party libraries. 
 
-If you have not done so already, clone a tagged version of CISM or download an archive of the code, as noted above. Store the code or the unzipped, untarred archive in a location of your choice. More detailed build instructions, including instructions for the installation of supporting software, are given below.
+If you have not done so already, clone a tagged version of CISM or download an archive of the code, as noted above. Store the code or the unzipped/untarred archive in a location of your choice. More detailed build instructions, including instructions for the installation of supporting software, are given below.
 
 % =====================================
 % =====================================
@@ -259,16 +259,6 @@ Install \texttt{gfortran} with:
 
 \texttt{sudo apt-get install gfortran}
 
-Additional tools are needed for managing the build process.  \texttt{make} (specifically, GNU's gmake)
-usually comes with a Linux distribution, but if not it should be installed.  On Ubuntu
-(and other Debian systems) there is usually a package called \texttt{build-essential} that
-includes a large collection of tools and libraries that are typically necessary
-for compiling code.  Additionally, CISM uses the \texttt{cmake} build utility.
-
-Install these tools with:
-
-\texttt{sudo apt-get install build-essential cmake}
-
 \end{mdframed}                 % ^==============UBUNTU==========^
 
 
@@ -300,6 +290,7 @@ In addition to the software installed above, you should now see something like t
 
 
 \begin{mdframed}[style=ubuntu] % V==============UBUNTU==========V
+
 On Ubuntu (and other Debian systems) there is usually a package called \texttt{build-essential} 
 that includes a large collection of tools and libraries that are typically necessary
 for compiling code. Install these tools and \texttt{CMake} with:
@@ -604,12 +595,14 @@ code on multiple processors. A more complete description of parallel
 model configurations is given in Chapter \ref{ch:runcism}. 
 (For example, some test cases and configurations when running the shallow-ice 
 dycore are not fully supported in parallel). 
+OpenMPI and MPICH are two common MPI implementations.
 
 \begin{mdframed}[style=mac] % V==============MAC================V
 It is likely that you already have versions of MPI installed on your system, 
 but they may be out of date or not compatible with the other libraries we have 
 and will be installing. Using Macports, the MPICH version of MPI is known 
-to work when building CISM.
+to work when building CISM.  (OpenMPI may also work, but we've seen more 
+consistent success on Macs with MPICH.)
 
 First, check Macports for available versions of MPICH using \texttt{port search mpich*}. We want 
 the version that is compatible with our GCC compiler suite, so we type: 
@@ -644,6 +637,8 @@ can be done with the following command:
 
 
 \begin{mdframed}[style=ubuntu] % V==============UBUNTU==========V
+Either OpenMPI or MPICH are likely to work with CISM on Linux machines.
+On Linux machines, we have tested OpenMPI more thoroughly.
 Install OpenMPI with:
 
 \texttt{sudo apt-get install openmpi-bin}
@@ -776,7 +771,7 @@ if you have questions about specific Trilinos tests failing.
 \begin{mdframed}[style=mac] % V==============MAC================V
 On a Mac, MPI tests have been known to trigger a dialog box from the firewall. 
 With more than 300 tests, these messages popping up continually can make it impossible 
-to use you computer until the tests complete. To keep them from appearing, you can temporarily 
+to use your computer until the tests complete. To keep them from appearing, you can temporarily 
 turn off your firewall under ``System Preferences'' (Security $>$ Firewall $>$ Stop). 
 Be sure to turn the firewall back on when the tests are complete!
 \end{mdframed}              % ^==============MAC================^
