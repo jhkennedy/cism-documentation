@@ -128,6 +128,7 @@ Moving terms to one side and dividing through by the effective viscosity \textit
 \end{equation}
 
 \subsection{Specified basal traction}
+\label{sc:ho_basal_traction}
 Derivation of the basal boundary condition follows that above for the free surface except that
 \begin{enumerate}
 
@@ -221,6 +222,7 @@ that computes effective pressure, so at present the effective pressure fields mu
 input as data to use these two basal friction laws.
 
 \subsection{Specified basal yield stress}
+\label{sc:ho_basal_yield}
 The above implementation of a specified basal traction can be altered to simulate sliding over a sediment-covered bed for which the sediment has a plastic or ``Coulomb friction" rheology. That is, sliding does not occur below the specified yield stress of the underlying material (e.g., a water-saturated subglacial till). When the yield stress, $\tau_0$ is reached, sliding occurs at a rate that maintains but does not exceed that yield stress. Consider the \textit{x}--direction boundary condition in \eqref{ho.eq.basal_bc}, written out in terms of basal stress components:
 
 \begin{equation}

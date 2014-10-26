@@ -5,9 +5,12 @@
 Glissade computes the ice velocity by solving an appropriate
 approximation of the Stokes equations, given the 2D surface elevation and thickness fields,
 the 3D temperature field, and relevant boundary conditions.
+The directory \texttt{libglissade} contains the primary higher-order velocity module,
+\texttt{glissade\_velo\_higher.F90}, along with supporting modules for the various solver options.
 Section \ref{sc:glissade-blatter-pattyn} describes assembly and solution of the matrix problem for the 
 3D first-order Blatter-Pattyn approximation.  
-Section \ref{sc:glissade-other-approx} discusses simpler approximations, including the SIA and SSA.
+The following sections discuss simpler approximations, including the shallow-ice, shallow-shelf,
+and L1L2 approximations.
 
 \subsection{Blatter-Pattyn approximation}
 \label{sc:glissade-blatter-pattyn}
@@ -31,23 +34,34 @@ Section \ref{sc:higher-order-mom}, are
 where $u$ and $v$ are the components of horizontal velocity, $\eta$ is the effective viscosity, $s$ is the ice surface elevation,
 $\rho$ is the density of ice (assumed constant), and $g$ is gravitational acceleration.  
 
-As in Glide, the equations are discretized on a structured, rectangular horizontal mesh
-of dimension $(nx,ny)$, together with a staggered mesh of dimension $(nx-1,ny-1)$.  The rectangles on the unstaggered mesh
-are called \textit{cells}, and the corners of each cell (where four rectangles meet) are called \textit{vertices}.
-The vertical \textit{levels} of the mesh are based on a terrain-following sigma coordinate system; 
-we define $\sigma = (s-z)/H$, where $H$ is the ice thickness. Thus $\sigma = 0$ at the top surface and $\sigma = 1$ at the bed. 
+As in Glide, the equations are discretized on a structured 3D mesh.
+In the map plane the mesh consists of rectangular \textit{cells}. These cells form an unstaggered 2D grid 
+of dimension $(nx,ny)$ (thus the number of cells is $(nx)(ny)$), together with a staggered grid of dimension $(nx-1,ny-1)$.
+The corners of each cell (where four rectangles meet) are called \textit{vertices}.
+The vertical \textit{levels} of the mesh are based on a terrain-following sigma coordinate system. 
+We define $\sigma = (s-z)/H$, where $H$ is the ice thickness, with $\sigma = 0$ at the top surface and $\sigma = 1$ at the bed. 
 There are $nz$ levels in the vertical direction, with $nz-1$ \textit{layers} between these levels.
 An \textit{element} is the region associated with a particular cell and layer; there are
 $(nx)(ny)(nz-1)$ elements on the mesh.  A \textit{node} is a point where eight elements intersect (or where four elements
 intersect at the upper or lower surface). There are $(nx-1)(ny-1)(nz)$ nodes on the mesh.
 
-Scalar 2D fields such as ice thickness $H$ and surface elevation $s$ are defined for each cell.
+Scalar 2D fields such as $H$ and $s$ are defined for each cell.
 Scalar 3D fields such as ice temperature $T$ lie at the center of each element (i.e., at the midpoint of each layer
 associated with  each cell). Gradients of 2D scalar fields (e.g., the surface slope $\nabla s$) are defined at vertices.
 The velocity components $u$ and $v$ live at nodes.
 
-An \textit{active cell} is a cell whose ice thickness exceeds a minimum threshold.  Each active cell is associated with
-a column of $nz-1$ active elements.  An \textit{active vertex} is any vertex of an active cell.  Each active vertex is
+For problems solved in parallel, the domain is partitioned among multiple processors.  
+Let $nx_{\textrm{local}}$ and $ny_\textrm{{local}}$ be the
+number of locally owned cells on each processor.  Each processor holds data for two rows of halo cells 
+(i.e., cells belonging to other processors) surrounding the block of locally owned cells.
+Thus the 2D grid on a given processor has dimensions $(nx_{\textrm{local}} + 2, ny_{\textrm{local}} + 2)$.
+Each locally owned cell is associated with a locally owned vertex lying at the northeast (upper right) corner
+of the cell.
+
+An \textit{active cell} is a cell that borders a locally owned vertex, whose ice thickness exceeds a minimum threshold.  
+Each active cell is associated with a column of $nz-1$ \textit{active elements}.  
+(All the data in a given column resides on a single processor.)
+An \textit{active vertex} is any vertex of an active cell.  Each active vertex is
 associated with $nz$ active nodes, including nodes at the surface and bed.
 
 The effective viscosity is defined in each active element by
@@ -110,9 +124,10 @@ Eq. \eqref{gliss.eq.matrix} shows the four parts of the global matrix $\mathbf{A
 with the solution and right-hand-side vectors separated into $u$ and $v$ components.
 In Glissade, $\mathbf{A}$ is always symmetric and positive-definite.
 
-Since $\mathbf{A}$ depends (through $\eta$) on $u$ and $v$, the problem is nonlinear and must be solved iteratively.
-For each nonlinear iteration, Glissade computes $\eta$ based on the
-current guess for the velocity field and then solves a linear problem of the form \eqref{gliss.eq.matrix}.
+Since $\mathbf{A}$ depends (through $\eta$) on $u$ and $v$, the problem is nonlinear and must be solved iteratively
+(see Section~\ref{sc:fixed-point}).
+For each nonlinear iteration, Glissade computes the 3D $\eta$ field based on the
+current guess for the velocity field and solves a linear problem of the form \eqref{gliss.eq.matrix}.
 Then $\eta$ is updated and the process is repeated until the solution converges to within a given tolerance.
 This procedure is known as Picard iteration.
 
@@ -123,18 +138,16 @@ The following sections describe how the matrix equations are assembled and solve
 The coupled PDEs \eqref{gliss.eq.stress_balance} are discretized using the finite-element method.
 Here we give a detailed but non-rigorous description of the method as applied to the Blatter-Pattyn
 approximation on the CISM mesh.
-We refer the reader to standard texts (\textit{add one or two references here}) 
-for a full discussion of finite elements.
+We refer the reader to standard texts \citep[e.g.,][]{Hughes2000} for a full discussion of finite elements.
 
 The PDEs, with appropriate boundary conditions, are converted to a system of algebraic equations
 by dividing the full domain into subdomains (i.e., elements), representing the velocity solution on each element,
-and then integrating over elements. On the CISM mesh, the elements are hexahedra (rectangles
+and integrating over elements. On the CISM mesh, the elements are hexahedra (rectangles
 in map view), each of which has eight nodes shared with its neighbors.
 The solution is approximated as a sum over basis functions $\varphi$. 
 Each active node is associated with a basis function whose value is $\varphi = 1$ at that node,
 with $\varphi = 0$ at all other nodes. The solution at a point
-within an element can be expanded as a sum of basis functions (evaluated at that point)
-multiplied by nodal values:
+within an element can be expanded in terms of basis functions and nodal values:
 
 \begin{equation}
 \label{gliss.eq.velo_expansion}  
@@ -151,7 +164,7 @@ as many terms as there are nodes per element.
 Glissade uses standard finite-element techniques to represent the PDE on each element and assemble
 the element equations into a global set of algebraic equations of the form \eqref{gliss.eq.matrix}.
 The scheme is formally equivalent to that described by \citet{Perego2012} (henceforth PGB).
-Note that \eqref{gliss.eq.stress_balance} can be written as
+Eq. \eqref{gliss.eq.stress_balance} can be written as
 
 \begin{equation}
   \label{gliss.eq.Perego12}
@@ -205,14 +218,14 @@ boundary (e.g., the calving front of an ice shelf), $\beta$ is a basal traction 
 lateral boundary, and $n_1$ and $n_2$ are components of the normal to $\Gamma_L$.
 These equations can also be obtained from a variational principle as described by \citet{DUKOWICZ:2010wb}.
 
-The four terms of \eqref{gliss.eq.weak_form} describe internal ice streses, basal friction, lateral pressure,
+The four terms on the LHS of \eqref{gliss.eq.weak_form} describe internal ice streses, basal friction, lateral pressure,
 and the gravitational driving force, respectively.  Next we describe how these terms are summed over elements
 and assembled into the global matrix $\mathbf{A}$ and right-hand side vector $\mathbf{b}$.
 
 \paragraph{Internal ice stresses.}
 
 We start with the internal stress term, which is the most complex.
-We can rewrite the first term on the left-hand side of \eqref{gliss.eq.weak_form} in terms of velocity components:
+We rewrite the first term on the LHS of \eqref{gliss.eq.weak_form} in terms of velocity components:
 
 \begin{equation}
   \label{gliss.eq.weak_form_velo}
@@ -267,16 +280,16 @@ the terms that multiply $u_j$ are given by
 \noindent
 Letting $i$ and $j$ range from 1 to 8, \eqref{gliss.eq.matrix_Kuu} gives the 64 terms of the $8\text{x}8$ element matrix $\mathbf{K_{uu}}$,
 which links the $u$ value at each node to the $u$ values at all eight nodes.
-Similarly, the 64 terms of element matrix $\mathbf{K_{uv}}$, which links $u$ at a given node to $v$ at all eight nodes,
+Similarly, the 64 terms of element matrix $\mathbf{K_{uv}}$, which links $u$ at each node to $v$ at each of the eight nodes,
 are given by
 
 \begin{equation}
   \label{gliss.eq.matrix_Kuv}
   \int\limits_{\Omega }{\eta \left( 2\frac{\partial {{\varphi }_{i}}}{\partial x}\frac{\partial {{\varphi }_{j}}}{\partial y}+\frac{\partial {{\varphi }_{i}}}{\partial y}\frac{\partial {{\varphi }_{j}}}{\partial x} \right)}d\Omega
 \end{equation}
-
+%
 Likewise, two $8\text{x}8$ matrices are associated with the $y$ component of \eqref{gliss.eq.element_matrix}.  
-The terms of $\mathbf{K_{vu}}$, which connects $v$ at a given node to $u$ at all nodes, are given by
+The terms of $\mathbf{K_{vu}}$, which connects $v$ at each node to $u$ at each of eight nodes, are given by
 
 \begin{equation}
   \label{gliss.eq.matrix_Kvu}
@@ -284,7 +297,7 @@ The terms of $\mathbf{K_{vu}}$, which connects $v$ at a given node to $u$ at all
 \end{equation}
 
 \noindent
-Finally, the terms of $\mathbf{K_{vv}}$, which links $v$ at a given node to $v$ at all nodes, are given by
+Finally, the terms of $\mathbf{K_{vv}}$, which links $v$ at each node to $v$ at each of eight nodes, are given by
 
 \begin{equation}
   \label{gliss.eq.matrix_Kvv}
@@ -298,8 +311,7 @@ containing $z$ (i.e., the vertical shear stresses associated with the shallow-ic
 appear only in $\mathbf{K_{uu}}$ and $\mathbf{K_{vv}}$.  The terms containing $x$ and $y$ (i.e.,
 the membrane stresses) appear in all four element matrices.
 
-Eqs. \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} lie at the heart of the code 
-(in subroutine \textit{compute\_element\_matrix} of module \textit{glissade\_velo\_higher.F90}).
+Eqs. \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv} lie at the heart of the code. 
 Together with the expressions for the effective viscosity $\eta$ (discussed below),
 these expressions contain the physical contents of the Blatter-Pattyn approximation. 
 
@@ -316,9 +328,9 @@ coordinate) and evaluate the basis function derivatives at the quadrature points
 Glissade uses trilinear basis functions defined on a reference cube.  
 This cube is centered at the origin $(0,0,0)$ in local reference coordinates 
 $(\hat{x}, \hat{y}, \hat{z}$). 
-The eight nodes are located at $(\hat{x}, \hat{y}, \hat{z}) = (\pm 1, \pm 1, \pm 1)$.
+The eight nodes of the reference cube are located at $(\hat{x}, \hat{y}, \hat{z}) = (\pm 1, \pm 1, \pm 1)$.
 By convention, nodes 1--4 are the nodes of the lower face, proceeding counterclockwise
-from the southwest corner $(\hat{x}, \hat{y}) = (-1, -1)$, and nodes 5--8 are the nodes
+from the southwest corner $(\hat{x}, \hat{y}) = (-1, -1)$. Nodes 5--8 are the nodes
 of the upper face, also moving counterclockwise from the southwest corner.
 Thus we have
 
@@ -446,7 +458,7 @@ We now have the information needed to compute the integrands \eqref{gliss.eq.mat
 at quadrature points. To integrate over a hexahedron, we take a weighted sum of the values at each
 of eight quadrature points.  These points are located at
 reference coordinates $(\hat{x},\hat{y},\hat{z}) = (\pm 1/\sqrt{3}, \pm 1/\sqrt{3}, \pm 1\sqrt{3})$.
-Thus, to evaluate an integral of the form
+To evaluate an integral of the form
 
 \begin{equation}
   \int\limits_{\Omega }{\eta \left( \frac{\partial {{\varphi }_{i}}}{\partial z}\frac{\partial {{\varphi }_{j}}}{\partial z} \right)}d\Omega
@@ -470,7 +482,7 @@ This is mostly a matter of bookkeeping.
 For example, the first row of $\mathbf{K_{uu}}$ corresponds to a particular node of element $(k,i,j)$
 (specifically, the node with indices $(k-1,i-1,j-1)$, given our convention for numbering nodes within elements).  
 This row is mapped to a row of the global matrix $\mathbf{A_{uu}}$, 
-and each of the eight terms in this row is associated with a column of $\mathbf{A_{uu}}$.  
+and each of the eight terms in the row is associated with a column of $\mathbf{A_{uu}}$.  
 Glissade determines the correct column
 and adds the $\mathbf{K_{uu}}$ term to the corresponding term in $\mathbf{A_{uu}}$.  This process proceeds
 until the code has looped over all the active elements and filled the global matrices.
@@ -480,10 +492,11 @@ These matrices, however, are sparse, with a maximum of 27 nonzero terms per row 
 a node and its 26 nearest neighbors in a 3D hexahedral lattice).
 Glissade therefore assembles and stores global matrices of dimension $(27,nz,nx-1,ny-1)$.
 The 27 terms of the first dimension are indexed such that each index has a geometric meaning.
-Suppose we are labeling columns for the matrix row corresponding to node $(k,i,j)$. 
-Then, for example, index 1 labels the node with coordinates $(k-1,i-1,j-1)$, index 14 labels the
-node itself (i.e., the diagonal term of the row), and index 27 labels the node at $(k+1,i+1,j+1)$.
-The global matrices can be reformatted as needed before being passed to a particular solver. 
+Suppose we are filling columns for the matrix row corresponding to node $(k,i,j)$. 
+Then, by convention, index 1 refers to the node with coordinates $(k-1,i-1,j-1)$, index 14 refers to the
+node itself (i.e., the diagonal term of the row), and index 27 refers to the node at $(k+1,i+1,j+1)$
+(and similarly for the other indices).
+Ater assembly, these matrices can be converted as needed to the form required by a particular solver.
 
 The remaining assembly consists of evaluating the other terms in \eqref{gliss.eq.weak_form}
 (i.e., the basal and lateral boundary conditions and the gravitational forcing) and implementing
@@ -502,6 +515,8 @@ At the basal boundary we assume a friction law of the form
 The coefficient $\beta$ is defined at each vertex and can vary spatially.  
 If $\beta$ depends on the velocity, as in some friction laws,
 then it is calculated using the velocity from the previous iteration.
+See Sections~\ref{sc:ho_basal_traction} and \ref{sc:ho_basal_yield}
+for a detailed discussion of basal traction in higher-order models.
 
 The basal boundary terms to be evaluated in \eqref{gliss.eq.weak_form} are
 
@@ -601,7 +616,11 @@ $v$ but not $u$, we form 2D matrices $\mathbf{K_{uu}}$ and $\mathbf{K_{vv}}$, bu
 Each term of $\mathbf{K_{uu}}$ is then inserted into the global matrix $\mathbf{A_{uu}}$, and
 similarly for $\mathbf{K_{vv}}$ and $\mathbf{A_{vv}}$.
 
-(\textbf{Add a reference here to plastic bed conditions. Also discuss alternate beta assembly.})
+This assembly procedure tends to smooth the $\beta$ field.  If it is necessary to resolve
+sharp discontinuities in $\beta$, as in the stream test problem of Section~\ref{sc:stream_test},
+Glissade allows an alternate assembly procedure in which the terms in a given row of the matrix
+depend only on $\beta$ at the vertex associated with that particular row of the matrix.
+See option \texttt{which\_ho\_assemble\_beta} in Section~{\ref{ug.sec.config}.
 
 \paragraph{Lateral boundary conditions.}
 
@@ -622,8 +641,7 @@ They are integrated over the lateral faces of floating cells that border the oce
 (Grounded cells are assumed to have no lateral forcing.)
 
 The lateral faces bordering the ocean are quadrilaterals that can be mapped to a reference square.
-As for the basal boundary terms, the integral over each face is found by 
-summing over four quadrature points.
+The integral over each face is found by summing over four quadrature points.
 Basis functions are given by \eqref{gliss.eq.basis_functions_2d}, and
 the Jacobian of the reference square is computed using \eqref{gliss.eq.Jacobian_eval_2d}.
 We evaluate the ice thickness $H$ at each quadrature point using
@@ -639,7 +657,7 @@ where the $H_n$ are nodal values.
 %have the same values for $H$ and $s$.) 
 The integrands have the form $p_n \varphi$, where $p_n$ is the vertically averaged
 net pressure normal to the ice edge.  
-(We use the vertically averaged pressure to avoid issues with vertical shearing at the ice edge.)
+(We use the vertically averaged pressure to avoid dealing with vertical shear at the ice edge.)
 The net pressure is equal to the pressure
 directed outward from the ice toward the ocean by the weight of the ice, minus the (smaller)
 pressure directed inward from the ocean to the ice by the hydrostatic water pressure.
@@ -648,7 +666,7 @@ and then dividing by $H$; it is given by
 
 \begin{equation}
   \label{gliss.eq.lateral_pout}
-  p_{\text{out}} = \frac{\rho_i g H}{2},
+  p_{\text{out}} = \frac{\rho_i g H}{2}.
 \end{equation}
 
 \noindent
@@ -688,7 +706,7 @@ The integral of the pressure terms over a lateral face is then found as a sum ov
 \noindent
 where the sign depends on the orientation of the face.  The resulting pressure terms
 are inserted into the load vector (either $\mathbf{b_u}$ or $\mathbf{b_v}$, depending on the orientation)
-associated with each of the four nodes of the face.
+in the rows associated with each of the four nodes of the face.
 
 \paragraph{Gravitational driving stress.}
 
@@ -717,7 +735,8 @@ well when the ice geometry is fixed but can cause problems when the geometry is 
 These problems arise because checkerboard noise in $s$ (which is common on structured meshes
 with the velocity at cell vertices) is invisible to the momentum balance; 
 it is canceled out by the centered averaging in \eqref{gliss.eq.dsdx_centered}.
-Checkerboard noise can therefore persist and grow.  To damp this noise, Glissade uses an upstream average:
+Checkerboard noise can therefore persist and grow.  To damp this noise, Glissade 
+can use an upstream average:
 
 \begin{equation}
   \label{gliss.eq.dsdx_upstream}
@@ -726,12 +745,15 @@ Checkerboard noise can therefore persist and grow.  To damp this noise, Glissade
 
 \noindent
 Here, ``upstream'' means in the direction of increasing surface elevation. Both \eqref{gliss.eq.dsdx_centered}
-and \eqref{gliss.eq.dsdx_upstream} are second-order accurate.
+and \eqref{gliss.eq.dsdx_upstream} are second-order accurate.  The default is \eqref{gliss.eq.dsdx_centered},
+but \eqref{gliss.eq.dsdx_upstream} can be chosen by setting \texttt{which\_ho\_gradient = 1} 
+in the config file (see Section~\ref{ug.sec.config}).
 
-Equations \eqref{gliss.eq.dsdx_centered} and \eqref{gliss.eq.dsdx_upstream} are ambiguous at the ice margin,
+Eqs. \eqref{gliss.eq.dsdx_centered} and \eqref{gliss.eq.dsdx_upstream} are ambiguous at the ice margin,
 where one or more of the four cells neighboring a vertex are ice-free. (Cells with very thin ice,
-$H < \texttt{thklim}$, are considered ice-free by the velocity solver; $\texttt{thklim} = 1 \textrm{ m}$
-by default.)  One option is to include all cells, including ice-free cells, in the gradient.
+$H < \texttt{thklim}$, are considered ice-free by the velocity solver. CISM's default value is $\texttt{thklim} = 100 \textrm{ m}$,
+which is appropriate for Glide, but Glissade is typically run with $\texttt{thklim} = 1 \textrm{ m}$.)
+One option is to include all cells, including ice-free cells, in the gradient.
 This generally works well for land-based ice but gives large gradients with excessive ice speeds
 at floating shelf margins.  A second option is to include only ice-covered cells in the gradient.
 For example, suppose cells $(i,j)$ and $(i,j+1)$ have ice, but cells $(1+1,j)$ and $(i+1,j+1)$ are
@@ -739,9 +761,10 @@ ice-free.  Then, lacking the required information to compute a gradient in the $
 we would set $\frac{\partial s}{\partial x} = 0$.  The $y$ gradient would be one-sided:
 $\frac{\partial s}{\partial y} = (s(i,j+1)-s(i,j)) \slash \Delta y$.  
 This option works well at shelf margins but tends to underestimate slopes at land margins.
-A hybrid option is to include in the gradient any neighbor cells that are either ice-covered
-or land cells.  (Land cells are cells with topography above sea level, whether ice-covered
-or ice-free.)  Since this option works well for both land and shelf margins, it is the default. 
+A third option is to include in the gradient any neighbor cells that are either ice-covered
+or land cells.  (Land cells are cells with bedrock topography above sea level, whether ice-covered
+or ice-free.)  Since this option (\texttt{which\_ho\_gradient\_margin = 1})
+works well for both land and shelf margins, it is the default. 
     
 The integrals in \eqref{gliss.eq.gravity_forcing} are over 3D elements.
 Hence we map each hexahedral element to a reference cube as described above. 
@@ -749,15 +772,15 @@ Given $\frac{\partial s}{\partial x}$ at the nodes of a cell,
 the surface slope terms at quadrature points are
 
 \begin{equation}
-  \frac{\partial s}{\partial x} = \sum\limits_{n=1}^{4}{{{\varphi }_{n}}}{{\left( \frac{\partial s}{\partial x} \right)}_{n}}, \quad
-  \frac{\partial s}{\partial y} = \sum\limits_{n=1}^{4}{{{\varphi }_{n}}}{{\left( \frac{\partial s}{\partial y} \right)}_{n}},
+  \frac{\partial s}{\partial x} = \sum\limits_{n=1}^{8}{{{\varphi }_{n}}}{{\left( \frac{\partial s}{\partial x} \right)}_{n}}, \quad
+  \frac{\partial s}{\partial y} = \sum\limits_{n=1}^{8}{{{\varphi }_{n}}}{{\left( \frac{\partial s}{\partial y} \right)}_{n}},
 \end{equation}
 
 \noindent
 where the basis functions $\varphi$ are given by \eqref{gliss.eq.basis_functions}
 and the spatial derivatives are derived from \eqref{gliss.eq.Jacobian_eval} and \eqref{gliss.eq.reference_to_real}.
 The integral of $\rho g \frac{\partial s}{\partial x} \varphi$
-over an element is then evaluated as a sum over quadrature points:
+over an element is evaluated as a sum over quadrature points:
 
 \begin{equation}
   \label{gliss.eq.sum_over_qp_gravity}
@@ -766,8 +789,7 @@ over an element is then evaluated as a sum over quadrature points:
 
 \noindent
 and similarly for the $\frac{\partial s}{\partial y}$ term.
-Glissade inserts these terms into the load vectors $\mathbf{b_u}$ and $\mathbf{b_v}$
-associated with each active node of the element.
+Glissade inserts these terms into the load vectors $\mathbf{b_u}$ and $\mathbf{b_v}$.
 
 \paragraph{Dirichlet boundary conditions.}
 
@@ -775,42 +797,19 @@ Once the matrix has been assembled, it may need to be adjusted for Dirichlet bou
 (i.e., prescribed values of the velocity at certain nodes). The most common Dirichlet condition
 is to set $u = v = 0$ at the bed to enforce a no-slip boundary condition.  (A no-slip condition
 can also be enforced by setting the basal traction coefficient $\beta$
-to a large value, but formally this is not a Dirichlet condition.)  Also, it may be desirable to
-set $u$ and $v$ to observed values at certain locations, as in the Ross ice shelf test case.
-
-%Suppose $u = u_c$ and $v = v_c$ at node $(k,i,j)$, where $u_c$ and $v_c$ are prescribed values.  
-%To enforce this Dirichlet condition, we set $\mathbf{A_{uu}}(m,k,i,j) = \mathbf{A_{vv}}(m,k,i,j) = 1$ 
-%for the value of $m$ denoting the diagonal entry in the global matrices, and we set  
-%$\mathbf{A_{uu}}(m,k,i,j) = \mathbf{A_{vv}}(m,k,i,j) = 0$ for all other $m$.  In addition, we set
-%$\mathbf{A_{uv}}(m,k,i,j) = \mathbf{A_{vu}}(m,k,i,j) = 0$ for all $m$, since these two matrices do not contain
-%any terms on the diagonal of the full global matrix (i.e., $A$ in \eqref{gliss.eq.matrix_full}.
-%On the right-hand side, we set $b_u(k,i,j) = u_c$ and $b_v(k,i,j) = v_c$.  These operations
-%convert the matrix rows associated with node $(k,i,j)$ to the form $1 \cdot u = u_c, 1 \cdot v = v_c$,
-%which clearly have the desired solutions $u_c$ and $v_c$.
-
-%A further step is needed to maintain matrix symmetry, as required
-%when using a preconditioned conjugate gradient solver. A given node $(k,i,j)$ is associated
-%with two columns of the full global matrix (one for $u$ and one for $v$).
-%Consider the row of $\mathbf{A_{uu}}$ associated with node $(k+1,i+1,j+1)$.  One term in this row
-%(specifically, $\mathbf{A_{uu}}(1,k+1,i+1,j+1)$ in the dense storage format) is linked to node $(k,i,j)$, 
-%in that the product of this term and $u(k,i,j) = u_c$ contributes to $b_u(k+1,i+1,j+1)$.
-%We can move this term to the right-hand side by subtracting the product from $b_u(k+1,i+1,j+1)$ 
-%and zeroing out the term in $\mathbf{A_{uu}}$.
-%This is done for all terms of $\mathbf{A_{uu}}$ and the other global matrices that are multiplied by
-%$u(k,i,j)$ or $v(k,i,j)$ in the matrix-vector product (i.e., all columns of the full matrix 
-%associated with node $(k,i,j)$).
-%Thus, both the rows and the columns associated with node $(k,i,j)$ are filled with zeros,
-%except for the diagonal term ``1'', and the full global matrix remains symmetric.
+to a very large value, but formally this is not a Dirichlet condition.)  Also, it may be desirable to
+set $u$ and $v$ to observed values at certain locations, as in the Ross Ice Shelf test case
+(Section~\ref{sc:ross_test}).
 
 Suppose that at node $(k,i,j)$ we have $u = u_c$ and $v = v_c$, where $u_c$ and $v_c$ are prescribed values.  
-Let $nr$ be the row of $\mathbf{A_{uu}}$ associated with this node, and let $nc$ range over the various
+Let $nr$ be the row of $\mathbf{A_{uu}}$ associated with this node, and let $nc$ range over the
 columns with nonzero entries in this row.
 To enforce the Dirichlet condition, we set $\mathbf{A_{uu}}(nr,nc) = \mathbf{A_{vv}}(nr,nc) = 0$ for all
 values of $nc$ except $nc = nr$ (the diagonal term); we set $\mathbf{A_{uu}}(nr,nr) = \mathbf{A_{vv}}(nr,nr) = 1$.
 In addition, we set $\mathbf{A_{uv}}(nr,nc) = \mathbf{A_{vu}}(nr,nc) = 0$ for all $nc$, since these two matrices do not contain
 any terms on the diagonal of the full global matrix (i.e., $\mathbf{A}$ in \eqref{gliss.eq.matrix_full}).
 On the right-hand side, we set $\mathbf{b_u}(nr) = u_c$ and $\mathbf{b_v}(nr) = v_c$.  These operations
-convert the matrix rows associated with node $(k,i,j)$ to the form $1 \cdot u = u_c, 1 \cdot v = v_c$,
+convert the matrix rows associated with node $(k,i,j)$ to the equations $1 \cdot u = u_c, 1 \cdot v = v_c$,
 which clearly have the desired solutions $u_c$ and $v_c$.
 
 A further step is needed to maintain matrix symmetry, as required
@@ -821,15 +820,11 @@ symmetry. The Dirichlet condition is $u(nr) = u_c$.
 In the matrix-vector product, the product $\mathbf{A_{uu}}(nc,nr) u(nr) = \mathbf{A_{uu}}(nc,nr) u_c$
 contributes to $\mathbf{b_u}(nc)$.  Thus we can replace $\mathbf{b_u}(nc)$ with 
 $\mathbf{b_u}(nc) -  \mathbf{A_{uu}}(nc,nr) u_c$
-and then set $\mathbf{A_{uu}}(nc,nr) = 0$ without altering the problem.
+and set $\mathbf{A_{uu}}(nc,nr) = 0$ without altering the problem.
 We do this for all the terms in the columns associated with node $(k,i,j)$ (i.e., all the
 terms multiplied by $u_c$ or $v_c$ in the matrix-vector product).
 Thus, both the rows and the columns associated with node $(k,i,j)$ are filled with zeros,
 except for the diagonal term, and the full global matrix remains symmetric.
-
-The Dirichlet bookkeeping in the code is a bit different from what is described here, since the 
-dense storage format for the global matrices requires indirect indexing of columns.
-The underlying idea, however, is the same.
 
 \subsubsection{Solving the linear system}
 
@@ -849,9 +844,9 @@ We describe each solver in turn.
 \paragraph{Preconditioned conjugate gradient solver.}
 
 The native PCG solver works directly with the assembled matrices
-$A_{uu}$, $A_{uv}$, $A_{vu}$, and $A_{vv}$, along with the right-hand side vectors
-$b_u$ and $b_v$.  These matrices are passed to one of two PCG solvers:
-a ``standard'' solver and a Chronopolous-Gear solver.  The standard method 
+$\mathbf{A_{uu}}$, $\mathbf{A_{uv}}$, $\mathbf{A_{vu}}$, and $\mathbf{A_{vv}}$, along with the right-hand side vectors
+$\mathbf{b_u}$ and $\mathbf{b_v}$.  These matrices are passed to one of two PCG solvers:
+a ``standard'' solver or a Chronopolous-Gear solver.  The standard method 
 for solving $\mathbf{Ax} = \mathbf{b}$ can be summarized as follows:
 
 \begin{itemize}
@@ -890,94 +885,97 @@ This solver works either in serial or in parallel.  If run in parallel, the dot 
 require global sums, and a halo update for $d$ is needed once per iteration.
 Halo updates in CISM operate on 2D arrays with horizontal indices $i$ and $j$ (or 3D/4D 
 arrays with additional indices).  This is the main reason for
-leaving the global matrices and vectors in array form, instead of
-converting to a standard matrix storage format such as compressed row storage.
+leaving the global matrices and vectors in standard Fortran arrays, instead of
+converting to a sparse matrix storage format such as compressed row storage.
 In array form, it is easy to do halo updates of vectors $u$, $v$, $r_u$, $r_v$, $d_u$, $d_v$, etc.
 
 The PCG solver has two preconditioning options:
 
 \begin{itemize}
-\item Diagonal (also known as Jacoby) preconditioning, in which the preconditioning matrix $M$ consists
-of the diagonal terms of $A$, so that $M$ is trivial to invert.  Convergence with iagonal preconditioning 
-is typically slow.
-\item Shallow-ice-based preconditioning.  In this case $M$ consists only of the rows and columns of $A$
-that link a given node to itself and its immediate neighbors above and below. The matrix $M$ is then
+\item Diagonal (also known as Jacoby) preconditioning, in which the preconditioning matrix $\mathbf{M}$ consists
+of the diagonal terms of $\mathbf{A}$, so that $\mathbf{M}$ is trivial to invert.  Convergence with diagonal preconditioning 
+can be slow.
+\item Shallow-ice-based preconditioning.  In this case $\mathbf{M}$ includes only the terms in $\mathbf{A}$
+that link a given node to itself and its immediate neighbors above and below. The matrix $\mathbf{M}$ is then
 tridiagonal, as in the shallow-ice approximation, and can be inverted efficiently. This preconditioner
 works well when the physics is dominated by vertical shear and the horizontal terms are small, but not
 as well when membrane stresses are important. Since the preconditioner is local (it consists of
-independent column solves), it scales well with increasing numbers of processor cores.
+independent column solves), it scales well with an increasing number of processors.
 \end{itemize}
 
 \noindent
-Other options could be added in the future, but for large problems that require complex preconditioning,
-it is probably better to use Trilinos (see below).
+Other preconditioning options could be added in the future. 
+If the existing options are inefficient for a given problem, it may be better to use Trilinos (see below).
 
-For small problems on a modest number of cores, the dominant cost is the matrix-vector
-multiply required during each iteration.  For large problems on many cores, however, the global sums become
+For small problems on a modest number of processors, the dominant cost is the matrix-vector
+multiply required during each iteration.  For large problems on many processors, however, the global sums become
 increasingly expensive.  To reduce the cost of global sums, the standard PCG algorithm can be
 replaced by the Chronopoulos-Gear algorithm, which rearranges operations such that both global sums
 are done with a single MPI call.  We omit the details here, but refer the reader
-to the code comments in module \textit{glissade\_velo\_higher\_pcg.F90}. 
+to the code comments in module \texttt{glissade\_velo\_higher\_pcg.F90}. 
 
 \paragraph{SLAP.}
 
 The Sparse Linear Algebra Package (SLAP) is a set of Fortran routines for solving sparse systems of linear
 equations. SLAP was part of the original Glimmer release and is still used to solve the thickness evolution
 and temperature advection problems in Glide.  It can also be used to solve higher-order systems in Glissade,
-using either GMRES or a biconjugate gradient solver. (These solvers are standard config options, but with a bit of
-effort, other solvers could be enabled too.)  The main limitation of SLAP is that it is serial only,
-hence unsuited for large problems.
+using either GMRES or a biconjugate gradient solver.
+SLAP, however, is limited to a single processor and thus is unsuited for large problems.
 
 In order for Glissade to use CISM's SLAP routines, it must convert the global matrices and the 
 right-hand-side and solution vectors to a SLAP-friendly format. First (before any matrix assembly),
 Glissade assigns a unique integer ID to each active node.  Following assembly, the code loops through the matrices
-$A_{uu}$, $A_{uv}$, $A_{vu}$ and $A_{vv}$, putting each nonzero entry into a Fortran derived type containing
-the row, column and value of each such entry.  Similarly, the current solution and the right-hand side are placed
-in SLAP-friendly vectors. This information is passed to CISM's SLAP solver
-and ultimately to the various SLAP subroutines.  The SLAP solver returns the velocity solution
+$\mathbf{A_{uu}}$, $\mathbf{A_{uv}}$, $\mathbf{A_{vu}}$ and $\mathbf{A_{vv}}$, putting each nonzero entry into a Fortran derived type containing
+the row, column and value of such entry.  Similarly, the current solution and the right-hand side are placed
+in SLAP-friendly vectors. This information is passed to the SLAP solver
+and ultimately to the various SLAP subroutines.  SLAP returns the velocity solution
 and residual vectors, which are copied back into Glissade data structures.
 
 \paragraph{Trilinos.}
 
-Trilinos (\url{trilinos.org}) is a set of solver packages and related software developed at 
-Sandia National Laboratories. Under the DOE ISICLES project \url{http://www.csm.ornl.gov/ISICLES/},
+\href{http://trilinos.org}{Trilinos} is a set of solver packages and related software developed at 
+Sandia National Laboratories. Under the 
+\href{http://www.csm.ornl.gov/ISICLES/}{DOE ISICLES project},
 the Glam higher-order dycore was parallelized and linked to Trilinos.  The Trilinos links
 developed for Glam were later adapted for Glissade.  Trilinos has been tested extensively on
-parallel architectures and has been installed on the DOE machines were CISM is typically run.
-See Section [insert ref here] for instructions on building CISM with Trilinos.
+parallel architectures and has been installed on DOE high-performance computers where 
+CISM is often run.
+See Section~\ref{sc:install_trilinos} for instructions on building CISM with Trilinos.
 
-The key Trilinos interfaces are in a C++ file called ``trilinosGlissadeSolver.cpp'' in directory ``libglimmer-solve'':
+A C++ file, \texttt{libglimmer-trilinos/trilinosGlissadeSolver.cpp}, contains procedures that
+link Glissade to Trilinos:
 
 \begin{itemize}
-\item \textit{initializetgs} is a procedure that sends Trilinos a global ID for each active node.
-\item \textit{insertrowtgs} sends Trilinos a row of the matrix (specifically, the global row index, the number of
+\item \texttt{initializetgs} sends Trilinos a global ID for each active node.
+\item \texttt{insertrowtgs} sends Trilinos a row of the matrix (specifically, the global row index, the number of
 potentially nonzero column entries, the index and value of each such entry, and the associated right-hand side term).
-\item \textit{solvevelocitytgs} returns the velocity solution.
+\item \texttt{solvevelocitytgs} returns the velocity solution.
 \end{itemize}
 
 Various Glissade subroutines gather the information needed by Trilinos.  Before assembly, Glissade computes
 global IDs for each node $(k,i,j)$ on each processor, along with unique indices for each unknown ($u$ and $v$)
-on each active node.  Glissade also computes a logical array of dimension (27,nz,nx-1,ny-1)---the same dimension
-as the global matrices---whose value is .true. for the potential nonzero entries in these matrices.
-After assembly of $A_{uu}$, $b_u$, etc., the nonzero matrix entries are passed to Trilinos, one row at a time.
-Following solution, the Trilinos velocity result is copied to Glissade data structures.
+on each active node.  Glissade also computes a logical array of dimension $(27,nz,nx-1,ny-1)$---the same dimension
+as the global matrices---whose value is \texttt{.true.} for the potential nonzero entries.
+After assembly of $\mathbf{A_{uu}}$, $\mathbf{b_u}$, etc., the nonzero matrix entries are passed to Trilinos, one row at a time.
+After solution, the Trilinos velocity result is copied to Glissade data structures.
 
-Trilinos solver options are set in a file called ``trilinosOptions.xml'' in the executable directory.
-Among the key settings are the solver type and preconditioner type.  The default solver type is Block GMRES.
-The default preconditioner type is Ifpack, which applies ILU preconditioning.  ILU generally works well
+Trilinos solver options are set in a file called \texttt{trilinosOptions.xml} in the directory where the code
+is executed.
+Among the key settings are the solver type and preconditioner type.  The default solver is \texttt{Block GMRES},
+and the default preconditioner is \texttt{Ifpack}, which applies ILU preconditioning.  ILU generally works well
 for problems where shallow-ice physics is dominant, but can struggle for shelf-type problems where
-membrane stresses are dominant.  For these problems the ML preconditioner type, which uses a multigrid
-method for preconditioning, is likely to work better.  Optimal Trilinos settings for large, physically complex
+membrane stresses are dominant.  For these problems the \texttt{ML} preconditioner type, which uses a multigrid
+method for preconditioning, is likely to work better.  Optimal Trilinos settings for large, complex
 problems are an area of active research.
 
-Choosing among the various solver options is to some degree an art.  The default is native PCG using
+Choosing among the various solver options is something of an art.  The default is native PCG using
 the Chronopoulos-Gear algorithm.  The PCG solver runs efficiently on most platforms and scales well.
 On the other hand, its preconditioning options are limited, so convergence may be slow for problems
 with dominant membrane stresses.  SLAP solvers are generally robust and efficient, but are limited
 to one processor.  Trilinos is typically slower than the other solvers, in part because of the
 extra cost of setting up Trilinos data structures, as well as the slower performance of C++ code
 relative to Fortran on many platforms.  On the other hand, Trilinos contains a vast range of
-solver options (only some of which have been tested to date with CISM) that are likely to 
+solver options (only a few of which have so far been tested with CISM), some of which may 
 be more flexible and robust than those implemented in SLAP and the native PCG solver.
 
 \subsubsection{Solving the nonlinear system}
@@ -985,15 +983,17 @@ be more flexible and robust than those implemented in SLAP and the native PCG so
 Each call to a linear solver (native PCG, SLAP, or Trilinos) returns a solution vector,
 along with the number of iterations and the error, defined as $\sqrt{(r,r)}/\sqrt{(b,b)}$.
 If the linear solution fails to converge after the maximum allowed number of iterations
-(typically 200), the solve exits with the last computed solution (which may be adequate
+(typically 200), the solver exits with the last computed solution (which may be adequate
 despite being unconverged).
 
 Then a new global matrix is assembled, using the latest velocity solution to compute 
 the effective viscosity.  The right-hand is adjusted as needed to incorporate Dirichlet
 boundary conditions.  Glissade then computes the new residual $b - Ax$.  If the $L_2$ norm of the
-residual (defined as $\sqrt{(r,r)}$ is smaller than a desired threshold ($10^{-4}$ by default),
+residual (defined as $\sqrt{(r,r)}$) is smaller than a desired threshold ($10^{-4}$ by default),
 the nonlinear system of equations is considered solved.
-\textit{(Change absolute to relative threshold?)}
+(An absolute threshold of $10^{-4}$ may be too stringent for large problems.  Alternatively,
+Glissade can use a relative threshold, based on the ratio of the L2 norm of the residual to the L2 norm of
+$\mathbf{b}$; see Section~\ref{ug.sec.config}.)
 Otherwise the linear solver is called again, until either the solution converges or the 
 maximum number of nonlinear iterations (typically 100) is reached.
 
@@ -1001,21 +1001,20 @@ As mentioned above, the procedure of updating the matrix with the latest guess f
 is known as Picard iteration.  The older Glam dycore includes an option
 to solve the nonlinear system using a Jacobian-Free Newton-Krylov (JFNK) method.
 JFNK requires an extra residual evaluation per nonlinear iteration, but generally
-converge in fewer iterations than does the Picard method.  Glissade, however, does not
+converges in fewer iterations than does the Picard method.  Glissade does not yet
 have a JFNK option.
-
-
-\subsection{Other Stokes approximations}
-\label{sc:glissade-other-approx}
 
 In addition to the 3D Blatter-Pattyn approximation, Glissade can solve the simpler shallow-ice
 and shallow-shelf approximations, as well as the vertically integrated, higher-order ``L1L2''
-approximation \citep{Schoof:2010dl}.  Many of the steps are similar to those described in
-Section \ref{sc:glissade-blatter-pattyn}.
+approximation \citep{Schoof:2010dl}.  These are described next.
 
-\subsubsection{Shallow-ice approximation: Matrix form}
+\subsection{Shallow-ice approximation}
+\label{sc:glissade-sia}
 
-The shallow-ice equations follow from the Blatter-Pattyn equations if the horizontal-stress
+\subsubsection{SIA: matrix form}
+
+By setting \texttt{which\_ho\_approx = 0} in the config file, Glissade's finite-element solver can be used as an
+SIA solver. The shallow-ice equations follow from the Blatter-Pattyn equations if the horizontal-stress
 terms are neglected.  The SIA analogs of \eqref{gliss.eq.stress_balance} are
 
 \begin{equation}
@@ -1040,9 +1039,9 @@ leading to the following internal stress terms in weak form:
 \noindent
 These terms are integrated over elements using \eqref{gliss.eq.basis_functions}
 and \eqref{gliss.eq.Jacobian_eval} for the 3D basis functions and Jacobians.
-The resulting $8\text{x}8$ element matrices $K_{uu}$ and $K_{vv}$ link each node
+The resulting $8\text{x}8$ element matrices $\mathbf{K_{uu}}$ and $\mathbf{K_{vv}}$ link each node
 to the eight nodes of the element, including itself.  Since there are no
-horizontal stress terms, $K_{uv}$ = $K_{vu}$ = 0. In the expression for
+horizontal stress terms, $\mathbf{K_{uv}}$ = $\mathbf{K_{vu}}$ = 0. In the expression for
 effective viscosity, the effective strain rate is given by
 
 \begin{equation}
@@ -1055,7 +1054,7 @@ The basal and lateral boundary conditions and gravitational loading are handled
 just as for the Blatter-Pattyn case.
 
 The resulting SIA global matrices contain about half as many nonzero terms as the BP matrices,
-since $A_{uv}$ = $A_{vu}$ = 0.  Each ice column, however, cannot be solved independently of the others;
+since $\mathbf{A_{uv}}$ = $\mathbf{A_{vu}}$ = 0.  Each ice column, however, cannot be solved independently of the others;
 rather, each node is linked to its horizontal neighbors by terms that arise during
 element assembly.  As a result, the matrix-based SIA solver is not dramatically faster than the BP solver.
 This solver can be useful for code testing
@@ -1063,9 +1062,9 @@ but is not practical for productions runs, since a practical SIA solver should b
 faster than a BP solver.  Glissade has a much faster alternative SIA solver,
 described next.
 
-\subsubsection{Shallow-ice approximation: Local form}
+\subsubsection{SIA: Local form}
 
-Glissade's local shallow-ice solver (in {\tt glissade\_velo\_sia.F90}),
+Glissade's local shallow-ice solver (in \texttt{glissade\_velo\_sia.F90}),
 is distinct from the finite-element solvers described in this section.
 It is local in the sense that $u$ and $v$ in each ice column are found independently
 of $u$ and $v$ in all other columns.
@@ -1092,12 +1091,12 @@ As in Glide, the basal velocity is proportional to $t_b$ and the gravitational d
 
 \begin{equation}
   \label{gliss.eq.velo_bed_sia}
-        \mathbf{u_b} = -{{t}_{b}}{{\rho }_{i}} g \bar{H} \vec{\nabla s},
+        \mathbf{u_b} = -{{t}_{b}}{{\rho }_{i}} g \bar{H} \nabla s,
 \end{equation}
 
 \noindent
-where $\bar{H}$ is the ice thickness interpolated to cell vertices,
-and $\vec{\nabla s}$ is the surface slope at vertices.
+where $\bar{H}$ is the ice thickness interpolated to cell vertices
+and $\nabla s$ is the surface slope at vertices.
 
 To find the interior velocities, we
 first compute a vertically integrated factor $c(\sigma)$ for each level at each cell vertex:
@@ -1121,9 +1120,8 @@ Discretized in the vertical, this becomes
 \end{equation}
 
 \noindent
-The factors $c(k)$ are then interpolated to cell edges, where the $u$ and $v$ 
-components of velocity are computed as a function of the surface slope 
-(also defined at cell edges):
+The factors $c(k)$ are interpolated from cell vertices to edges.  The $u$ and $v$ 
+components of velocity are computed at cell edges as a function of the surface slope: 
 
 \begin{equation}
   \label{gliss.eq.velo_interior_sia}
@@ -1150,13 +1148,13 @@ Finally, we average $\Delta u_E$ and $\Delta v_N$ to vertices and add the bed ve
 
 For serial problems there are no special advantages to using Glissade's local SIA solver 
 in place of Glide.  Glissade's local SIA solver, however, can run on multiple processors, 
-whereas Glide cannot.  For large SIA problems (e.g., the Greenland
-ice sheet at $\sim\text{5 km}$ resolution), parallel Glissade can hold more data
+whereas Glide cannot.  For large SIA problems, parallel Glissade can hold more data
 in memory and may be faster.
 
-\subsubsection{Shallow-shelf approximation}
+\subsection{Shallow-shelf approximation}
 
-The shallow-shelf equations can be derived by vertically integrating the 3D Blatter-Pattyn equations.
+Glissade's finite-element solver can also be used as a shallow-shelf solver.  The SSA equations 
+can be derived by vertically integrating the 3D Blatter-Pattyn equations.
 They are valid when the basal shear stress is small or zero and the velocity is 
 (to a good approximation) vertically uniform.  The shallow-shelf analog of \eqref{gliss.eq.stress_balance} is
 
@@ -1173,9 +1171,9 @@ They are valid when the basal shear stress is small or zero and the velocity is
 \end{equation}
 
 \noindent
-where $\bar{\eta}$ is the vertical average effective viscosity.
+where $\bar{\eta}$ is the vertically averaged effective viscosity.
 The SSA equations in weak form resemble \eqref{gliss.eq.weak_form},
-except that the internal stress terms are
+but with internal stress terms
 
 \begin{equation}
   \label{gliss.eq.element_matrix_ssa}
@@ -1191,7 +1189,7 @@ except that the internal stress terms are
 The resulting element matrices are similar to \eqref{gliss.eq.matrix_Kuu}--\eqref{gliss.eq.matrix_Kvv},
 except that the terms containing $\frac{\partial {{\varphi }_{i}}}{\partial z}$ and
 $\frac{\partial {{\varphi }_{j}}}{\partial z}$ are missing, and the viscosity term $\eta$
-is replaced by $\bar{\eta} H$.  The effective viscosity is analogous to \eqref{gliss.eq.effective_viscosity},
+is replaced by $\bar{\eta} H$.  The effective viscosity is defined as in \eqref{gliss.eq.effective_viscosity},
 but with a vertically averaged flow factor and with \eqref{gliss.eq.effective_strain_rate} replaced by
 
 \begin{equation}
@@ -1209,19 +1207,19 @@ and \eqref{gliss.eq.Jacobian_eval_2d}.
 The basal boundary terms are handled as in the 3D Blatter-Pattyn approximation. 
 The lateral boundary and gravitational forcing terms are computed initially in 3D
 (as for the Blatter-Pattyn case), but then are summed in the vertical before being
-inserted into the 2D right-hand vectors $b_u$ and $b_v$.  The solution procedure
+inserted into the 2D right-hand vectors $\mathbf{b_u}$ and $\mathbf{b_v}$.  The solution procedure
 is the same as for the 3D case, except that the problem has no vertical dimension.
 When using the native PCG solver, the shallow-ice-based preconditioner is inappropriate
 and the diagonal preconditioner should be used instead.  
 
-In short, the SSA problem is analogous to the Blatter-Pattyn problem except for the
-missing vertical terms.  The solution is much faster, because the SSA matrices
+In short, the SSA problem is similar to the Blatter-Pattyn problem except for the
+missing vertical shear terms and the reduction to 2D.  The solution is much faster, because the SSA matrices
 have roughly $3*nz$ times fewer nonzero entries than the Blatter-Pattyn matrices.
 The factor of 3 arises from the fact that the BP equations at each level include
 connections to the levels above and below, whereas the SSA equations
 are solved at a single level.
 
-\subsubsection{L1L2 approximation}
+\subsection{L1L2 approximation}
 
 The L1L2 approximation \citep{Schoof:2010dl} can be derived by vertically integrating
 the Blatter-Pattyn equations with the assumption that the horizontal gradients of the membrane
@@ -1229,12 +1227,12 @@ stresses are uniform with depth.
 (The term ``L1L2'' is based on the classification scheme of \citet{Hindmarsh2004}.)  
 This assumption leads to a 2D matrix system (like the SSA), which can be solved
 much more cheaply than the 3D BP system.
-The L1L2 approximation is as accurate as the BP equations in
+The L1L2 approximation is about as accurate as the BP equations in
 regions of fast sliding.  In regions of little or no sliding, it reduces to the
 shallow-ice approximation.  Thus it is accurate where the SIA is accurate,
 but not in regions of slow sliding and rough bed topography, where
 the horizontal gradients of the membrane stresses vary strongly with height.
-(For example, L1L2 performs poorly for ISMIP-HOM Test A.)
+For example, L1L2 performs poorly for ISMIP-HOM Test A.
 
 Consider the Blatter-Pattyn equations \eqref{gliss.eq.stress_balance}, written in
 terms of deviatoric stresses instead of strain rates:
@@ -1270,10 +1268,11 @@ Assuming that $\tau_{xx}$, $\tau_{yy}$ and $\tau_{xy}$ are depth-independent,
 \end{equation}
 
 \noindent
-where $u_b$ and $v_b$ are the components of basal velocity, and we have used Leibniz's rule
+where $u_b$ and $v_b$ are the components of basal velocity, and we have used
+\href{http://en.wikipedia.org/wiki/Leibniz_integral_rule}{Leibniz's rule}
 to move the partial derivatives outside the integrals and eliminate several boundary terms.
-Since the deviatoric stresses are depth-independent, they can be written in terms of the
-basal strain rates and taken outside the integral:
+Sinc the deviatoric stresses are depth-independent, they can be written in terms of the
+basal strain rates. Taking these strain rates outside the integral, we obtain
 
 \begin{equation}
   \label{gliss.eq.stress_balance_tau_integrated}
@@ -1288,7 +1287,7 @@ basal strain rates and taken outside the integral:
 \end{equation}
 
 \noindent
-where the vertical average effective viscosity is
+where the vertically averaged effective viscosity is
 
 \begin{equation}
   \bar{\eta} = \int_b^s {\eta dz}.

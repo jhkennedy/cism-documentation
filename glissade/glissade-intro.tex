@@ -3,19 +3,23 @@
 \section{Introduction}
 \label{sc:glissade-intro}
 
-CISM includes a higher-order dynamical core called Glissade.  (The name ``Glissade'' was originally an acronym,
-but as with ``Glimmer'' and ``Glide'' the acronym is rarely used.) Glissade is the successor to the shallow-ice
-Glide dycore in the original Glimmer code.  Like Glide, Glissade solves equations for conservation of momentum
-(i.e., an appropriate approximation of Stokes flow), mass, and internal energy. Glissade numerics, however,
-differ substantially from Glide numerics:
+CISM includes a parallel, higher-order dynamical core called Glissade\footnote
+{The name ``Glissade'' was originally an acronym, but as with ``Glimmer'' and ``Glide'' the acronym is rarely used.
+It can be pronounced either American--style (gliss--AID) or French--style (gliss--AHD).},
+the successor to the Glide shallow-ice dycore.
+Like Glide, Glissade solves equations for conservation of momentum
+(i.e., an appropriate approximation of Stokes flow), mass, and internal energy. 
+Glissade numerics, however, differ substantially from Glide numerics:
 
 \begin{itemize}
 
 \item \textit{Velocity:}
-Glide is limited to the shallow-ice approximation (SIA), whereas Glissade can solve several Stokes
+Glide is limited to the shallow-ice approximation, whereas Glissade can solve several Stokes
 approximations, as described in Section \ref{sc:glissade-velocity}.
 These include a 3D first-order Blatter-Pattyn solver (the most accurate and complex scheme)
-as well as simpler shallow-ice and shallow-shelf solvers.
+as well as simpler shallow-ice, shallow-shelf, and ``L1L2'' solvers.
+Unlike Glide, which computes the velocity using finite-difference techniques,
+Glissade uses a more robust and flexible finite-element method.
 
 \item \textit{Temperature:}
 To evolve the ice temperature, Glide solves a prognostic equation that incorporates horizontal advection as well
@@ -30,8 +34,8 @@ velocities. Since Glissade solves for higher-order flow that may have a large ad
 component, a different approach is needed.  Glissade has two mass- and energy-conserving transport options, 
 described in Section \ref{sc:glissade-transport}:
 incremental remapping (the more complex and accurate scheme) and first-order upwind. These schemes
-transfer mass and internal energy in the horizontal direction, followed by a vertical remapping to
-the sigma coordinate system.
+transport mass and internal energy in the horizontal direction, followed by a vertical remapping to
+sigma coordinates.
 
 \end{itemize}
 

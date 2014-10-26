@@ -2,30 +2,102 @@
 \section{Temperature Solver}
 \label{sc:glissade-temperature}
 
-As noted in Section (insert ref here), the thermal evolution of the ice sheet is given by
+As discussed in Section (insert ref here), the thermal evolution of the ice sheet is given by
 
 \begin{equation}
-  \label{gliss.eq.temperature_evol}
+  \label{gliss.eq.temp_evol}
   \frac{\partial T}{\partial t} = 
   \frac{k}{\rho c} {{\nabla }^{2}}T - \bf{u}\cdot \nabla T - w\frac{\partial T}{\partial z} + \frac{\Phi }{\rho c}
 \end{equation}
 
 \noindent
-where $T$ is the temperature, $k$ is the thermal conductivity of ice, $c$ is the specific heat of ice,
-and $\Phi$ is the rate of heating due to internal deformation and dissipation.
+where $T$ is the temperature in $^\circ$C, $k$ is the thermal conductivity of ice, $c$ is the specific heat of ice, 
+$\rho$ is the density, and $\Phi$ is the rate of heating due to internal deformation and dissipation.
 This equation describes the conservation of internal energy under horizontal and vertical 
-diffusion (the first term), advection (the second and third terms), and dissipation
-(the last term).
-Glide solves this equation in module {\tt glide\_temperature.F90}.
+diffusion (the first term), horizontal and vertical advection (the second and third terms), and 
+internal heat dissipation (the last term).
+Glide solves this equation in module {\tt glide\_temp.F90}.
 Glissade takes a different approach, dividing the temperature evolution into an advective term
 and a diffusion/dissipation term.
-Module {\tt glissade\_temperature.F90} solves for diffusion and internal dissipation:
+Module {\tt glissade\_temp.F90} solves for diffusion and internal dissipation:
 
 \begin{equation}
+  \label{gliss.eq.vert_temp_evol}
   \frac{\partial T}{\partial t} = \frac{k}{\rho c}{{\nabla }^{2}}T + \frac{\Phi }{\rho c},
 \end{equation}
 
 \noindent
 as described in this section.
-The advective part of \eqref{gliss.eq.temperature_evol} is described separately
+The advective part of \eqref{gliss.eq.temp_evol} is described separately
 in Section \ref{sc:glissade-transport}.
+
+Glissade's vertical discretization of temperature is also different from that of Glide.
+In Glide, temperature is located at each of $nz$ vertical levels.
+In Glissade, however, internal temperatures are located at the midpoints of the $nz-1$ layers.
+Temperature is also defined at the upper and lower ice surface, giving a total
+of $nz+1$ temperature points in each column.  This convention makes it more straightforward
+to advect temperature conservatively.  The total internal energy is the sum over layers of
+$\rho c T \Delta z$, where $\Delta z$ is that layer thickness.  
+The upper and lower surface temperatures, which are determined by the boundary conditions, 
+are assumed to belong to infinitesimally thin layers, so they are not associated with
+any internal energy.
+
+The following sections describe how the terms in \eqref{gliss.eq.vert_temp_evol} are computed,
+how the boundary conditions are determined, and how the equation is solved. 
+
+\subsubsection{Vertical diffusion}
+
+Computing the vertical diffusion term requires a discretization for ${\nabla}^{2}T$.
+As in Glide (Section~\ref{sc:glide_vert_diff}), we assume that horizontal diffusion is
+negligible compared to vertical diffusion:
+
+\begin{equation}
+  {{\nabla }^{2}}T\simeq \frac{{{\partial }^{2}}T}{\partial {{z}^{2}}}=\frac{1}{{{H}^{2}}}\frac{{{\partial }^{2}}T}{\partial {{\sigma }^{2}}}
+\end{equation}
+%
+where the last equality follows from $\sigma = (s-z)/H$.
+
+In $\sigma$--coordinates, the central difference formulas
+for first derivatives at the upper and lower interfaces of layer $k$ are
+
+\begin{equation}
+  \label{gliss.eq.temp_d1}
+  \begin{split}
+    {{\left. \frac{\partial T}{\partial \sigma } \right|}_{{{\sigma }_{k}}}} =
+    \frac{{{T}_{k}}-{{T}_{k-1}}}{{{{\tilde{\sigma }}}_{k}}-{{{\tilde{\sigma }}}_{k-1}}},\\
+    {{\left. \frac{\partial T}{\partial \sigma } \right|}_{{{\sigma }_{k+1}}}} =
+    \frac{{{T}_{k+1}}-{{T}_{k}}}{{{{\tilde{\sigma }}}_{k+1}}-{{{\tilde{\sigma }}}_{k}}}.
+  \end{split}
+\end{equation}
+%
+Here, $\tilde{\sigma}_k$ is the value of $\sigma$ at the midpoint of layer $k$, 
+halfway between $\sigma_{k}$ and $\sigma_{k+1}$:
+
+\begin{equation}
+  \tilde{\sigma}_k = \frac{\sigma_{k+1} - \sigma_{k}} {2}.
+\end{equation}
+%
+The second partial derivative is
+\begin{equation}
+  \label{gliss.eq.temp_d2}
+        {{\left. \frac{{{\partial }^{2}}T}{\partial {{\sigma }^{2}}} \right|}_{{{{\tilde{\sigma }}}_{k}}}} =
+        \frac{{{\left. \frac{\partial T}{\partial \sigma } \right|}_{{{\sigma }_{k+1}}}} - {{\left. \frac{\partial T}{\partial \sigma } \right|}_{{{\sigma }_{k}}}}} 
+             {{{\sigma }_{k+1}}-{{\sigma }_{k}}}
+\end{equation}
+%
+Inserting \eqref{gliss.eq.temp_d1} into \eqref{gliss.eq.temp_d2}, we obtain
+the required vertical diffusion term:
+
+\begin{multline}
+    \label{gliss.eq.temp_d3}
+          {{\left. \frac{{{\partial }^{2}}T}{\partial {{\sigma }^{2}}} \right|}_{{{{\tilde{\sigma }}}_{k}}}} =
+          \frac{{{T}_{k-1}}}{\left( {{{\tilde{\sigma }}}_{k}}-{{{\tilde{\sigma }}}_{k-1}} \right)\left( {{\sigma }_{k+1}}-{{\sigma }_{k}} \right)}
+          - {{T}_{k}}\left( \frac{1}{\left( {{{\tilde{\sigma }}}_{k}}-{{{\tilde{\sigma }}}_{k-1}} \right)\left( {{\sigma }_{k+1}}-{{\sigma }_{k}} \right)}+\frac{1}{\left( {{{\tilde{\sigma }}}_{k+1}}-{{{\tilde{\sigma }}}_{k}} \right)\left( {{\sigma }_{k+1}}-{{\sigma }_{k}} \right)} \right)\\
+          +\frac{{{T}_{k+1}}}{\left( {{{\tilde{\sigma }}}_{k+1}}-{{{\tilde{\sigma }}}_{k}} \right)\left( {{\sigma }_{k+1}}-{{\sigma }_{k}} \right)}.
+\end{multline}
+%
+\subsection{Heat dissipation}
+
+In higher-order models, the internal heating term $\Phi$ in \eqref{gliss.eq.vert_temp_evol} is given by
+
+\begin{equation}

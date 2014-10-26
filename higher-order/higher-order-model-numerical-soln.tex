@@ -153,6 +153,7 @@ An example is given below, where the coefficients of $u$ and $v$ are contained i
 Here the \textbf{uu} subscript denotes block matrices containing coefficients for gradients of \textit{u} in the equation for the \textit{x} component of velocity (i.e., \textit{u}). The subscript \textbf{uv} denotes block matrices containing coefficients for gradients of \textit{v} in the equation for the \textit{x} component of velocity (and similarly for the \textbf{vu} and \textbf{vv} subscripts). On the right-hand side, the subscripts \textbf{u} and \textbf{v} are attached to the geometric source terms for the \textit{x} and \textit{y} components of velocity, respectively.
 
 \subsection{Treating nonlinearity through a fixed-point iteration}
+\label{sc:fixed-point}
 The nonlinearity of the equations---the fact that the matrix coefficients (in particular, the effective viscosity) depend
 on the velocity (or more specifically, the velocity gradients)---is handled through a fixed-point iteration. 
 A general fixed-point iteration for a vector of unknowns \textit{u} can be written as 
