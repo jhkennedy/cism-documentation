@@ -4,7 +4,7 @@
 
 The higher-order test cases are designed to test various aspects of higher-order dycores.
 By default they use the Glissade dycore with the Blatter-Pattyn approximation 
-(see Section~\ref{sc:glissade-blatter-pattyn}.
+(see Section~\ref{sc:glissade-blatter-pattyn}).
 As other higher-order dycores become available, they can be applied
 to these same tests. Additional test cases will be added as needed.
 
@@ -69,7 +69,7 @@ Sample output is shown in Figure \ref{fig:domeresults}.
 \begin{figure}[H!]
 	\centering
 	\includegraphics[width=7.0cm]{\dir/dome-output.eps}
-	\caption{Dome velnorm (i.e., the ice speed in m/yr) field at time 0 using default \texttt{dome.config} settings. This figure is a screenshot of ncview.}
+	\caption{Dome \texttt{velnorm} (i.e., the ice speed in m/yr) field at time 0 using default \texttt{dome.config} settings. This figure is a screenshot of ncview.}
 	\label{fig:domeresults}
 \end{figure}
 \FloatBarrier
@@ -79,8 +79,9 @@ Sample output is shown in Figure \ref{fig:domeresults}.
 % =====================================
 The Ice Sheet Model Intercomparison Project for Higher-Order Models (ISMIP-HOM)
 prescribes a set of experiments for testing the implementation of higher-order physics.  
-For more information, see \href{http://homepages.ulb.ac.be/~fpattyn/ismip/}{here}
-\footnote{http://homepages.ulb.ac.be/~fpattyn/ismip/} and the ISMIP-HOM description paper by \citet{Pattyn2008}.
+For more information, see 
+\href{http://homepages.ulb.ac.be/~fpattyn/ismip/}{here}\footnote{http://homepages.ulb.ac.be/\textasciitilde{}fpattyn/ismip/} 
+and the ISMIP-HOM description paper by \citet{Pattyn2008}.
 
 The python scripts provided (runISMIPHOM.py and plotISMIPHOM.py, referred to here as the ISMIP-HOM 
 scripts) were created to run experiments A through F using CISM and compare the results with results from other models. 
@@ -98,10 +99,10 @@ test case that are not described here.
     		If you wish to run the tests with different solver settings, for example, you should edit this file.
 	\item runISMIPHOM.py \\
 		The script used for running any/all of the ISMIP-HOM experiments.  
-    		Invoke with `- - help' to see the many command line options for controlling execution.
+    		Invoke with `-{}-help' to see the many command line options for controlling execution.
   \item plotISMIPHOM.py \\
 		The script used for analyzing/plotting any/all of the ISMIP-HOM experiments.  
-    		Invoke with `- - help' to see the many command line options for controlling execution.
+    		Invoke with `-{}-help' to see the many command line options for controlling execution.
 \end{itemize}
 
 \subsubsection{Running the test}
@@ -128,7 +129,7 @@ An example output plot is shown in Figure \ref{fig:ismiphom-results}.
 CISM output is shown with a black line, and the range of output from other models is shown by colored bars. 
 This figure was generated with \texttt{./plotISMIPHOM.py -e a -s 160} after running the test with \texttt{./runISMIPHOM.py -e a -s 160}.
 Additional options (e.g., running and plotting for multiple tests simultaneously) are described in the \texttt{README} and by invoking the
-`- - help' option at the command line.}
+`-{}-help' option at the command line.}
 	\label{fig:ismiphom-results}
 \end{figure}
 \FloatBarrier
@@ -194,7 +195,7 @@ parameter $\beta$ over neighboring nodes during finite-element assembly
 	\includegraphics[width=10.0cm]{\dir/stream_schoof.eps}
   \end{center}
   \caption{Comparison between CISM model output (black) and analytic solution (red) for the Raymond (top) and Schoof (bottom) stream test cases. This figure was generated with \texttt{./plotStream.py} after running the test with \texttt{./runStream.py}.
-Additional runtime options are described in the \texttt{README} and by invoking the `- - help' option at the command line.}
+Additional runtime options are described in the \texttt{README} and by invoking the `-{}-help' option at the command line.}
   \label{fig:stream-results}
 \end{figure} 
 
@@ -207,7 +208,7 @@ confined, rectangular embayment.  Grounded ice is not explicitly modeled but inc
 model setup as Dirichlet boundary conditions for velocity along the ice shelf edges.
 More detailed information on this test case can be found 
 \href{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}{here}
-\footnote{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html} in the 
+\footnote{http://homepages.vub.ac.be/\textasciitilde{}phuybrec/eismint/iceshelf.html} in the 
 ``shelf-descr.pdf" document.
 
 Note that the confined shelf and circular shelf experiments are both in the 
@@ -238,7 +239,7 @@ Figure \ref{fig:confinedshelf-results} shows an example.
 \begin{figure}[H!]
 	\centering
 	\includegraphics[width=8.0cm]{\dir/confinedshelf-output.eps}
-	\caption{Confined shelf velnorm field using default \texttt{confined-shelf.config} settings. This figure is a screenshot of ncview.}
+	\caption{Confined shelf \texttt{velnorm} field using default \texttt{confined-shelf.config} settings. This figure is a screenshot of ncview.}
 	\label{fig:confinedshelf-results}
 \end{figure}
 \FloatBarrier
@@ -248,7 +249,7 @@ Figure \ref{fig:confinedshelf-results} shows an example.
 % =====================================
 The circular shelf test case is a variant on the confined shelf discussed above. It simulates the flow within a circular ice shelf with a uniform thickness
 of 1000 m, which is grounded at a single grid point at its center. This test case confirms a working ``floating ice" boundary condition
-in 2D (i.e, in map plane view) and also confirms radial symmetry. 
+in 2D (i.e., in map plane view) and also confirms radial symmetry. 
 
 Note that the confined shelf and circular shelf experiments are both in the 
 \texttt{tests/higher-order/shelf} directory and share some files.
@@ -288,7 +289,7 @@ Figure \ref{fig:circularshelf-results} shows an example.
 % =====================================
 The Ross experiment is designed to simulate the flow of the Ross Ice Shelf of Antarctica under idealized conditions (e.g., constant and uniform
 flow-law rate factor). For more information about the experiment and its results, see 
-\href{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}{here}\footnote{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}. 
+\href{http://homepages.vub.ac.be/~phuybrec/eismint/iceshelf.html}{here}\footnote{http://homepages.vub.ac.be/\textasciitilde{}phuybrec/eismint/iceshelf.html}. 
 Also, see \citet{MacAyeal:1996vn} for a discussion of the official model intercomparison results.
 
 Using the Glissade solver with the Blatter-Pattyn approximation, this experiment typically 

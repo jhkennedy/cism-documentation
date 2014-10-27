@@ -440,10 +440,11 @@ To aid understanding of the time-stepping controls, here are some examples. Firs
 \begin{tabular}{ll}
 forcing time-step: & 6 hours \\
 mass-balance time-step: & 1 day \\
-ice time-step: & 0.5 year
+ice time-step: & 0.5 year \\
 \end{tabular}
 \vspace{0.5cm}
 %
+\newline
 By default, the model will accumulate 6 months of mass-balance 
 calculations, and force the ice sheet model based on the 6-month average. This might not be 
 desirable, so you could set:
@@ -478,6 +479,7 @@ ice time-step:       &   10 years\\
 \end{tabular}
 \vspace{0.5cm}
 %
+\newline
 (Clearly this is a numerically stable and/or low-resolution ice sheet).
 To avoid running the daily PDD scheme c.3600 times (depending on the value of 
 \texttt{days\_in\_year}), we can choose to use only the first two years of data:

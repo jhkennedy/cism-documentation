@@ -3,7 +3,7 @@
 \label{sc:sia-tests}
 
 These tests are primarily useful for testing the shallow-ice approximation (SIA) dynamical core, Glide (see Chapter~\ref{ch:glide}).
-The Glissade dycore also has a shallow-ice option (see Section~\ref{sc:glissade-other-approx}).
+The Glissade dycore also has a shallow-ice option (see Section~\ref{sc:glissade-sia}).
 
 % =====================================
 \subsection{Halfar dome}
@@ -51,7 +51,7 @@ These values can be changed by editing \texttt{halfarDome.py}.
 		Information about the test case, including technical details about running it.
 	\item halfar.config \\
 	        This is the config file defining CISM options. It is set up to run Glide. \\
-        \item halfarHO.config \\
+  \item halfarHO.config \\
               This alternative config file is set up to run Glissade
               using the Blatter-Pattyn approximation of Stokes flow. By manually setting
               \texttt{which\_ho\_approx} under \texttt{[ho\_options]}, users can choose other approximations 
@@ -69,7 +69,12 @@ These values can be changed by editing \texttt{halfarDome.py}.
 One script sets up the initial condition and runs the model:
 
 \texttt{./halfar.py}
-%
+
+Note that to run the test with the \texttt{halfarHO.config} settings, you can use
+the \texttt{-c} commandline option for specifying a configuration file:
+
+\texttt{./halfar.py -c halfarHO.config}
+
 Another script analyzes and plots the results:
 
 \texttt{./halfar\_results.py}
@@ -98,7 +103,7 @@ and also report error statistics.  Invoke \texttt{halfar\_results.py --help} for
 % =====================================
 \label{sec:eismint_description}
 This test case is from phase 1 of the European Ice Sheet Modelling INiTiative intercomparison experiments.  These experiments are described in more detail
-\href{http://homepages.vub.ac.be/~phuybrec/eismint.html}{here}\footnote{http://homepages.vub.ac.be/~phuybrec/eismint.html} and in \citet{Huybrechts1996}.
+\href{http://homepages.vub.ac.be/~phuybrec/eismint.html}{here}\footnote{http://homepages.vub.ac.be/\textasciitilde{}phuybrec/eismint.html} and in \citet{Huybrechts1996}.
 
 \subsubsection{Provided files}
 \label{subsec:eismint_files}
@@ -129,7 +134,7 @@ However, users can visually compare their results to those in \citet{Huybrechts1
 % =====================================
 \label{sec:eismint2_description}
 This test case is from phase 2 of the European Ice Sheet Modelling INiTiative intercomparison experiments.  These experiments are described in more detail
-\href{http://homepages.vub.ac.be/~phuybrec/eismint.html}{here}\footnote{http://homepages.vub.ac.be/~phuybrec/eismint.html} and in \citet{Payne2000}.
+\href{http://homepages.vub.ac.be/~phuybrec/eismint.html}{here}\footnote{http://homepages.vub.ac.be/\textasciitilde{}phuybrec/eismint.html} and in \citet{Payne2000}.
 
 \subsubsection{Provided files}
 \label{subsec:eismint2_files}
@@ -191,7 +196,7 @@ We summarize that information here.
 There is no script for running these experiments. They are run manually, e.g. using: 
 
 \texttt{./cism\_driver greenland\_20km.config.pdd glint\_example.config.pdd}
-%
+
 The two config files specify the ice sheet and climate configurations, respectively. 
 
 \subsubsection{Results}

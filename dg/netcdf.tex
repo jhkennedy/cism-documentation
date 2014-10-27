@@ -48,7 +48,7 @@ The file is read using the python \texttt{ConfigParser} module.
 The format of the file is similar to Windows \texttt{.ini} files.
 Lines beginning with \texttt{\#} or \texttt{;} or empty lines are ignored. 
 These files must have a definition section \texttt{[VARSET]} (see Table \ref{dg.tab.vdef}).
-A new variable definition block starts with the variable name in square brackets []. 
+A new variable definition block starts with the variable name in square brackets [ ]. 
 Variables are further specified by parameter name/value pairs which are separated by
  \texttt{:} or \texttt{=}. Parameter names and their meanings are summarized in 
 Table \ref{dg.tab.vdf}. All parameter names not recognised by the code generator 
@@ -87,9 +87,9 @@ Table \ref{dg.tab.vdf}. All parameter names not recognised by the code generator
     \hline
     \texttt{load} & Set to 1 if the variable can be loaded from file. Default: 0.\\
     \hline
-    \texttt{hot} & Set to 1 if the variable should be saved for hot--starting (i.e., restarting) the model (implies \texttt{load}=1)\\
-    \hline
-    \texttt{average} & Set to 1 if the variable should also be available as a mean over the write--out interval. Averages are calculated only if required. To store the average in a netCDF output file, append \texttt{\_tavg} to the variable.\\
+%% MJH: this no longer works - now glide_setup.F90 controls this    \texttt{hot} & Set to 1 if the variable should be saved for hot--starting (i.e., restarting) the model (implies \texttt{load}=1)\\
+%%    \hline
+    \texttt{average} & Set to 1 if the variable should also be available as a mean over the write--out interval. Averages are calculated only if required. To store the average in a netCDF output file, append \texttt{\_tavg} to the variable name.\\
     \hline
     \texttt{units} & UDUNITS compatible unit string describing the variable units.\\
     \hline

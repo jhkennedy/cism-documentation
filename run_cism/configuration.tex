@@ -85,13 +85,13 @@ in the tables below.
     \hline
     \multicolumn{2}{|l|}{\texttt{[time]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps diagnostic specifications} \\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Configure time steps and diagnostic specifications} \\
     %{\bf TODO: address / remove this next note:} Update intervals should probably become absolute values rather than related to the main time step when we introduce variable time steps. \textbf{Steve: I don't actually know what the question is here or what this note is supposed to be about.}}\\
     \hline
     \texttt{tstart} & (real) start time of the model in years\\
     \texttt{tend} & (real) end time of the model in years\\
     \texttt{dt} & (real) size of time step in years\\
-    \texttt{subcyc} & (integer) number of time steps to subcycle within dt using a steady velocity field \\
+    \texttt{subcyc} & (integer) number of time steps to subcycle evolution within dt using a steady velocity field \\
     \texttt{ntem} & (real) time step multiplier setting the ice temperature update interval\\
 %    \texttt{nvel} & (real) time step multiplier setting the velocity update interval\\
 %    \texttt{profile} & (integer) profile frequency (number of time steps) {\bf TODO: more useful description of what profiling is? Steve: I've never used this either.   
@@ -99,7 +99,7 @@ in the tables below.
 %   Matt: Disabling this for 2.0 release
     \texttt{dt\_diag} & (real) writing diagnostic variables to log file every dt\_diag yrs\\
     \texttt{idiag} & (int) $x$ direction index for diagnostic grid point in log file\\
-    \texttt{jdiag} & (int) $x$ direction index for diagnostic grid point in log file\\
+    \texttt{jdiag} & (int) $y$ direction index for diagnostic grid point in log file\\
 %    \texttt{ndiag} & (int) number of time steps between diagnostics. {\bf DEPRECATED}.  Use \texttt{dt\_diag}. \textbf{Steve: Should we then remove and replace this with dt\_diag rather than using the old var name?}\\
 
 
@@ -158,7 +158,7 @@ in the tables below.
     \begin{tabular}[t]{lp{0.85\linewidth}}
       {\bf 0} & none \\
       1 & local water balance\\
-      2 & compute the steady-state, routing-based, basal water flux and water layer thickness (NOTE: not supported for $> 1$ processor) \\
+      2? & compute the steady-state, routing-based, basal water flux and water layer thickness (NOTE: not supported for $> 1$ processor) \\
       3 & use a constant basal water layer thickness everywhere, to enforce T=T${_{pmp}}$ everywhere \\
       4! & ocean penetration parameterization for effective pressure from \citet{Leguy2014} \\
     \end{tabular}\\
@@ -392,7 +392,7 @@ in the tables below.
     \texttt{marine\_limit} & (real) all ice is assumed lost (calved) once water depths reach this value (for \texttt{marine\_margin}=3 or 4 in 
     \texttt{[options]} above). Note, water depth is negative.  (default = -200.0 m) \\
     \texttt{calving\_fraction} & (real) fraction of ice lost due to calving (for \texttt{marine\_margin}=2). (default = 0.8)\\
-    \texttt{geothermal} & (real) constant geothermal heat flux, positive down by convention (hence < 0). (default = -0.05 W m$^{-2}$)\\
+    \texttt{geothermal} & (real) constant geothermal heat flux, positive down by convention (hence $<$ 0). (default = -0.05 W m$^{-2}$)\\
     \texttt{flow\_factor} & (real) the flow law rate factor is multiplied by this factor (default = 1.0; in previous versions of Glimmer-CISM the default value was 3.0) \\
     \texttt{default\_flwa} & flow law parameter A to use in isothermal experiments (flow\_law set to 0).  Default value is $10^{-16}$ Pa$^{-n}$ yr$^{-1}$. This 
     overrides any temperature dependence. \\
@@ -420,8 +420,8 @@ used for \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 2.0 m, from
     \texttt{coulomb\_bump\_slope} $\dagger$ & (real) maximum slope (unitless) of the dominant bedrock bumps, $m_{max}$,
 used for \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.5 m, from \citet{Pimentel2010a}) \\
     \texttt{p\_ocean\_penetration} & (real) $p$-exponent in ocean penetration parameterization for (\texttt{basal\_water} = 4 (default = 0.0)\\
-    \texttt{periodic\_offset\_ew}$\dagger$ & (real) vertical offset between east and west edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.) \\
-    \texttt{periodic\_offset\_ns}$\dagger$ & (real) vertical offset between north and south edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM test cases.)\\
+    \texttt{periodic\_offset\_ew}$\dagger$ & (real) vertical offset between east and west edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM and Stream test cases.) \\
+    \texttt{periodic\_offset\_ns}$\dagger$ & (real) vertical offset between north and south edges of the global domain. (default = 0.0 m)  (Primarily used for ISMIP-HOM and Stream test cases.)\\
 
 
 
@@ -480,7 +480,7 @@ used for \texttt{which\_ho\_babc} = 10 (Eq. \ref{CF-law}) (default = 0.5 m, from
     \hline
     \multicolumn{2}{|l|}{\texttt{[projection]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Specify map projection. The reader is
+    \multicolumn{2}{|p{0.95\textwidth}|}{Specify map projection for reference. The reader is
     referred to Snyder J.P. (1987) \emph{Map Projections - a working manual.} USGS 
         Professional Paper 1395.} \\
 % TODO: I am assuming this works.  Code is not in glide\_setup.F90.  

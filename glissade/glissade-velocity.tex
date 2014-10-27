@@ -507,7 +507,7 @@ Suppose we are filling columns for the matrix row corresponding to node $(k,i,j)
 Then, by convention, index 1 refers to the node with coordinates $(k-1,i-1,j-1)$, index 14 refers to the
 node itself (i.e., the diagonal term of the row), and index 27 refers to the node at $(k+1,i+1,j+1)$
 (and similarly for the other indices).
-Ater assembly, these matrices can be converted as needed to the form required by a particular solver.
+After assembly, these matrices can be converted as needed to the form required by a particular solver.
 
 The remaining assembly consists of evaluating the other terms in \eqref{gliss.eq.weak_form}
 (i.e., the basal and lateral boundary conditions and the gravitational forcing) and implementing
@@ -1282,7 +1282,7 @@ Assuming that $\tau_{xx}$, $\tau_{yy}$ and $\tau_{xy}$ are depth-independent,
 where $u_b$ and $v_b$ are the components of basal velocity, and we have used
 \href{http://en.wikipedia.org/wiki/Leibniz_integral_rule}{Leibniz's rule}
 to move the partial derivatives outside the integrals and eliminate several boundary terms.
-Sinc the deviatoric stresses are depth-independent, they can be written in terms of the
+Since the deviatoric stresses are depth-independent, they can be written in terms of the
 basal strain rates. Taking these strain rates outside the integral, we obtain
 
 \begin{equation}

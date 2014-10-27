@@ -2,7 +2,7 @@
 \label{io-config}
 
 NetCDF I/O can be configured in the main configuration file or in a separate file 
-(see \texttt{ioparams} in the \texttt{[options]} section). 
+(see \texttt{ioparams} in the \texttt{[options]} section description above). 
 Any number of input, forcing, and output files can be specified. 
 
 Input files are processed in the same order they appear in the configuration file, 
@@ -14,14 +14,15 @@ the actual time.)
 Input files can contain any of a large number of model fields that are specified as being
 ``loadable". These fields are marked with asterisks in the netCDF model variable
 table in Appendix \ref{ch:appendix_vars}. The option for a given variable to be ``loadable" 
-or not can be changed within the \texttt{glide\_vars.def} file, as described in Appendix \ref{app:netcdfio}. 
+or not can be changed within the \texttt{*\_vars.def} files (most commonly, \texttt{glide\_vars.def}),
+as described in Appendix \ref{app:netcdfio}. 
 The standard test cases discussed in Chapter \ref{chp:testcases} give examples
 of variables that might be specified for standard model setups.    
 
 Forcing files are new in CISM 2.0.  These are input files that are read on every 
 time step to allow time-dependent
 forcing to be applied during a simulation.  Any input fields specified in
-\texttt{glide\_vars\_def} can be included
+\texttt{*\_vars.def} (again, most commonly, \texttt{glide\_vars.def}) can be included
 in forcing files.  Forcing files should have a ``time'' field which is used to 
 assign values to each field in the file during the simulation.  Forcing is applied 
 in a piecewise constant fashion; the most recent time slice in the forcing file prior
@@ -30,10 +31,10 @@ forcing may be available in the future but is not yet implemented.)
 If a field is present in both an input file and a
 forcing file at the start time, the value in the forcing file will overwrite the value
 from the input file because forcing files are read after input files.
-Forcing files are processed in the same order they appear in the configuration file, 
-thus on each time step potentially overwriting previously loaded fields from other
+Forcing files are processed in the same order they appear in the configuration file on each time step, 
+thus potentially overwriting previously loaded fields from other
 forcing files.  The ``dome'' test case (\texttt{tests/higher-order/dome}) includes 
-an example of time-dependent forcing.
+an optional setup of how to implement time-dependent forcing.
 
 One special input field is the \texttt{kinbcmask} field, which is used to specify locations (i.e.,
 indices in the horizontal grid plane) on the staggered (velocity) grid where Dirichlet boundary 
@@ -71,8 +72,8 @@ The following tables describe netCDF sections and parameters in the .config file
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF default]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be modified
-      in the \texttt{[CF output]} section.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{This section contains metadata describing the experiment. Any of these parameters can be optionally included 
+      in the \texttt{[CF output]} section for a specific output file, overriding the default values specified here.}\\
     \hline
     \texttt{title}& Title of the experiment\\
     \texttt{institution} & Institution at which the experiment was run\\
@@ -86,7 +87,7 @@ The following tables describe netCDF sections and parameters in the .config file
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF input]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they appear in the configuration file, potentially overriding previously loaded variables.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of input files can be specified in separate \texttt{[CF input]} sections. They are processed in the order they appear in the configuration file, potentially overwriting previously loaded variables with the same names from previous input files.}\\
     \hline
     \texttt{name}& Name of the netCDF file to be read. Typically, netCDF files end with \texttt{.nc}.\\
     \texttt{time}& Time slice (not actual time) to be read from the netCDF file. The first time slice is read by default.\\
@@ -98,7 +99,7 @@ The following tables describe netCDF sections and parameters in the .config file
     \hline
     \multicolumn{2}{|l|}{\texttt{[CF forcing]}}\\
     \hline
-    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they appear in the configuration file, potentially overriding previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
+    \multicolumn{2}{|p{0.95\textwidth}|}{Any number of forcing files can be specified in separate \texttt{[CF forcing]} sections. They are processed in the order they appear in the configuration file, potentially overwriting previously loaded variables.  Each forcing file needs a ``time'' dimension and variable that indicates the model time associated with each time slice in the file.}\\
     \hline
     \texttt{name}& Name of the netCDF file to be read. Typically, netCDF files end with \texttt{.nc}.\\
     \hline
@@ -112,11 +113,17 @@ The following tables describe netCDF sections and parameters in the .config file
     \multicolumn{2}{|p{0.95\textwidth}|}{This section controls how often selected variables are written to files.}\\
     \hline
     \texttt{name} & Name of the output netCDF file. Typically, netCDF files end with \texttt{.nc}.\\
-    \texttt{start} & Start writing to file when this time is reached (default: first time slice).\\
-    \texttt{stop} & Stop writing to file when this time is reached (default: last time slice). \\
-    \texttt{frequency} & The time interval in years, determining how often selected variables are written to file.\\
+    \texttt{start} & (real) Start writing to file when this time (years) is reached (default: first time slice).\\
+    \texttt{stop} & (real) Stop writing to file when this time (years) is reached (default: last time slice). \\
+    \texttt{frequency} & (real) The time interval in years, determining how often selected variables are written to file.\\
     \texttt{xtype} & Set the floating point representation used in netCDF file. \texttt{xtype} can be one of \texttt{real}, \texttt{double} (default: \texttt{real}). (If the  name \texttt{restart} is included in the list of \texttt{variables}, \texttt{xtype} is automatically set to \texttt{double} to ensure bit-reproducible restarts, overriding the value set here.)\\
-    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} for a list of known variables. Names should be separated by at least one space. The variable names are case-sensitive. The name \texttt{restart} selects all variables necessary for a restart based on the specified model configuration.  (The name \texttt{hot} is also retained for this purpose for backwards compatability.)  If the  name \texttt{restart} is included, the \texttt{xtype} option is automatically set to \texttt{double} to ensure bit-reproducible restarts.\\
+    \texttt{variables} & List of variables to be written to file. See Appendix \ref{ug.sec.varlist} 
+for a list of possible variables. Names should be separated by at least one space. 
+The variable names are case-sensitive. The name \texttt{restart} selects all variables 
+necessary for a restart based on the specified model configuration.  
+(The name \texttt{hot} is also retained for this purpose for backwards compatability.)  
+If the  name \texttt{restart} is included, the \texttt{xtype} option is automatically 
+set to \texttt{double} to ensure bit-reproducible restarts.\\
     \hline
   \end{supertabular*}
 \end{center}
