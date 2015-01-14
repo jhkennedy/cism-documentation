@@ -9,7 +9,8 @@
 # ===================================
 
 # Location of source directory - needed for autogenerating variables only
-top_srcdir = /Users/sprice/work/modeling/cism/temp/
+#top_srcdir = /Users/sprice/work/modeling/cism/temp/
+top_srcdir = /Users/sprice/work/modeling/cism/cism-github/
 
 # commands to make documentation
 LATEX = latex

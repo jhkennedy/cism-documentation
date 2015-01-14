@@ -59,8 +59,8 @@ If you have not done so already, clone a tagged version of CISM or download an a
 Because the build process can be fairly complicated, we describe it in detail below, 
 relying on the use of a package manager to handle many of the standard software dependencies. 
 For each step we give specific instructions for both Mac OS X using MacPorts (in red boxes) and
-Linux, specifically Ubuntu 12.10 (in blue boxes).  For different but related systems,
-hopefully these instructions can be used as a guide.
+Linux (in blue boxes). For the latter, we have verified that the instructions work for Ubuntu 12.10 and 14.04 LTS.
+For different but related systems, hopefully these instructions can be used as a guide.
 
 CISM can be installed in either a serial or parallel configuration. The parallel mode
 allows the model to be run on multiple processors which can greatly speed up execution.
@@ -107,18 +107,22 @@ If you have previously installed Macports but not updated it recently, it's gene
 
 \texttt{sudo port selfupdate}
 
+\noindent
 You will then be prompted to update any installed ports that are outdated, which you can do using:
 
 \texttt{sudo port upgrade outdated}
 
+\noindent
 To search for available software in Macports, type: 
 
 \texttt{port search software-name}
 
+\noindent
 Software is installed through Macports using the command:
 
 \texttt{sudo port install software-name}
 
+\noindent
 Additional Macports tips will follow inline below. Extensive documentation for Macports 
 can be found at the \href{http://guide.macports.org}{Macports} website.
 \end{mdframed}              % ^==============MAC================^
@@ -132,23 +136,40 @@ Instructions make use of the command line tool for installing packages that come
 \texttt{apt-get}.  Other package management tools (e.g., Software Center)
 could also be used.
 
+\noindent
+
 It's generally a good idea to synchronize your local package index files before
 installing new software using \texttt{apt-get}:
 
 \texttt{sudo apt-get update}
 
+\noindent
 To search for available packages, type:
 
 \texttt{apt-cache search software-name}
 
+\noindent
 And to see detailed information about a package, type:
 
 \texttt{apt-cache show software-name}
 
+\noindent
 Packages are installed through apt-get using the command:
 
 \texttt{sudo apt-get install software-name}
 
+\noindent
+Some users have reported that BLAS and LAPACK libraries need to installed explicitly, for example when starting from a ``clean" machine. 
+To do this, use the following two commands:
+
+\texttt{sudo apt-get install libblas-dev}
+
+\noindent
+and
+
+\texttt{sudo apt-get install liblapack-dev}
+
+\noindent
 Additional apt-get tips will follow inline below. Extensive documentation for apt-get 
 can be found at the \href{https://help.ubuntu.com/community/AptGet/Howto}{Ubuntu} website
 and through man pages (\texttt{man apt-get}).
@@ -431,10 +452,16 @@ Install python modules with:
 \noindent
 Install pip (a tool for installing and managing Python packages):
 
-\texttt{sudo apt-get install pip}
+\texttt{sudo apt-get install pip}\footnote{For Ubuntu 14.04 there is a known issue with pip and handling freetypes. This can be fixed using \texttt{sudo apt-get install libfreetype6-dev libxft-dev}.}
 
 \noindent
-Install \texttt{netCDF4} using pip:
+%Install \texttt{netCDF4} using pip:
+Next, install \texttt{HDF5} using pip:
+
+\texttt{sudo apt-get install libhdf5-dev hdf5-tools hdf5-helpers flex}
+
+\noindent
+Finally, install \texttt{netCDF4} using pip:
 
 \texttt{sudo -E pip install netcdf4}
 \end{mdframed}                 % ^==============UBUNTU==========^
@@ -653,7 +680,7 @@ Install OpenMPI with:
 
 Trilinos is a modern, open source, C++ based library of parallel nonlinear and linear solvers, 
 preconditioning and mesh-partitioning tools, and much more. It can be downloaded 
-\href{trilinos.sandia.gov/download/}{here}.
+\href{http://trilinos.org/download/}{here}\footnote{http://trilinos.org/download/}.
 (The software is free, but you are required to enter your email address to download it.) 
 The documentation below assumes that you are working with version 11.10.* and was specifically 
 tested using version 11.10.2. 
