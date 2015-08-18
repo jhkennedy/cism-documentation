@@ -10,7 +10,7 @@ for each test.  Any velocity solver can be used with any test
 if the .config file settings are adjusted manually.  In some cases, however, the results
 may be difficult to interpret.
 
-Each test directory includes a README file with some technical details 
+Each test directory includes a README.md file with some technical details 
 about how to run the test.  Many tests have python scripts that are used to set up
 the initial condition and, in some cases, execute the model.  Some tests
 have an additional python script for analyzing the CISM output.
@@ -28,7 +28,7 @@ There are several ways to do this:
 
   \item Use the -e command line option to point to include an explicit path for the executable (for test case run scripts that support this option), e.g.:
 
-        \texttt{./dome.py -e ../../../builds/mac-gnu/cism\_driver/cism\_driver}
+        \texttt{./runDome.py -e ../../../builds/mac-gnu/cism\_driver/cism\_driver}
 
         This is useful for quickly trying a different version of CISM (e.g., comparing 
         serial and parallel executables).
@@ -43,7 +43,7 @@ The python scripts generally have useful
 command line options that control their execution.  Typically, you can see details 
 by using the \texttt{-{}-help} (or \texttt{-h}) command line option, e.g.:
 
-\texttt{./dome.py --help}
+\texttt{./runDome.py --help}
 
 The various tests are described below.
 
