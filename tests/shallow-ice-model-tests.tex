@@ -44,36 +44,33 @@ For more details, see \citet{Halfar1983}, \citet{Bueler2005}, and this \href{htt
 \label{subsec:halfar_files}
 
 Our implementation of the Halfar dome test has an initial radius of $R_0=21.2$ km and an initial thickness of $H=707.1$ m.
-These values can be changed by editing \texttt{halfarDome.py}.
+These values can be changed by editing the \texttt{halfarDome} function in \texttt{runHalfar.py}.
 
 \begin{itemize}
-	\item README \\
+	\item README.md \\
 		Information about the test case, including technical details about running it.
 	\item halfar.config \\
 	        This is the config file defining CISM options. It is set up to run Glide. \\
-  \item halfarHO.config \\
+  \item halfar-HO.config \\
               This alternative config file is set up to run Glissade
               using the Blatter-Pattyn approximation of Stokes flow. By manually setting
               \texttt{which\_ho\_approx} under \texttt{[ho\_options]}, users can choose other approximations 
               (see Section~\ref{ug.sec.config}).
-	\item halfar.py \\
+	\item runHalfar.py \\
 		This python script generates the dome initial condition and runs CISM.
 	\item halfar\_results.py \\
 		This script compares model results to the analytic solution.
-	\item halfarDome.py \\
-		This python module defines the analytic solution. \\
-    		 It is not meant to be run manually, but is used by the other scripts.
 \end{itemize}
 
 \subsubsection{Running the test}
 One script sets up the initial condition and runs the model:
 
-\texttt{./halfar.py}
+\texttt{./runHalfar.py}
 
-Note that to run the test with the \texttt{halfarHO.config} settings, you can use
+Note that to run the test with the \texttt{halfar-HO.config} settings, you can use
 the \texttt{-c} commandline option for specifying a configuration file:
 
-\texttt{./halfar.py -c halfarHO.config}
+\texttt{./runHalfar.py -c halfar-HO.config}
 
 Another script analyzes and plots the results:
 
@@ -109,7 +106,7 @@ This test case is from phase 1 of the European Ice Sheet Modelling INiTiative in
 \label{subsec:eismint_files}
 
 \begin{itemize}
-	\item README \\
+	\item README.md \\
 	Information about the test case, including technical details about running it.
 	\item *.config \\
   	There are .config files for each of the six experiments in EISMINT 1: three fixed margin experiments (fm) and three moving margin experiments (mm).
@@ -140,7 +137,7 @@ This test case is from phase 2 of the European Ice Sheet Modelling INiTiative in
 \label{subsec:eismint2_files}
 
 \begin{itemize}
-	\item README \\
+	\item README.md \\
 	Information about the test case, including technical details about running it.
   	\item *.config \\
   	There are 11 .config files: one for each of the experiments described in \citet{Payne2000}.
@@ -178,7 +175,7 @@ We summarize that information here.
 \label{subsec:glint_files}
 
 \begin{itemize}
-	\item README.glint\_example \\
+	\item README.md \\
          Information about the test case, including technical details about downloading the required data files
          and running the case.
   	\item greenland\_20km.config.pdd and glint\_example.config.pdd \\

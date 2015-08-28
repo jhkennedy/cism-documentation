@@ -502,8 +502,8 @@ encounter may indicate that some of the supporting software (above) is missing.
 On a Mac, you should be able to build the code by doing the following:
 
 \begin{enumerate}
-\item{Change to the \texttt{./builds/mac-gnu-serial} directory from the root level of the code.}
-\item{Configure the build using \texttt{source mac-gnu-cmake-serial}}
+\item{Change to the \texttt{./builds/mac-gnu} directory from the root level of the code.}
+\item{Configure the build using \texttt{source mac-gnu-serial-cmake}}
 \item{Build the code using \texttt{make -j X}, where the ``X'' refers to the number of processors available for use in the build (or just \texttt{make} if you have only one processor).}
 \end{enumerate}
 \end{mdframed}              % ^==============MAC================^
@@ -513,13 +513,13 @@ On a Mac, you should be able to build the code by doing the following:
 On a Linux platform, you should be able to build the code by doing the following:
 
 \begin{enumerate}
-\item{Change to the \texttt{./builds/linux-gnu-cism} directory from the root level of the code.}
-\item{Configure the build using \texttt{source linux-gnu-cism-cmake-serial}}
+\item{Change to the \texttt{./builds/linux-gnu} directory from the root level of the code.}
+\item{Configure the build using \texttt{source linux-gnu-serial-cmake}}
 \item{Build the code using \texttt{make -j X}, where the ``X'' refers to the number of processors available for use in the build (or just \texttt{make} if you have only one processor).}
 \end{enumerate}
 \end{mdframed}                 % ^==============UBUNTU==========^
 
-When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the current build directory (here, from within the \texttt{./builds/mac-gnu-serial} or \texttt{./builds/linux-gnu-cism/} directory). The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
+When the build completes, you can check for the executable driver by typing \texttt{ls cism\_driver} from within the current build directory (here, from within the \texttt{./builds/mac-gnu} or \texttt{./builds/linux-gnu/} directory). The file \texttt{cism\_driver} is the executable you will link to when running the model, which is generally done using a symbolic link. For example, from the \texttt{./tests/higher-order/shelf/} directory, one would link to this executable using, 
 
 \begin{verbatim}
 ln -s ../../../builds/mac-gnu/cism_driver/cism_driver ./
@@ -845,10 +845,10 @@ is set to the Trilinos installation directory.
 
 The procedure for building parallel CISM is nearly identical to the serial build (above).
 The build script for parallel CISM for a Mac is located at \texttt{builds/mac-gnu/mac-gnu-cmake}, 
-while the build script for Linux is located at \texttt{builds/linux-gnu-cism/linux-gnu-cism-cmake}.
+while the build script for Linux is located at \texttt{builds/linux-gnu/linux-gnu-cmake}.
 From the appropriate directory, run:
 
-\texttt{ source mac-gnu-cmake} or \texttt{ source linux-gnu-cism-cmake}
+\texttt{ source mac-gnu-cmake} or \texttt{ source linux-gnu-cmake}
 
 \noindent{Once the configuration step completes successfully, you can compile the code as before with:}
 
