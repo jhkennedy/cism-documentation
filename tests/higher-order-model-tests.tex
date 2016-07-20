@@ -378,7 +378,7 @@ you would run these commands:
 \begin{verbatim}
 cd tests/regression/
 source setup_titan.bash
-./build_and_test.py -p titan -c gnu -b ./build
+./build_and_test.py -p titan-gnu -b ./build
 \end{verbatim}
 
 \noindent
@@ -398,41 +398,64 @@ All the files associated with each test will be output to a new directory called
 directory structure that mirrors CISMS test directory structure:
 
 \begin{verbatim}
- reg_test/
-    └── PLATFORM-COMPILER/
-        ├── CMakeCache.txt
-        ├── higher-order/
-        │    ├── dome/
-        │    │   ├── dome.RESO.pPRC.*
-        │    │   └── timing/
-        │    │       └── dome-t?.RESO.pPRC.*
-        │    ├── ismip-hom
-        │    │   ├── ismip-hom-a.RESO.pPRC.*
-        │    │   ├── ismip-hom-c.RESO.pPRC.*
-        │    │   └── ismip-hom-f.0100.pPRC.*
-        │    ├── shelf
-        │    │   ├── shelf-circular.RESO.pPRC.*
-        │    │   └── shelf-confined.RESO.pPRC.*
-        │    └── stream
-        │        └── stream.RESO.pPRC.*
-    --------------------------------------------
-        ├── Jobs/
-        │    ├── platform_job.small
-        │    ├── platform_job.small_timing_?
-        │    ├── platform_job.large
-        │    └── platform_job.large_timing_?
-        ├── submit_all_jobs.bash
-        └── clean_timing.bash
+ reg_test
+    └── PLATFORM-COMPILER
+        └── CISM-glissade
+            ├── CMakeCache.txt
+            ├── dome
+            │    └── dome
+            │        └── sRESO
+            │            └── pPRC
+            │                ├── dome.RESO.pPRC.*
+            │                └── timing/
+            │                    └── dome-t?.RESO.pPRC.*
+            ├── ismip-hom
+            │    ├── ismip-hom-a
+            │    │   └── sRESO
+            │    │       └── pPRC
+            │    │           └── zSIZE
+            │    │               └── ismip-hom-a.SIZE.pPRC.*
+            │    ├── ismip-hom-c
+            │    │   └── sRESO
+            │    │       └── pPRC
+            │    │           └── zSIZE
+            │    │               └── ismip-hom-c.SIZE.pPRC.*
+            │    └── ismip-hom-f
+            │        └── sRESO
+            │            └── pPRC
+            │                └── zSIZE
+            │                    └── ismip-hom-f.SIZE.pPRC.*
+            ├── shelf
+            │    ├── shelf-circular
+            │    │   └── sRESO
+            │    │       └── pPRC
+            │    │           └── shelf-circular.RESO.pPRC.*
+            │    └── shelf-confined
+            │        └── sRESO
+            │            └── pPRC
+            │                └── shelf-confined.RESO.pPRC.*
+            ├── stream 
+            │    └── stream
+            │        └── stream.RESO.pPRC.*
+        --------------------------------------------
+            ├── all_jobs
+            │    ├── platform_job.small
+            │    ├── platform_job.small_timing_?
+            │    ├── platform_job.large
+            │    └── platform_job.large_timing_?
+            ├── submit_all_jobs.bash
+            └── clean_timing.bash
 \end{verbatim}
 
 \noindent
 where \texttt{*} and \texttt{?} are POSIX regular expressions metacharacters, \texttt{RESO} is a number indicating the
-resolution the test was run at (the meaning of the number is test dependent), and \texttt{pPRC} is a number, prefixed by
-a \texttt{p}, indicating the number of processors used when running the model. This \texttt{reg\_test} directory will be
-formatted to used with LIVVkit directly. Note: everything below the dashed line will only appear on HPC systems (tests
-are immediately run on PCs).  \texttt{submit\_all\_jobs.bash} will submit all the jobs in the \texttt{jobs/} directory
-and \texttt{clean\_timing.bash} will clean out any \texttt{higher-order/*/timing/} directory such that only the timing
-files remain (to be used after all jobs finish).
+resolution the test was run at (the meaning of the number is test dependent), \texttt{PRC} is a number indicating the
+number of processors used when running the model, and `SIZE` is a test-specific number indicating the size of the model
+domain. This \texttt{reg\_test} directory will be formatted to used with LIVVkit directly.  Note: everything below the
+dashed line will only appear on HPC systems (tests are immediately run on PCs).  \texttt{submit\_all\_jobs.bash} will
+submit all the jobs in the \texttt{jobs/} directory and \texttt{clean\_timing.bash} will clean out any
+\texttt{higher-order/*/timing/} directories that exist such that only the timing files remain (to be used after all jobs
+finish).
 
 \subsubsection{Advanced usage}
     
